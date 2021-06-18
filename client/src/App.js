@@ -1,17 +1,14 @@
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route
-} from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 import './App.scss';
 
-import {AuthContextProvider} from './AuthContext';
+import { AuthContextProvider, AuthProtectedRoute } from './AuthContext';
 import Header from './Header';
 import Home from './Home';
 import Login from './Login';
 import Passwords from './Passwords';
 import Register from './Register';
+import Users from './Users';
 
 function App() {
   return (
@@ -33,6 +30,9 @@ function App() {
               <Register />
             </Route>
           )}
+          <AuthProtectedRoute path="/account">
+            <Users />
+          </AuthProtectedRoute>
         </Switch>
       </Router>
     </AuthContextProvider>

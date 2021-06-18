@@ -1,24 +1,20 @@
 import { useState } from 'react';
-import { useHistory, Link } from 'react-router-dom';
 import classNames from 'classnames';
 import { StatusCodes } from 'http-status-codes';
 
-import Api from './Api';
-import { useAuthContext } from './AuthContext';
-import UnexpectedError from './UnexpectedError';
-import ValidationError from './ValidationError';
+import Api from '../Api';
+import { useAuthContext } from '../AuthContext';
+import PhotoUploader from '../PhotoUploader';
+import UnexpectedError from '../UnexpectedError';
+import ValidationError from '../ValidationError';
 
-function Register() {
+function UserForm() {
   const authContext = useAuthContext();
-  const history = useHistory();
 
-  const [user, setUser] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-  });
+  const [user, setUser] = useState({ ...authContext.user, password: '' });
+  const [isUploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
 
   const onChange = function (event) {
     const newUser = { ...user };
@@ -29,10 +25,11 @@ function Register() {
   const onSubmit = async function (event) {
     event.preventDefault();
     setError(null);
+    setSuccess(false);
     try {
-      const response = await Api.auth.register(user);
+      const response = await Api.users.update(user.id, user);
       authContext.setUser(response.data);
-      history.push('/', { flash: 'Your account has been created!' });
+      setSuccess(true);
     } catch (error) {
       if (error.response?.status === StatusCodes.UNPROCESSABLE_ENTITY) {
         setError(new ValidationError(error.response.data));
@@ -48,9 +45,28 @@ function Register() {
         <div className="col col-sm-10 col-md-8 col-lg-6 col-xl-4">
           <div className="card">
             <div className="card-body">
-              <h2 className="card-title">Register</h2>
+              <h2 className="card-title">My Account</h2>
               <form onSubmit={onSubmit}>
                 {error && error.message && <div className="alert alert-danger">{error.message}</div>}
+                {success && <div className="alert alert-info">Your account has been updated!</div>}
+                <div className="mb-3">
+                  <label className="form-label" htmlFor="picture">
+                    Picture
+                  </label>
+                  <PhotoUploader
+                    className="card"
+                    id="picture"
+                    name="picture"
+                    value={user.picture}
+                    valueUrl={user.pictureUrl}
+                    onChange={onChange}
+                    onUploading={setUploading}>
+                    <div className="card-body">
+                      <div className="card-text">Drag-and-drop a photo file here, or click here to browse and select a file.</div>
+                    </div>
+                  </PhotoUploader>
+                  {error?.errorMessagesHTMLFor?.('picture')}
+                </div>
                 <div className="mb-3">
                   <label className="form-label" htmlFor="firstName">
                     First name
@@ -108,12 +124,9 @@ function Register() {
                   {error?.errorMessagesHTMLFor?.('password')}
                 </div>
                 <div className="mb-3 d-grid">
-                  <button className="btn btn-primary" type="submit">
+                  <button disabled={isUploading} className="btn btn-primary" type="submit">
                     Submit
                   </button>
-                </div>
-                <div className="mb-3 text-center">
-                  <Link to="/login">Already have an account?</Link>
                 </div>
               </form>
             </div>
@@ -124,4 +137,4 @@ function Register() {
   );
 }
 
-export default Register;
+export default UserForm;
