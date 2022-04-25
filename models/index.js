@@ -1,7 +1,8 @@
-const AWS = require('aws-sdk');
 const fs = require('fs-extra');
+const inflection = require('inflection');
 const path = require('path');
 const Sequelize = require('sequelize');
+const s3 = require('../lib/s3');
 
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
@@ -35,19 +36,8 @@ db.Sequelize = Sequelize;
 
 // add some helpers to the Sequelize Model class for handling file attachments
 
-const s3options = {};
-if (process.env.AWS_ACCESS_KEY_ID) {
-  s3options.accessKeyId = process.env.AWS_ACCESS_KEY_ID;
-}
-if (process.env.AWS_SECRET_ACCESS_KEY) {
-  s3options.secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
-}
-if (process.env.AWS_S3_BUCKET_REGION) {
-  s3options.region = process.env.AWS_S3_BUCKET_REGION;
-}
-const s3 = new AWS.S3(s3options);
-
-Sequelize.Model.prototype.assetUrl = function assetUrl(attribute, pathPrefix) {
+Sequelize.Model.prototype.assetUrl = function assetUrl(attribute) {
+  const pathPrefix = `${inflection.tableize(this.constructor.name)}/${this.id}/${attribute}`;
   const file = this.get(attribute);
   if (file) {
     return path.resolve('/api/assets/', pathPrefix, file);
@@ -55,49 +45,42 @@ Sequelize.Model.prototype.assetUrl = function assetUrl(attribute, pathPrefix) {
   return null;
 };
 
-Sequelize.Model.prototype.handleAssetFile = async function handleAssetFile(attribute, pathPrefix, options) {
+Sequelize.Model.prototype.handleAssetFile = async function handleAssetFile(attribute, options, callback) {
+  const pathPrefix = `${inflection.tableize(this.constructor.name)}/${this.id}/${attribute}`;
   if (!this.changed(attribute)) {
     return;
   }
+  const assetPrefix = process.env.ASSET_PATH_PREFIX || '';
   const prevFile = this.previous(attribute);
   const newFile = this.get(attribute);
   const handle = async () => {
+    let prevPath;
+    let newPath;
     if (process.env.AWS_S3_BUCKET) {
       if (prevFile) {
-        await s3
-          .deleteObject({
-            Bucket: process.env.AWS_S3_BUCKET,
-            Key: path.join(pathPrefix, prevFile),
-          })
-          .promise();
+        prevPath = path.join(assetPrefix, pathPrefix, prevFile);
+        await s3.deleteObject(prevPath);
       }
       if (newFile) {
-        await s3
-          .copyObject({
-            ACL: 'private',
-            Bucket: process.env.AWS_S3_BUCKET,
-            CopySource: path.join(process.env.AWS_S3_BUCKET, 'uploads', newFile),
-            Key: path.join(pathPrefix, newFile),
-            ServerSideEncryption: 'AES256',
-          })
-          .promise();
-        await s3
-          .deleteObject({
-            Bucket: process.env.AWS_S3_BUCKET,
-            Key: path.join('uploads', newFile),
-          })
-          .promise();
+        newPath = path.join(assetPrefix, pathPrefix, newFile);
+        await s3.copyObject(path.join(process.env.AWS_S3_BUCKET, 'uploads', newFile), newPath);
+        await s3.deleteObject(path.join('uploads', newFile));
       }
     } else {
       if (prevFile) {
-        fs.removeSync(path.resolve(__dirname, '../public/assets', pathPrefix, prevFile));
+        prevPath = path.resolve(__dirname, '../public/assets', assetPrefix, pathPrefix, prevFile);
+        fs.removeSync(prevPath);
       }
       if (newFile) {
         fs.ensureDirSync(path.resolve(__dirname, '../public/assets'));
-        fs.moveSync(path.resolve(__dirname, '../tmp/uploads', newFile), path.resolve(__dirname, '../public/assets', pathPrefix, newFile), {
+        newPath = path.resolve(__dirname, '../public/assets', assetPrefix, pathPrefix, newFile);
+        fs.moveSync(path.resolve(__dirname, '../tmp/uploads', newFile), newPath, {
           overwrite: true,
         });
       }
+    }
+    if (callback) {
+      await callback(prevPath, newPath);
     }
   };
   if (options.transaction) {
@@ -105,6 +88,18 @@ Sequelize.Model.prototype.handleAssetFile = async function handleAssetFile(attri
   } else {
     await handle();
   }
+};
+
+Sequelize.Model.paginate = async function paginate(options) {
+  const newOptions = { ...options };
+  const page = parseInt(newOptions.page || '1', 10);
+  delete newOptions.page;
+  const perPage = newOptions.paginate || 25;
+  delete newOptions.paginate;
+  newOptions.offset = (page - 1) * perPage;
+  newOptions.limit = perPage;
+  const { count, rows } = await this.findAndCountAll(newOptions);
+  return { records: rows, pages: Math.ceil(count / perPage), total: count };
 };
 
 module.exports = db;

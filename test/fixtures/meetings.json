@@ -1,0 +1,32 @@
+[
+  {
+    "model": "Meeting",
+    "data": {
+      "id": "4a8b1331-8d68-470b-bfc9-265c2cc8f039",
+      "startsAt": "2022-02-03T19:00:00",
+      "callLink": "https://calllink.com/asdf",
+      "callDetails": "These are the call details",
+      "topic": "Topic 1",
+      "maxUploadsCount": 20,
+      "allowedUserIds": null,
+      "MeetingTemplateId": "1633bc60-c8da-45bf-ae5f-471d617e7c37",
+      "CreatedByUserId": 1,
+      "UpdatedByUserId": 1
+    }
+  },
+  {
+    "model": "Meeting",
+    "data": {
+      "id": "12464934-3e8e-4034-8064-009c28147a27",
+      "startsAt": "2022-02-10T19:00:00",
+      "callLink": "https://calllink.com/asdf",
+      "callDetails": "These are the call details",
+      "topic": "Topic 2",
+      "maxUploadsCount": 20,
+      "allowedUserIds": null,
+      "MeetingTemplateId": "d4b52805-c63a-44b5-8dad-da34173cab2c",
+      "CreatedByUserId": 1,
+      "UpdatedByUserId": 1
+    }
+  }
+]

@@ -16,6 +16,7 @@ describe('models.User', () => {
     let user = models.User.build({
       firstName: 'John',
       lastName: 'Doe',
+      username: 'johndoe',
       email: 'john.doe@test.com',
       password: 'abcd1234',
     });
@@ -35,12 +36,13 @@ describe('models.User', () => {
     const user = models.User.build({
       firstName: '',
       lastName: '',
+      username: '',
       email: '',
       password: '',
     });
     await assert.rejects(user.save(), (error) => {
       assert(error instanceof models.Sequelize.ValidationError);
-      assert.deepStrictEqual(error.errors.length, 4);
+      assert.deepStrictEqual(error.errors.length, 6);
       assert(
         _.find(error.errors, {
           path: 'firstName',
@@ -51,6 +53,18 @@ describe('models.User', () => {
         _.find(error.errors, {
           path: 'lastName',
           message: 'Last name cannot be blank',
+        })
+      );
+      assert(
+        _.find(error.errors, {
+          path: 'username',
+          message: 'Username cannot be blank',
+        })
+      );
+      assert(
+        _.find(error.errors, {
+          path: 'username',
+          message: 'Letters, numbers and hypen only',
         })
       );
       assert(
@@ -73,6 +87,7 @@ describe('models.User', () => {
     const user = models.User.build({
       firstName: 'John',
       lastName: 'Doe',
+      username: 'johndoe',
       email: 'regular.user@test.com',
       password: 'abcd1234',
     });
@@ -118,27 +133,38 @@ describe('models.User', () => {
 
     afterEach(() => {
       fs.removeSync(path.resolve(__dirname, `../../tmp/uploads/${picture}`));
-      fs.removeSync(path.resolve(__dirname, `../../public/assets/users/picture/${picture}`));
+      fs.removeSync(path.resolve(__dirname, `../../public/assets`, process.env.ASSET_PATH_PREFIX));
     });
 
     it('handles a picture asset upload', async () => {
       const user = models.User.build({
         firstName: 'Test',
         lastName: 'User',
+        username: 'testuser',
         email: 'test.user@test.com',
         password: 'abcd1234',
         picture,
       });
       await user.save();
-      assert(fs.pathExistsSync(path.resolve(__dirname, '../../public/assets/users/picture', picture)));
+      assert(
+        fs.pathExistsSync(
+          path.resolve(__dirname, '../../public/assets', process.env.ASSET_PATH_PREFIX, 'users', `${user.id}`, 'picture', picture)
+        )
+      );
     });
 
     describe('.pictureUrl', () => {
-      it('returns an asset url for the picture', () => {
+      it('returns an asset url for the picture', async () => {
         const user = models.User.build({
+          firstName: 'Test',
+          lastName: 'User',
+          username: 'testuser',
+          email: 'test.user@test.com',
+          password: 'abcd1234',
           picture,
         });
-        assert.deepStrictEqual(user.pictureUrl, `/api/assets/users/picture/${picture}`);
+        await user.save();
+        assert.deepStrictEqual(user.pictureUrl, `/api/assets/users/${user.id}/picture/${picture}`);
       });
     });
   });

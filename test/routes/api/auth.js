@@ -9,10 +9,6 @@ const app = require('../../../app');
 describe('/api/auth', () => {
   let testSession;
 
-  before(() => {
-    process.env.REACT_APP_FEATURE_REGISTRATION = 'true';
-  });
-
   beforeEach(async () => {
     await helper.loadFixtures(['users']);
     testSession = session(app);
@@ -26,6 +22,7 @@ describe('/api/auth', () => {
         .send({
           firstName: 'Normal',
           lastName: 'Person',
+          username: 'normalperson',
           email: 'normal.person@test.com',
           password: 'abcd1234',
         })
@@ -37,8 +34,15 @@ describe('/api/auth', () => {
         id,
         firstName: 'Normal',
         lastName: 'Person',
+        username: 'normalperson',
         email: 'normal.person@test.com',
+        phone: null,
+        bio: null,
+        license: 'allrightsreserved',
+        website: null,
+        acquireLicensePage: null,
         isAdmin: false,
+        isPublic: false,
         picture: null,
         pictureUrl: null,
       });
@@ -51,6 +55,7 @@ describe('/api/auth', () => {
         .send({
           firstName: '',
           lastName: '',
+          username: '',
           email: '',
           password: '',
         })
@@ -58,7 +63,7 @@ describe('/api/auth', () => {
 
       const error = response.body;
       assert.deepStrictEqual(error.status, HttpStatus.UNPROCESSABLE_ENTITY);
-      assert.deepStrictEqual(error.errors.length, 4);
+      assert.deepStrictEqual(error.errors.length, 6);
       assert(
         _.find(error.errors, {
           path: 'firstName',
@@ -69,6 +74,18 @@ describe('/api/auth', () => {
         _.find(error.errors, {
           path: 'lastName',
           message: 'Last name cannot be blank',
+        })
+      );
+      assert(
+        _.find(error.errors, {
+          path: 'username',
+          message: 'Username cannot be blank',
+        })
+      );
+      assert(
+        _.find(error.errors, {
+          path: 'username',
+          message: 'Letters, numbers and hypen only',
         })
       );
       assert(
@@ -92,6 +109,7 @@ describe('/api/auth', () => {
         .send({
           firstName: 'Normal',
           lastName: 'Person',
+          username: 'normalperson',
           email: 'regular.user@test.com',
           password: 'abcd1234',
         })

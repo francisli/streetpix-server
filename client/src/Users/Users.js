@@ -1,17 +1,43 @@
-import { useRouteMatch, Route, Switch } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import Api from '../Api';
+import { useAuthContext } from '../AuthContext';
 
-import UserForm from './UserForm';
+import './Users.scss';
 
 function Users() {
-  const { path } = useRouteMatch();
+  const { user } = useAuthContext();
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    Api.users.index().then((response) => setUsers(response.data));
+  }, []);
 
   return (
-    <Switch>
-      <Route exact path={path}>
-        <UserForm />
-      </Route>
-    </Switch>
+    <main className="users container">
+      <h1>Members</h1>
+      {user?.isAdmin && (
+        <div className="mb-5 text-center">
+          <Link to="/admin/members" className="btn btn-outline-primary">
+            Manage Members
+          </Link>
+        </div>
+      )}
+      <div className="row justify-content-center">
+        {users.map((user) => (
+          <Link key={user.id} to={`/members/${user.username}`} className="users__user col-6 col-md-3 col-lg-2">
+            <div className="square mb-3">
+              <div
+                className="users__picture square__content"
+                style={{ backgroundImage: user.picture ? `url(${user.pictureUrl})` : 'none' }}></div>
+            </div>
+            <h4 className="users__name">
+              {user.firstName} {user.lastName}
+            </h4>
+          </Link>
+        ))}
+      </div>
+    </main>
   );
 }
-
 export default Users;

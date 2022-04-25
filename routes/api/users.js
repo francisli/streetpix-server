@@ -8,18 +8,22 @@ const helpers = require('../helpers');
 
 const router = express.Router();
 
-router.get('/', interceptors.requireAdmin, async (req, res) => {
+router.get('/', async (req, res) => {
   const page = req.query.page || 1;
-  const { docs, pages, total } = await models.User.paginate({
+  const options = {
     page,
     order: [
       ['lastName', 'ASC'],
       ['firstName', 'ASC'],
       ['email', 'ASC'],
     ],
-  });
+  };
+  if (!req.user) {
+    options.where = { isPublic: true };
+  }
+  const { records, pages, total } = await models.User.paginate(options);
   helpers.setPaginationHeaders(req, res, page, pages, total);
-  res.json(docs.map((d) => d.toJSON()));
+  res.json(records.map((r) => r.toJSON()));
 });
 
 router.get('/me', (req, res) => {
@@ -30,9 +34,14 @@ router.get('/me', (req, res) => {
   }
 });
 
-router.get('/:id', interceptors.requireAdmin, async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
-    const user = await models.User.findByPk(req.params.id);
+    let user;
+    if (req.params.id.match(/[0-9]+/)) {
+      user = await models.User.findByPk(req.params.id);
+    } else {
+      user = await models.User.findOne({ where: { username: req.params.id } });
+    }
     if (user) {
       res.json(user.toJSON());
     } else {
@@ -55,7 +64,22 @@ router.patch('/:id', interceptors.requireLogin, (req, res) => {
         res.status(HttpStatus.NOT_FOUND).end();
         return;
       }
-      await user.update(_.pick(req.body, ['firstName', 'lastName', 'email', 'password', 'picture']), { transaction });
+      await user.update(
+        _.pick(req.body, [
+          'firstName',
+          'lastName',
+          'username',
+          'email',
+          'password',
+          'picture',
+          'bio',
+          'website',
+          'license',
+          'acquireLicensePage',
+          'isPublic',
+        ]),
+        { transaction }
+      );
       res.json(user.toJSON());
     } catch (error) {
       if (error.name === 'SequelizeValidationError') {

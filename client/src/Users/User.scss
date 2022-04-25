@@ -1,0 +1,15 @@
+.thumbnail {
+  // border-right: 1px solid lightgray;
+  margin-bottom: 24px;
+}
+
+.thumbnail__content {
+  padding: 48px 36px;
+}
+
+.user__website {
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
+}

@@ -16,7 +16,23 @@ instance.interceptors.response.use(
   }
 );
 
+function parseLinkHeader(response) {
+  const link = response.headers?.link;
+  if (link) {
+    const linkRe = /<([^>]+)>; rel="([^"]+)"/g;
+    const urls = {};
+    let m;
+    while ((m = linkRe.exec(link)) !== null) {
+      let url = m[1];
+      urls[m[2]] = url;
+    }
+    return urls;
+  }
+  return null;
+}
+
 const Api = {
+  parseLinkHeader,
   assets: {
     create(data) {
       return instance.post('/api/assets', data);
@@ -36,6 +52,51 @@ const Api = {
       return instance.post('/api/auth/register', data);
     },
   },
+  invites: {
+    index() {
+      return instance.get(`/api/invites`);
+    },
+    create(data) {
+      return instance.post('/api/invites', data);
+    },
+    get(id) {
+      return instance.get(`/api/invites/${id}`);
+    },
+    accept(id, data) {
+      return instance.post(`/api/invites/${id}/accept`, data);
+    },
+    revoke(id) {
+      return instance.delete(`/api/invites/${id}`);
+    },
+  },
+  meetings: {
+    index() {
+      return instance.get(`/api/meetings`);
+    },
+    create(data) {
+      return instance.post('/api/meetings', data);
+    },
+    get(id) {
+      return instance.get(`/api/meetings/${id}`);
+    },
+    submit(id, data) {
+      return instance.post(`/api/meetings/${id}/submissions`, data);
+    },
+    update(id, data) {
+      return instance.patch(`/api/meetings/${id}`, data);
+    },
+  },
+  meetingTemplates: {
+    index() {
+      return instance.get('/api/meetings/templates');
+    },
+    get(id) {
+      return instance.get(`/api/meetings/templates/${id}`);
+    },
+    update(id, data) {
+      return instance.patch(`/api/meetings/templates/${id}`, data);
+    },
+  },
   passwords: {
     reset(email) {
       return instance.post('/api/passwords', { email });
@@ -47,9 +108,39 @@ const Api = {
       return instance.patch(`/api/passwords/${token}`, { password });
     },
   },
+  photos: {
+    index(userId, page) {
+      const params = {};
+      if (userId) {
+        params.userId = userId;
+      }
+      if (page) {
+        params.page = page;
+      }
+      return instance.get('/api/photos', { params });
+    },
+    random() {
+      return instance.get(`/api/photos/random`);
+    },
+    get(id) {
+      return instance.get(`/api/photos/${id}`);
+    },
+    create(data) {
+      return instance.post('/api/photos', data);
+    },
+    update(id, data) {
+      return instance.patch(`/api/photos/${id}`, data);
+    },
+  },
   users: {
     me() {
       return instance.get('/api/users/me');
+    },
+    index() {
+      return instance.get(`/api/users`);
+    },
+    get(id) {
+      return instance.get(`/api/users/${id}`);
     },
     update(id, data) {
       return instance.patch(`/api/users/${id}`, data);

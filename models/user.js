@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 const { Model, Op } = require('sequelize');
 const _ = require('lodash');
-const sequelizePaginate = require('sequelize-paginate');
 const { v4: uuid } = require('uuid');
 const mailer = require('../emails/mailer');
 
@@ -15,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     // eslint-disable-next-line no-unused-vars
     static associate(models) {
       // define association here
+      User.hasMany(models.Photo);
     }
 
     static isValidPassword(password) {
@@ -26,7 +26,22 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     toJSON() {
-      return _.pick(this.get(), ['id', 'firstName', 'lastName', 'email', 'picture', 'pictureUrl', 'isAdmin']);
+      return _.pick(this.get(), [
+        'id',
+        'firstName',
+        'lastName',
+        'username',
+        'email',
+        'phone',
+        'picture',
+        'pictureUrl',
+        'isAdmin',
+        'bio',
+        'website',
+        'license',
+        'acquireLicensePage',
+        'isPublic',
+      ]);
     }
 
     hashPassword(password, options) {
@@ -120,6 +135,44 @@ module.exports = (sequelize, DataTypes) => {
           return `${this.firstName} ${this.lastName} <${this.email}>`;
         },
       },
+      username: {
+        type: DataTypes.CITEXT,
+        allowNull: false,
+        validate: {
+          notNull: {
+            msg: 'Username cannot be blank',
+          },
+          notEmpty: {
+            msg: 'Username cannot be blank',
+          },
+          async isValid(value) {
+            if (value.match(/^[0-9]+$/) != null) {
+              throw new Error('Please include at least one letter');
+            }
+            if (value.match(/^[A-Za-z0-9-]+$/) == null) {
+              throw new Error('Letters, numbers and hypen only');
+            }
+          },
+          async isUnique(value) {
+            if (this.changed('username')) {
+              const user = await User.findOne({
+                where: {
+                  id: {
+                    [Op.ne]: this.id,
+                  },
+                  username: value,
+                },
+              });
+              if (user) {
+                throw new Error('Username already taken');
+              }
+            }
+          },
+        },
+      },
+      phone: {
+        type: DataTypes.STRING,
+      },
       password: {
         type: DataTypes.VIRTUAL,
         validate: {
@@ -143,8 +196,25 @@ module.exports = (sequelize, DataTypes) => {
       pictureUrl: {
         type: DataTypes.VIRTUAL,
         get() {
-          return this.assetUrl('picture', 'users/picture');
+          return this.assetUrl('picture');
         },
+      },
+      bio: {
+        type: DataTypes.TEXT,
+      },
+      website: {
+        type: DataTypes.TEXT,
+      },
+      license: {
+        type: DataTypes.TEXT,
+      },
+      acquireLicensePage: {
+        type: DataTypes.TEXT,
+      },
+      isPublic: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
       },
       isAdmin: {
         type: DataTypes.BOOLEAN,
@@ -177,10 +247,8 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   User.afterSave(async (user, options) => {
-    user.handleAssetFile('picture', 'users/picture', options);
+    user.handleAssetFile('picture', options);
   });
-
-  sequelizePaginate.paginate(User);
 
   return User;
 };

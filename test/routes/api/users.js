@@ -10,7 +10,7 @@ describe('/api/users', () => {
   let testSession;
 
   beforeEach(async () => {
-    await helper.loadFixtures(['sections', 'users']);
+    await helper.loadFixtures(['users']);
     testSession = session(app);
   });
 
@@ -44,10 +44,17 @@ describe('/api/users', () => {
           id: 2,
           firstName: 'Regular',
           lastName: 'User',
+          username: 'regular',
           email: 'regular.user@test.com',
+          phone: null,
           isAdmin: false,
+          isPublic: false,
           picture: null,
           pictureUrl: null,
+          bio: null,
+          license: 'allrightsreserved',
+          acquireLicensePage: null,
+          website: null,
         });
       });
     });
@@ -60,6 +67,7 @@ describe('/api/users', () => {
           .send({
             firstName: 'Normal',
             lastName: 'Person',
+            username: 'normalperson',
             email: 'normal.person@test.com',
           })
           .expect(HttpStatus.OK);
@@ -68,10 +76,17 @@ describe('/api/users', () => {
           id: 2,
           firstName: 'Normal',
           lastName: 'Person',
+          username: 'normalperson',
           email: 'normal.person@test.com',
+          phone: null,
           isAdmin: false,
+          isPublic: false,
           picture: null,
           pictureUrl: null,
+          bio: null,
+          license: 'allrightsreserved',
+          acquireLicensePage: null,
+          website: null,
         });
       });
 

@@ -1,0 +1,44 @@
+[
+  {
+    "model": "Photo",
+    "data": {
+      "id": "e6ecab76-48ca-4a89-8593-281153dff454",
+      "UserId": 1,
+      "file": "e6ecab76-48ca-4a89-8593-281153dff454.jpg",
+      "caption": "Test photo 1",
+      "description": "This is a description of Test photo 1",
+      "metadata": null,
+      "isPublic": false,
+      "license": null,
+      "acquireLicensePage": null
+    }
+  },
+  {
+    "model": "Photo",
+    "data": {
+      "id": "ea92aaca-4fa3-4ff7-96e9-dd0db71b5143",
+      "UserId": 1,
+      "file": "ea92aaca-4fa3-4ff7-96e9-dd0db71b5143.jpg",
+      "caption": "Test photo 2",
+      "description": "This is a description of Test photo 2",
+      "metadata": null,
+      "isPublic": true,
+      "license": null,
+      "acquireLicensePage": null
+    }
+  },
+  {
+    "model": "Photo",
+    "data": {
+      "id": "d0cb02d1-e95f-4d05-8b90-f2db36357e83",
+      "UserId": 2,
+      "file": "d0cb02d1-e95f-4d05-8b90-f2db36357e83.jpg",
+      "caption": "Test photo 3",
+      "description": "This is a description of Test photo 3",
+      "metadata": null,
+      "isPublic": true,
+      "license": null,
+      "acquireLicensePage": null
+    }
+  }
+]
