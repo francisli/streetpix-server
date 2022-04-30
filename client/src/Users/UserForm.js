@@ -51,7 +51,7 @@ function UserForm() {
       <div className="row justify-content-center">
         <div className="col col-sm-10 col-md-8 col-lg-6 col-xl-4">
           <h1>Edit Profile</h1>
-          <form onSubmit={onSubmit}>
+          <form onSubmit={onSubmit} autoComplete="off">
             {error && error.message && <div className="alert alert-danger">{error.message}</div>}
             {success && <div className="alert alert-info">Your account has been updated!</div>}
             <div className="mb-3">
@@ -106,6 +106,7 @@ function UserForm() {
               </label>
               <input
                 type="text"
+                data-lpignore="true"
                 className={classNames('form-control', { 'is-invalid': error?.errorsFor?.('username') })}
                 id="username"
                 name="username"
@@ -120,6 +121,7 @@ function UserForm() {
               </label>
               <input
                 type="text"
+                data-lpignore="true"
                 className={classNames('form-control', { 'is-invalid': error?.errorsFor?.('email') })}
                 id="email"
                 name="email"
@@ -148,6 +150,7 @@ function UserForm() {
               </label>
               <input
                 type="password"
+                data-lpignore="true"
                 className={classNames('form-control', { 'is-invalid': error?.errorsFor?.('password') })}
                 id="password"
                 name="password"

@@ -23,6 +23,8 @@ function User({ userId }) {
   const [nextPhotoId, setNextPhotoId] = useState();
   const [prevPhotoId, setPrevPhotoId] = useState();
 
+  const validPhotoId = photoId !== 'edit' ? photoId : undefined;
+
   useEffect(() => {
     if (userId) {
       Api.users.get(userId).then((response) => setUser(response.data));
@@ -30,14 +32,14 @@ function User({ userId }) {
   }, [userId]);
 
   useEffect(() => {
-    if (!photoId || !page) {
+    if (!validPhotoId || !page) {
       const params = new URLSearchParams(search);
       const newPage = parseInt(params.get('page') ?? '1', 10);
       if (newPage !== page) {
         setPage(newPage);
       }
     }
-  }, [photoId, search, page]);
+  }, [validPhotoId, search, page]);
 
   useEffect(() => {
     if (userId && page) {
@@ -57,8 +59,8 @@ function User({ userId }) {
   }, [userId, page]);
 
   useEffect(() => {
-    if (userId && photoId && photos && page && lastPage) {
-      const index = photos.findIndex((photo) => photo.id === photoId);
+    if (userId && validPhotoId && photos && page && lastPage) {
+      const index = photos.findIndex((photo) => photo.id === validPhotoId);
       if (index < 0) {
         if (page < lastPage) {
           setPage(page + 1);
@@ -102,12 +104,12 @@ function User({ userId }) {
         setNextPhotoId(photos[index + 1].id);
       }
     }
-  }, [userId, photoId, photos, page, lastPage]);
+  }, [userId, validPhotoId, photos, page, lastPage]);
 
   return (
     <main className="container">
-      {photoId ? (
-        <Photo userId={userId} id={photoId} page={page} nextId={nextPhotoId} prevId={prevPhotoId} />
+      {validPhotoId ? (
+        <Photo userId={userId} id={validPhotoId} page={page} nextId={nextPhotoId} prevId={prevPhotoId} />
       ) : (
         <>
           {user && (
