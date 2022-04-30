@@ -11,7 +11,7 @@ photoServer.on('connection', async (ws, req) => {
   ws.info = { userId, photoId };
   ws.on('message', async (data) => {
     // broadcast back to other users viewing the same photo
-    let payload = data.toString();
+    const payload = data.toString();
     photoServer.clients.forEach((client) => {
       if (client.info.photoId === photoId && client.info.userId !== userId) {
         client.send(payload);
