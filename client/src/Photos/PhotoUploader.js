@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 
-import DropzoneUploader from '../DropzoneUploader';
+import DropzoneUploader from '../Components/DropzoneUploader';
 
 import PhotoForm from './PhotoForm';
 
