@@ -64,22 +64,23 @@ router.patch('/:id', interceptors.requireLogin, (req, res) => {
         res.status(HttpStatus.NOT_FOUND).end();
         return;
       }
-      await user.update(
-        _.pick(req.body, [
-          'firstName',
-          'lastName',
-          'username',
-          'email',
-          'password',
-          'picture',
-          'bio',
-          'website',
-          'license',
-          'acquireLicensePage',
-          'isPublic',
-        ]),
-        { transaction }
-      );
+      const fields = [
+        'firstName',
+        'lastName',
+        'username',
+        'email',
+        'password',
+        'picture',
+        'bio',
+        'website',
+        'license',
+        'acquireLicensePage',
+        'isPublic',
+      ];
+      if (req.user.isAdmin) {
+        fields.push('isAdmin');
+      }
+      await user.update(_.pick(req.body, fields), { transaction });
       res.json(user.toJSON());
     } catch (error) {
       if (error.name === 'SequelizeValidationError') {

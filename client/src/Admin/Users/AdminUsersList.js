@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEnvelope } from '@fortawesome/free-regular-svg-icons';
+import { faCheckSquare, faEnvelope } from '@fortawesome/free-regular-svg-icons';
 import { DateTime } from 'luxon';
 
 import Api from '../../Api';
@@ -78,7 +78,8 @@ function AdminUsersList() {
               <th className="w-20">Last name</th>
               <th className="w-20">Username</th>
               <th className="w-20">Email</th>
-              <th className="w-20">Actions</th>
+              <th className="w-5">Admin?</th>
+              <th className="w-15">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -92,6 +93,7 @@ function AdminUsersList() {
                 <td>
                   <a href={`mailto:${user.email}`}>{user.email}</a>
                 </td>
+                <td>{user.isAdmin && <FontAwesomeIcon icon={faCheckSquare} />}</td>
                 <td>
                   <Link to={`/admin/members/${user.username}`}>Edit&nbsp;Profile</Link>
                 </td>

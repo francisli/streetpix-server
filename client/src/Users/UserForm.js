@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { StatusCodes } from 'http-status-codes';
 
@@ -8,13 +8,32 @@ import PhotoInput from '../Components/PhotoInput';
 import UnexpectedError from '../UnexpectedError';
 import ValidationError from '../ValidationError';
 
-function UserForm() {
+function UserForm({ userId }) {
   const authContext = useAuthContext();
 
-  const [user, setUser] = useState({ ...authContext.user, password: '' });
+  const [user, setUser] = useState({
+    firstName: '',
+    lastName: '',
+    username: '',
+    isAdmin: false,
+    email: '',
+    phone: '',
+    password: '',
+    bio: '',
+    website: '',
+    isPublic: false,
+    license: 'allrightsreserved',
+    acquireLicensePage: '',
+  });
   const [isUploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    if (userId) {
+      Api.users.get(userId).then((response) => setUser(response.data));
+    }
+  }, [userId]);
 
   function onChange(event) {
     const newUser = { ...user };
@@ -34,7 +53,9 @@ function UserForm() {
     setSuccess(false);
     try {
       const response = await Api.users.update(user.id, user);
-      authContext.setUser(response.data);
+      if (user.id === authContext.user.id) {
+        authContext.setUser(response.data);
+      }
       setSuccess(true);
     } catch (error) {
       if (error.response?.status === StatusCodes.UNPROCESSABLE_ENTITY) {
@@ -53,7 +74,7 @@ function UserForm() {
           <h1>Edit Profile</h1>
           <form onSubmit={onSubmit} autoComplete="off">
             {error && error.message && <div className="alert alert-danger">{error.message}</div>}
-            {success && <div className="alert alert-info">Your account has been updated!</div>}
+            {success && <div className="alert alert-info">The account has been updated!</div>}
             <div className="mb-3">
               <label className="form-label" htmlFor="picture">
                 Picture
@@ -115,6 +136,27 @@ function UserForm() {
               />
               {error?.errorMessagesHTMLFor?.('username')}
             </div>
+            {authContext.user.isAdmin && (
+              <div className="mb-3">
+                <label className="form-label" htmlFor="isAdmin">
+                  Administrator
+                </label>
+                <div className="form-check">
+                  <input
+                    type="checkbox"
+                    className={classNames('form-check-input', { 'is-invalid': error?.errorsFor?.('isAdmin') })}
+                    id="isAdmin"
+                    name="isAdmin"
+                    onChange={onToggle}
+                    checked={user.isAdmin}
+                  />
+                  <label htmlFor="isAdmin" className="form-check-label">
+                    Is an administrator?
+                  </label>
+                </div>
+                {error?.errorMessagesHTMLFor?.('isAdmin')}
+              </div>
+            )}
             <div className="mb-3">
               <label className="form-label" htmlFor="email">
                 Email
