@@ -106,10 +106,18 @@ function User({ userId }) {
     }
   }, [userId, validPhotoId, photos, page, lastPage]);
 
+  function onDeleted(id) {
+    const index = photos.findIndex((photo) => photo.id === id);
+    if (index >= 0) {
+      photos.splice(index, 1);
+      setPhotos([...photos]);
+    }
+  }
+
   return (
     <main className="container">
       {validPhotoId ? (
-        <Photo userId={userId} id={validPhotoId} page={page} nextId={nextPhotoId} prevId={prevPhotoId} />
+        <Photo userId={userId} id={validPhotoId} page={page} nextId={nextPhotoId} prevId={prevPhotoId} onDeleted={onDeleted} />
       ) : (
         <>
           {user && (

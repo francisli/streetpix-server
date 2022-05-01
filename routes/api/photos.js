@@ -120,4 +120,20 @@ router.patch('/:id', interceptors.requireLogin, async (req, res) => {
   }
 });
 
+router.delete('/:id', interceptors.requireLogin, async (req, res) => {
+  await models.sequelize.transaction(async (transaction) => {
+    const photo = await models.Photo.findByPk(req.params.id, { transaction });
+    if (!photo) {
+      res.status(HttpStatus.NOT_FOUND).end();
+      return;
+    }
+    if (!req.user.isAdmin && req.user.id !== photo.UserId) {
+      res.status(HttpStatus.UNAUTHORIZED).end();
+      return;
+    }
+    await photo.destroy({ transaction });
+    res.status(HttpStatus.OK).end();
+  });
+});
+
 module.exports = router;

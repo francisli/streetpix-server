@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import Api from '../Api';
 import { useAuthContext } from '../AuthContext';
 
-function PhotoForm({ id, file, meetingId, onCancel, onUpdated }) {
+function PhotoForm({ id, file, meetingId, onCancel, onUpdated, onDeleted }) {
   const { user } = useAuthContext();
   const [data, setData] = useState({
     file,
@@ -64,6 +64,22 @@ function PhotoForm({ id, file, meetingId, onCancel, onUpdated }) {
     return false;
   }
 
+  async function onDelete(event) {
+    event.preventDefault();
+    if (window.confirm('Are you sure you wish to delete this photo?')) {
+      try {
+        setLoading(true);
+        await Api.photos.delete(id);
+        if (onDeleted) {
+          onDeleted();
+        }
+      } catch (error) {
+        setLoading(false);
+        console.log(error);
+      }
+    }
+  }
+
   return (
     <form onSubmit={onSubmit}>
       <fieldset disabled={isLoading}>
@@ -119,21 +135,28 @@ function PhotoForm({ id, file, meetingId, onCancel, onUpdated }) {
             className="form-control"
           />
         </div>
-        <div>
-          <button className="btn btn-outline-primary" type="submit">
-            {data.id ? 'Update' : 'Submit'}
-          </button>
-          {onCancel && (
-            <>
-              &nbsp;&nbsp;
-              <button onClick={onCancel} className="btn btn-outline-secondary" type="button">
-                Cancel
-              </button>
-            </>
+        <div className="d-flex justify-content-between">
+          <div>
+            <button className="btn btn-outline-primary" type="submit">
+              {data.id ? 'Update' : 'Submit'}
+            </button>
+            {onCancel && (
+              <>
+                &nbsp;&nbsp;
+                <button onClick={onCancel} className="btn btn-outline-secondary" type="button">
+                  Cancel
+                </button>
+              </>
+            )}
+            &nbsp;&nbsp;
+            {isCreated && <span className="text-success">Photo added!</span>}
+            {isUpdated && <span className="text-success">Photo updated!</span>}
+          </div>
+          {id && (
+            <button onClick={onDelete} className="btn btn-outline-danger" type="button">
+              Delete
+            </button>
           )}
-          &nbsp;&nbsp;
-          {isCreated && <span className="text-success">Photo added!</span>}
-          {isUpdated && <span className="text-success">Photo updated!</span>}
         </div>
       </fieldset>
     </form>

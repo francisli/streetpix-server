@@ -70,10 +70,18 @@ function Meeting() {
     }
   }
 
+  function onDeleted(id) {
+    const index = meeting.MeetingSubmissions.findIndex((ms) => ms.Photo.id === id);
+    if (index >= 0) {
+      meeting.MeetingSubmissions.splice(index, 1);
+      setMeeting({ ...meeting });
+    }
+  }
+
   return (
     <main className="container">
       {photoId ? (
-        <Photo meetingId={meetingId} id={photoId} nextId={nextPhotoId} prevId={prevPhotoId} />
+        <Photo meetingId={meetingId} id={photoId} nextId={nextPhotoId} prevId={prevPhotoId} onDeleted={onDeleted} />
       ) : (
         <>
           <h1>Meeting</h1>

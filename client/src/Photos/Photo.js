@@ -10,7 +10,7 @@ import './Photo.scss';
 import InteractivePhoto from './InteractivePhoto';
 import PhotoForm from './PhotoForm';
 
-function Photo({ meetingId, userId, id, page, nextId, prevId }) {
+function Photo({ meetingId, userId, id, page, nextId, prevId, onDeleted }) {
   const { user } = useAuthContext();
   const { path } = useRouteMatch();
   const fshandle = useFullScreenHandle();
@@ -19,6 +19,14 @@ function Photo({ meetingId, userId, id, page, nextId, prevId }) {
 
   const [data, setData] = useState(null);
   const [isEditing, setEditing] = useState(false);
+
+  let baseUrl = path;
+  if (userId) {
+    baseUrl = baseUrl.replace(':userId', userId);
+  } else if (meetingId) {
+    baseUrl = baseUrl.replace(':meetingId', meetingId);
+  }
+  const listUrl = `${baseUrl.replace('/:photoId?', '')}${!page || page === 1 ? '' : `?page=${page}`}`;
 
   useEffect(() => {
     Api.photos.get(id).then((response) => setData(response.data));
@@ -38,6 +46,13 @@ function Photo({ meetingId, userId, id, page, nextId, prevId }) {
     setEditing(false);
   }
 
+  function onDeletedInternal() {
+    if (onDeleted) {
+      onDeleted(id);
+    }
+    history.replace(listUrl);
+  }
+
   function onKeyDown(event) {
     switch (event.keyCode) {
       case 37:
@@ -53,13 +68,6 @@ function Photo({ meetingId, userId, id, page, nextId, prevId }) {
       default:
         break;
     }
-  }
-
-  let baseUrl = path;
-  if (userId) {
-    baseUrl = baseUrl.replace(':userId', userId);
-  } else if (meetingId) {
-    baseUrl = baseUrl.replace(':meetingId', meetingId);
   }
 
   return (
@@ -109,9 +117,7 @@ function Photo({ meetingId, userId, id, page, nextId, prevId }) {
                       )}
                     </div>
                     <div className="col-4 text-center">
-                      <Link
-                        to={`${baseUrl.replace('/:photoId?', '')}${!page || page === 1 ? '' : `?page=${page}`}`}
-                        className="btn btn-sm btn-outline-secondary">
+                      <Link to={listUrl} className="btn btn-sm btn-outline-secondary">
                         Back to List
                       </Link>
                     </div>
@@ -123,7 +129,7 @@ function Photo({ meetingId, userId, id, page, nextId, prevId }) {
                   </div>
                 </>
               )}
-              {isEditing && <PhotoForm id={id} onCancel={onCancel} onUpdated={onUpdated} />}
+              {isEditing && <PhotoForm id={id} onCancel={onCancel} onUpdated={onUpdated} onDeleted={onDeletedInternal} />}
             </div>
             <div className="col-md-3">
               {nextId && (
