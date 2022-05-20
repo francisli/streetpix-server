@@ -26,6 +26,23 @@ function AdminUsersList() {
     }
   }
 
+  async function resend(invite) {
+    let name = `${invite.firstName} ${invite.lastName}`.trim();
+    let nameAndEmail = `${name} <${invite.email}>`.trim();
+    if (window.confirm(`Are you sure you wish to resend the invite to ${nameAndEmail}?`)) {
+      const response = await Api.invites.resend(invite.id);
+      if (response.status === 200) {
+        for (const inv of invites) {
+          if (inv.id === invite.id) {
+            inv.updatedAt = response.data.updatedAt;
+            break;
+          }
+        }
+        setInvites([...invites]);
+      }
+    }
+  }
+
   return (
     <main className="users container">
       <h1>Manage Members</h1>
@@ -56,8 +73,12 @@ function AdminUsersList() {
                     <td>
                       <a href={`mailto:${invite.email}`}>{invite.email}</a>
                     </td>
-                    <td>{DateTime.fromISO(invite.createdAt).toLocaleString()}</td>
+                    <td>{DateTime.fromISO(invite.updatedAt).toLocaleString()}</td>
                     <td>
+                      <button className="btn btn-link p-0" onClick={() => resend(invite)}>
+                        Resend&nbsp;Invite
+                      </button>
+                      &nbsp;|&nbsp;
                       <button className="btn btn-link p-0" onClick={() => revoke(invite)}>
                         Revoke&nbsp;Invite
                       </button>

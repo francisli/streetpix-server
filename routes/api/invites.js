@@ -41,6 +41,20 @@ router.post('/', interceptors.requireAdmin, async (req, res) => {
   }
 });
 
+router.post('/:id/resend', interceptors.requireAdmin, async (req, res) => {
+  await models.sequelize.transaction(async (transaction) => {
+    const invite = await models.Invite.findByPk(req.params.id, { transaction });
+    if (invite) {
+      invite.changed('updatedAt', true);
+      await invite.update({ updatedAt: new Date() });
+      await invite.sendInviteEmail();
+      res.json(invite.toJSON());
+    } else {
+      res.status(HttpStatus.NOT_FOUND).end();
+    }
+  });
+});
+
 router.delete('/:id', interceptors.requireAdmin, async (req, res) => {
   await models.sequelize.transaction(async (transaction) => {
     const invite = await models.Invite.findByPk(req.params.id, { transaction });
