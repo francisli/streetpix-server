@@ -176,13 +176,30 @@ module.exports = (sequelize, DataTypes) => {
       password: {
         type: DataTypes.VIRTUAL,
         validate: {
-          isStrong(value) {
+          isValid(value) {
             if (this.hashedPassword && this.password === '') {
               // not changing, skip validation
               return;
             }
             if (value.match(/^(?=.*?[A-Za-z])(?=.*?[0-9]).{8,30}$/) == null) {
               throw new Error('Minimum eight characters, at least one letter and one number');
+            }
+            if (value !== this.confirmPassword) {
+              throw new Error('Passwords do not match');
+            }
+          },
+        },
+      },
+      confirmPassword: {
+        type: DataTypes.VIRTUAL,
+        validate: {
+          isValid(value) {
+            if (this.hashedPassword && this.password === '') {
+              // not changing, skip validation
+              return;
+            }
+            if (value !== this.password) {
+              throw new Error('Passwords do not match');
             }
           },
         },

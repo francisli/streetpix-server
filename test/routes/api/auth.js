@@ -25,6 +25,7 @@ describe('/api/auth', () => {
           username: 'normalperson',
           email: 'normal.person@test.com',
           password: 'abcd1234',
+          confirmPassword: 'abcd1234',
         })
         .expect(HttpStatus.CREATED);
 
@@ -58,6 +59,7 @@ describe('/api/auth', () => {
           username: '',
           email: '',
           password: '',
+          confirmPassword: '',
         })
         .expect(HttpStatus.UNPROCESSABLE_ENTITY);
 
@@ -112,6 +114,7 @@ describe('/api/auth', () => {
           username: 'normalperson',
           email: 'regular.user@test.com',
           password: 'abcd1234',
+          confirmPassword: 'abcd1234',
         })
         .expect(HttpStatus.UNPROCESSABLE_ENTITY);
 

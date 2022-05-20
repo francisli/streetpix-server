@@ -75,6 +75,20 @@ function RegistrationForm({ error, isLoading, onChange, onSubmit, user }) {
           />
           {error?.errorMessagesHTMLFor?.('password')}
         </div>
+        <div className="mb-3">
+          <label className="form-label" htmlFor="confirmPassword">
+            Confirm Password
+          </label>
+          <input
+            type="password"
+            className={classNames('form-control', { 'is-invalid': error?.errorsFor?.('confirmPassword') })}
+            id="confirmPassword"
+            name="confirmPassword"
+            onChange={onChange}
+            value={user.confirmPassword ?? ''}
+          />
+          {error?.errorMessagesHTMLFor?.('confirmPassword')}
+        </div>
         <div className="mb-3 d-grid">
           <button className="btn btn-primary" type="submit">
             Submit

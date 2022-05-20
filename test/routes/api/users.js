@@ -99,12 +99,13 @@ describe('/api/users', () => {
             lastName: '',
             email: '',
             password: 'foo',
+            confirmPassword: '',
           })
           .expect(HttpStatus.UNPROCESSABLE_ENTITY);
 
         const error = response.body;
         assert.deepStrictEqual(error.status, HttpStatus.UNPROCESSABLE_ENTITY);
-        assert.deepStrictEqual(error.errors.length, 4);
+        assert.deepStrictEqual(error.errors.length, 5);
         assert(
           _.find(error.errors, {
             path: 'firstName',
@@ -127,6 +128,12 @@ describe('/api/users', () => {
           _.find(error.errors, {
             path: 'password',
             message: 'Minimum eight characters, at least one letter and one number',
+          })
+        );
+        assert(
+          _.find(error.errors, {
+            path: 'confirmPassword',
+            message: 'Passwords do not match',
           })
         );
       });

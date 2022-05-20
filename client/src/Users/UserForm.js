@@ -74,6 +74,7 @@ function UserForm({ userId }) {
           <h1>Edit Profile</h1>
           <form onSubmit={onSubmit} autoComplete="off">
             {error && error.message && <div className="alert alert-danger">{error.message}</div>}
+            {error && !error.message && <div className="alert alert-danger">Please review the errors below.</div>}
             {success && <div className="alert alert-info">The account has been updated!</div>}
             <div className="mb-3">
               <label className="form-label" htmlFor="picture">
@@ -188,7 +189,7 @@ function UserForm({ userId }) {
             </div>
             <div className="mb-3">
               <label className="form-label" htmlFor="password">
-                Password
+                New Password
               </label>
               <input
                 type="password"
@@ -200,6 +201,21 @@ function UserForm({ userId }) {
                 value={user.password ?? ''}
               />
               {error?.errorMessagesHTMLFor?.('password')}
+            </div>
+            <div className="mb-3">
+              <label className="form-label" htmlFor="confirmPassword">
+                Confirm New Password
+              </label>
+              <input
+                type="password"
+                data-lpignore="true"
+                className={classNames('form-control', { 'is-invalid': error?.errorsFor?.('confirmPassword') })}
+                id="confirmPassword"
+                name="confirmPassword"
+                onChange={onChange}
+                value={user.confirmPassword ?? ''}
+              />
+              {error?.errorMessagesHTMLFor?.('confirmPassword')}
             </div>
             <div className="mb-3">
               <label className="form-label" htmlFor="bio">

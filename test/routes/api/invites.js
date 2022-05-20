@@ -97,6 +97,7 @@ describe('/api/invites', () => {
           username: 'acceptinguser',
           email: 'accepting.user@test.com',
           password: 'abcd1234',
+          confirmPassword: 'abcd1234',
         })
         .expect(HttpStatus.CREATED);
       const { id } = response.body;

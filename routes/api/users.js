@@ -70,6 +70,7 @@ router.patch('/:id', interceptors.requireLogin, (req, res) => {
         'username',
         'email',
         'password',
+        'confirmPassword',
         'picture',
         'bio',
         'website',

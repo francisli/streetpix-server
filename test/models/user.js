@@ -19,6 +19,7 @@ describe('models.User', () => {
       username: 'johndoe',
       email: 'john.doe@test.com',
       password: 'abcd1234',
+      confirmPassword: 'abcd1234',
     });
     assert.deepStrictEqual(user.id, null);
     await user.save();
@@ -39,6 +40,7 @@ describe('models.User', () => {
       username: '',
       email: '',
       password: '',
+      confirmPassword: '',
     });
     await assert.rejects(user.save(), (error) => {
       assert(error instanceof models.Sequelize.ValidationError);
@@ -90,6 +92,7 @@ describe('models.User', () => {
       username: 'johndoe',
       email: 'regular.user@test.com',
       password: 'abcd1234',
+      confirmPassword: 'abcd1234',
     });
     await assert.rejects(user.save(), (error) => {
       assert(error instanceof models.Sequelize.ValidationError);
@@ -143,6 +146,7 @@ describe('models.User', () => {
         username: 'testuser',
         email: 'test.user@test.com',
         password: 'abcd1234',
+        confirmPassword: 'abcd1234',
         picture,
       });
       await user.save();
@@ -161,6 +165,7 @@ describe('models.User', () => {
           username: 'testuser',
           email: 'test.user@test.com',
           password: 'abcd1234',
+          confirmPassword: 'abcd1234',
           picture,
         });
         await user.save();

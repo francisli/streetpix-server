@@ -48,7 +48,8 @@ function Meetings() {
                       <tr key={mt.id}>
                         <td>{mt.topic}</td>
                         <td>
-                          <Link to={`/meetings/new?meetingTemplateId=${mt.id}`}>Create Next Meeting</Link>&nbsp;&nbsp;
+                          <Link to={`/meetings/new?meetingTemplateId=${mt.id}`}>Create Next Meeting</Link>
+                          &nbsp;|&nbsp;
                           <Link to={`/meetings/templates/${mt.id}/edit`}>Edit Meeting Template</Link>
                         </td>
                       </tr>

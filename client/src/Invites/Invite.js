@@ -20,6 +20,7 @@ function Invite() {
     username: '',
     email: '',
     password: '',
+    confirmPassword: '',
   });
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState(null);
