@@ -27,5 +27,10 @@ module.exports = (sequelize, DataTypes) => {
     const photo = rating.Photo || (await rating.getPhoto({ transaction }));
     await photo.updateRating({ transaction });
   });
+  Rating.afterDestroy(async (rating, options = {}) => {
+    const { transaction } = options;
+    const photo = rating.Photo || (await rating.getPhoto({ transaction }));
+    await photo.updateRating({ transaction });
+  });
   return Rating;
 };

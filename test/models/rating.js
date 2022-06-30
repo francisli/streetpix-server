@@ -40,4 +40,18 @@ describe('models.Rating', () => {
     const photo = await rating.getPhoto();
     assert.deepStrictEqual(photo.rating, 1.5);
   });
+
+  it('updates the Photo record after deletion', async () => {
+    const rating = await models.Rating.create({
+      PhotoId: 'e6ecab76-48ca-4a89-8593-281153dff454',
+      UserId: 2,
+      value: 1,
+    });
+    const photo = await rating.getPhoto();
+    assert.deepStrictEqual(photo.rating, 1);
+
+    await rating.destroy();
+    await photo.reload();
+    assert.deepStrictEqual(photo.rating, 0);
+  });
 });
