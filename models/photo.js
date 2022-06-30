@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Photo.hasMany(models.Rating);
       Photo.hasOne(models.MeetingSubmission);
       Photo.belongsTo(models.User);
     }
@@ -48,6 +49,20 @@ module.exports = (sequelize, DataTypes) => {
           await Photo.resize(newPath, newPath.replace('/file/', '/large/'), 1500);
         }
       }
+    }
+
+    async updateRating(options = {}) {
+      const { transaction } = options;
+      const ratings = await this.getRatings({ transaction });
+      let rating = 0;
+      if (ratings.length > 0) {
+        let sum = 0;
+        for (const rating of ratings) {
+          sum += rating.value;
+        }
+        rating = sum / ratings.length;
+      }
+      await this.update({ rating }, { transaction });
     }
 
     toJSON() {
@@ -98,6 +113,7 @@ module.exports = (sequelize, DataTypes) => {
       isPublic: DataTypes.BOOLEAN,
       license: DataTypes.TEXT,
       acquireLicensePage: DataTypes.TEXT,
+      rating: DataTypes.FLOAT,
     },
     {
       sequelize,
