@@ -37,7 +37,9 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', interceptors.requireLogin, async (req, res) => {
-  const doc = models.Photo.build(_.pick(req.body, ['file', 'caption', 'description', 'isPublic', 'license', 'acquireLicensePage']));
+  const doc = models.Photo.build(
+    _.pick(req.body, ['filename', 'file', 'caption', 'description', 'isPublic', 'license', 'acquireLicensePage'])
+  );
   doc.UserId = req.user.id;
   try {
     await doc.save();

@@ -72,15 +72,16 @@ router.delete('/:id', interceptors.requireAdmin, async (req, res) => {
 
 router.post('/:id/accept', async (req, res, next) => {
   req.logout();
-  await models.sequelize.transaction(async (transaction) => {
-    const invite = await models.Invite.findByPk(req.params.id, { transaction });
-    if (invite) {
-      if (invite.acceptedAt || invite.revokedAt) {
-        res.status(HttpStatus.FORBIDDEN).end();
-        return;
-      }
-      const user = models.User.build(_.pick(req.body, ['firstName', 'lastName', 'username', 'email', 'password', 'confirmPassword']));
-      try {
+  try {
+    let user;
+    await models.sequelize.transaction(async (transaction) => {
+      const invite = await models.Invite.findByPk(req.params.id, { transaction });
+      if (invite) {
+        if (invite.acceptedAt || invite.revokedAt) {
+          res.status(HttpStatus.FORBIDDEN).end();
+          return;
+        }
+        user = models.User.build(_.pick(req.body, ['firstName', 'lastName', 'username', 'email', 'password', 'confirmPassword']));
         await user.save({ transaction });
         await invite.update(
           {
@@ -90,27 +91,29 @@ router.post('/:id/accept', async (req, res, next) => {
           { transaction }
         );
         await user.sendWelcomeEmail();
-        req.login(user, (err) => {
-          if (err) {
-            next(err);
-            return;
-          }
-          res.status(HttpStatus.CREATED).json(user);
-        });
-      } catch (error) {
-        if (error.name === 'SequelizeValidationError') {
-          res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-            errors: error.errors || [],
-          });
-        } else {
-          res.status(HttpStatus.INTERNAL_SERVER_ERROR).end();
-        }
       }
+    });
+    if (user) {
+      req.login(user, (err) => {
+        if (err) {
+          next(err);
+          return;
+        }
+        res.status(HttpStatus.CREATED).json(user);
+      });
     } else {
       res.status(HttpStatus.NOT_FOUND).end();
     }
-  });
+  } catch (error) {
+    if (error.name === 'SequelizeValidationError') {
+      res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
+        status: HttpStatus.UNPROCESSABLE_ENTITY,
+        errors: error.errors || [],
+      });
+    } else {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).end();
+    }
+  }
 });
 
 router.get('/:id', async (req, res) => {

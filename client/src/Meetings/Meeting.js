@@ -119,15 +119,17 @@ function Meeting() {
                       </h3>
                     </div>
                     <div className="row">
-                      {photosByUser[u.id].map((ms) => (
-                        <div key={ms.Photo.id} className="thumbnail col-md-3">
-                          <div className="thumbnail__content">
-                            <Link to={`${url}/${ms.Photo.id}`} className="square">
-                              <div className="square__content" style={{ backgroundImage: `url(${ms.Photo.thumbUrl})` }}></div>
-                            </Link>
+                      {photosByUser[u.id]
+                        .sort((a, b) => a.position - b.position)
+                        .map((ms) => (
+                          <div key={ms.Photo.id} className="thumbnail col-md-3">
+                            <div className="thumbnail__content">
+                              <Link to={`${url}/${ms.Photo.id}`} className="square">
+                                <div className="square__content" style={{ backgroundImage: `url(${ms.Photo.thumbUrl})` }}></div>
+                              </Link>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
                     </div>
                   </React.Fragment>
                 ))}
