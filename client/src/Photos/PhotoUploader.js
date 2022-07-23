@@ -1,5 +1,7 @@
 import classNames from 'classnames';
 
+import Api from '../Api';
+import { useAuthContext } from '../AuthContext';
 import DropzoneUploader from '../Components/DropzoneUploader';
 
 import PhotoForm from './PhotoForm';
@@ -7,8 +9,38 @@ import PhotoForm from './PhotoForm';
 import './PhotoUploader.scss';
 
 function PhotoUploader({ id, className, maxFiles, meetingId }) {
+  const { user } = useAuthContext();
+
+  async function onUploaded(status) {
+    try {
+      const data = {
+        filename: status.file.name,
+        file: status.signedId,
+        isPublic: user?.isPublic,
+        license: user?.license,
+        acquireLicensePage: user?.acquireLicensePage,
+      };
+      let response;
+      if (meetingId) {
+        response = await Api.meetings.submit(meetingId, data);
+        response.data = response.data.Photo;
+      } else {
+        response = await Api.photos.create(data);
+      }
+      status.photoId = response.data.id;
+      status.status = 'submitted';
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
-    <DropzoneUploader id={id} className={classNames('photouploader', className)} multiple={true} maxFiles={maxFiles}>
+    <DropzoneUploader
+      id={id}
+      className={classNames('photouploader', className)}
+      multiple={true}
+      maxFiles={maxFiles}
+      onUploaded={onUploaded}>
       {(statuses) => {
         if (statuses.length === 0) {
           return (
@@ -19,20 +51,25 @@ function PhotoUploader({ id, className, maxFiles, meetingId }) {
             </div>
           );
         } else {
-          return statuses.map((status) => (
-            <div key={status.id} className="card mb-4">
-              <div className="card-body">
-                <div className="row">
-                  <div className="col-4">
-                    <div className="square">
-                      <div className="square__content" style={{ backgroundImage: `url(${status.file.preview})` }}></div>
+          return statuses
+            .sort((a, b) => a.file.name.localeCompare(b.file.name))
+            .map((status) => (
+              <div key={status.id} className="card mb-4">
+                <div className="card-body">
+                  <div className="row">
+                    <div className="col-4">
+                      <div className="square">
+                        <div className="square__content" style={{ backgroundImage: `url(${status.file.preview})` }}></div>
+                      </div>
+                    </div>
+                    <div className="col-8">
+                      {status.status !== 'submitted' && <span>Please wait...</span>}
+                      {status.status === 'submitted' && <PhotoForm id={status.photoId} />}
                     </div>
                   </div>
-                  <div className="col-8">{status.status === 'uploaded' && <PhotoForm file={status.signedId} meetingId={meetingId} />}</div>
                 </div>
               </div>
-            </div>
-          ));
+            ));
         }
       }}
     </DropzoneUploader>

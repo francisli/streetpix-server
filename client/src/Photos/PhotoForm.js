@@ -3,9 +3,10 @@ import { useEffect, useState } from 'react';
 import Api from '../Api';
 import { useAuthContext } from '../AuthContext';
 
-function PhotoForm({ id, file, meetingId, onCancel, onUpdated, onDeleted }) {
+function PhotoForm({ id, filename, file, meetingId, onCancel, onUpdated, onDeleted }) {
   const { user } = useAuthContext();
   const [data, setData] = useState({
+    filename,
     file,
     isPublic: user?.isPublic,
     license: user?.license,
@@ -83,6 +84,12 @@ function PhotoForm({ id, file, meetingId, onCancel, onUpdated, onDeleted }) {
   return (
     <form onSubmit={onSubmit}>
       <fieldset disabled={isLoading}>
+        <div className="mb-3">
+          <label htmlFor="filename" className="form-label">
+            Original File Name
+          </label>
+          <input id="filename" name="filename" value={data?.filename ?? ''} readOnly={true} type="text" className="form-control" />
+        </div>
         <div className="mb-3">
           <label htmlFor="caption" className="form-label">
             Caption

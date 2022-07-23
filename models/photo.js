@@ -53,6 +53,7 @@ module.exports = (sequelize, DataTypes) => {
     toJSON() {
       const json = _.pick(this.get(), [
         'id',
+        'filename',
         'file',
         'fileUrl',
         'thumbUrl',
@@ -73,6 +74,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Photo.init(
     {
+      filename: DataTypes.TEXT,
       file: DataTypes.TEXT,
       fileUrl: {
         type: DataTypes.VIRTUAL,

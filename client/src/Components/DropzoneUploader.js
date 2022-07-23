@@ -40,10 +40,12 @@ function DropzoneUploader({ className, children, disabled, id, maxFiles, multipl
           })
           .then(() => {
             status.status = 'uploaded';
-            setStatuses([...statuses]);
             if (onUploaded) {
-              onUploaded(status);
+              return Promise.resolve(onUploaded(status));
             }
+          })
+          .then(() => {
+            setStatuses([...statuses]);
           });
         break;
       }

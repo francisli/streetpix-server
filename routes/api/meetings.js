@@ -134,7 +134,9 @@ router.post('/:id/submissions', interceptors.requireLogin, async (req, res) => {
       if (priorSubmissions.length >= meeting.maxUploadCount) {
         res.status(HttpStatus.FORBIDDEN).end();
       }
-      const photo = models.Photo.build(_.pick(req.body, ['file', 'caption', 'description', 'isPublic', 'license', 'acquireLicensePage']));
+      const photo = models.Photo.build(
+        _.pick(req.body, ['filename', 'file', 'caption', 'description', 'isPublic', 'license', 'acquireLicensePage'])
+      );
       photo.UserId = req.user.id;
       await photo.save({ transaction });
       meetingSubmission = await models.MeetingSubmission.create(
