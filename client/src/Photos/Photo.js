@@ -9,6 +9,7 @@ import License from '../Components/License';
 import './Photo.scss';
 import InteractivePhoto from './InteractivePhoto';
 import PhotoForm from './PhotoForm';
+import PhotoRating from './PhotoRating';
 
 function Photo({ meetingId, userId, id, page, nextId, prevId, onDeleted }) {
   const { user } = useAuthContext();
@@ -41,6 +42,22 @@ function Photo({ meetingId, userId, id, page, nextId, prevId, onDeleted }) {
     setEditing(false);
   }
 
+  function onChangeRating(newValue) {
+    const newData = { ...data };
+    let rating = newData.Ratings.find((r) => r.UserId === user?.id);
+    if (rating) {
+      rating.value = newValue;
+    } else {
+      rating = {
+        UserId: user?.id,
+        value: newValue,
+      };
+      newData.Ratings.push(rating);
+    }
+    setData(newData);
+    Api.photos.rate(id, newValue);
+  }
+
   function onUpdated(newData) {
     setData(newData);
     setEditing(false);
@@ -70,6 +87,11 @@ function Photo({ meetingId, userId, id, page, nextId, prevId, onDeleted }) {
     }
   }
 
+  let rating;
+  if (data) {
+    rating = data.Ratings.find((r) => r.UserId === user?.id);
+  }
+
   return (
     <div className="photo" ref={ref} tabIndex={0} onKeyDown={onKeyDown}>
       {data && (
@@ -91,8 +113,17 @@ function Photo({ meetingId, userId, id, page, nextId, prevId, onDeleted }) {
             <div className="col-md-6 pt-1">
               {!isEditing && (
                 <>
-                  <div className="photo__caption">{data.caption}</div>
-                  <div className="photo__description">{data.description}</div>
+                  <div className="row mb-3">
+                    <div className="col-md-6">
+                      <div className="photo__caption">{data.caption}</div>
+                      <div className="photo__description">{data.description}</div>
+                    </div>
+                    <div className="col-md-6">
+                      <div className="photo__rating">
+                        <PhotoRating onChange={onChangeRating} value={rating?.value} />
+                      </div>
+                    </div>
+                  </div>
                   <div className="row">
                     <div className="col-md-6">
                       <div className="photo__user text-secondary">

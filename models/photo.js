@@ -57,9 +57,9 @@ module.exports = (sequelize, DataTypes) => {
       let rating = 0;
       if (ratings.length > 0) {
         let sum = 0;
-        for (const rating of ratings) {
-          sum += rating.value;
-        }
+        ratings.forEach((r) => {
+          sum += r.value;
+        });
         rating = sum / ratings.length;
       }
       await this.update({ rating }, { transaction });
@@ -73,6 +73,7 @@ module.exports = (sequelize, DataTypes) => {
         'fileUrl',
         'thumbUrl',
         'largeUrl',
+        'rating',
         'caption',
         'description',
         'metadata',
@@ -83,6 +84,9 @@ module.exports = (sequelize, DataTypes) => {
       ]);
       if (this.User) {
         json.User = this.User.toJSON();
+      }
+      if (this.Ratings) {
+        json.Ratings = this.Ratings.map((r) => r.toJSON());
       }
       return json;
     }

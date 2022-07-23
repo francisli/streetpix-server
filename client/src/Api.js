@@ -134,6 +134,9 @@ const Api = {
     update(id, data) {
       return instance.patch(`/api/photos/${id}`, data);
     },
+    rate(id, value) {
+      return instance.post(`/api/photos/${id}/rate`, { value });
+    },
     delete(id) {
       return instance.delete(`/api/photos/${id}`);
     },

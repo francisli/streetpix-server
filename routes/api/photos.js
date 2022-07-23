@@ -79,7 +79,7 @@ router.get('/random', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const doc = await models.Photo.findByPk(req.params.id, {
-      include: models.User,
+      include: [models.Rating, models.User],
     });
     if (doc) {
       res.json(doc.toJSON());
