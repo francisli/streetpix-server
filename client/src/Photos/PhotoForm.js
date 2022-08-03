@@ -47,21 +47,24 @@ function PhotoForm({ id, filename, file, meetingId, onCancel, onUpdated, onDelet
       let response;
       if (data.id) {
         response = await Api.photos.update(data.id, data);
-        setUpdated(true);
-        onUpdated?.(response.data);
       } else if (meetingId) {
         response = await Api.meetings.submit(meetingId, data);
         response.data = response.data.Photo;
-        setCreated(true);
       } else {
         response = await Api.photos.create(data);
+      }
+      setLoading(false);
+      setData(response.data);
+      if (data.id) {
+        setUpdated(true);
+        onUpdated?.(response.data);
+      } else {
         setCreated(true);
       }
-      setData(response.data);
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
-    setLoading(false);
     return false;
   }
 

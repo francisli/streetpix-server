@@ -134,5 +134,68 @@ describe('/api/photos', () => {
         assert(record.isPublic === false);
       });
     });
+
+    describe('POST /:id/rate', () => {
+      it('creates a new rating', async () => {
+        const response = await testSession
+          .post('/api/photos/e6ecab76-48ca-4a89-8593-281153dff454/rate')
+          .set('Accept', 'application/json')
+          .send({
+            value: 3,
+          })
+          .expect(HttpStatus.OK);
+        assert(response.body.id);
+
+        const rating = await models.Rating.findByPk(response.body.id);
+        assert.deepStrictEqual(rating.value, 3);
+      });
+
+      it('updates an existing rating', async () => {
+        const response = await testSession
+          .post('/api/photos/e6ecab76-48ca-4a89-8593-281153dff454/rate')
+          .set('Accept', 'application/json')
+          .send({
+            value: 3,
+          })
+          .expect(HttpStatus.OK);
+        assert(response.body.id);
+
+        await testSession
+          .post('/api/photos/e6ecab76-48ca-4a89-8593-281153dff454/rate')
+          .set('Accept', 'application/json')
+          .send({
+            value: 2,
+          })
+          .expect(HttpStatus.OK);
+
+        const rating = await models.Rating.findByPk(response.body.id);
+        assert.deepStrictEqual(rating.value, 2);
+      });
+
+      it('removes a rating', async () => {
+        const response = await testSession
+          .post('/api/photos/e6ecab76-48ca-4a89-8593-281153dff454/rate')
+          .set('Accept', 'application/json')
+          .send({
+            value: 3,
+          })
+          .expect(HttpStatus.OK);
+        assert(response.body.id);
+
+        await testSession
+          .post('/api/photos/e6ecab76-48ca-4a89-8593-281153dff454/rate')
+          .set('Accept', 'application/json')
+          .send({
+            value: 0,
+          })
+          .expect(HttpStatus.OK);
+
+        const rating = await models.Rating.findByPk(response.body.id);
+        assert.deepStrictEqual(rating, null);
+
+        const photo = await models.Photo.findByPk('e6ecab76-48ca-4a89-8593-281153dff454');
+        assert.deepStrictEqual(photo.rating, 0);
+      });
+    });
   });
 });

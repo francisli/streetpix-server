@@ -79,7 +79,7 @@ router.get('/random', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const doc = await models.Photo.findByPk(req.params.id, {
-      include: models.User,
+      include: [models.Rating, models.User],
     });
     if (doc) {
       res.json(doc.toJSON());
@@ -96,7 +96,7 @@ router.patch('/:id', interceptors.requireLogin, async (req, res) => {
   try {
     await models.sequelize.transaction(async (transaction) => {
       doc = await models.Photo.findByPk(req.params.id, {
-        include: models.User,
+        include: [models.Rating, models.User],
         transaction,
       });
       if (!doc) {
@@ -110,6 +110,52 @@ router.patch('/:id', interceptors.requireLogin, async (req, res) => {
       await doc.update(_.pick(req.body, ['caption', 'description', 'isPublic', 'license', 'acquireLicensePage']), { transaction });
     });
     res.json(doc.toJSON());
+  } catch (error) {
+    if (error.name === 'SequelizeValidationError') {
+      res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
+        status: HttpStatus.UNPROCESSABLE_ENTITY,
+        errors: error.errors,
+      });
+    } else {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).end();
+    }
+  }
+});
+
+router.post('/:id/rate', interceptors.requireLogin, async (req, res) => {
+  let rating;
+  let created;
+  try {
+    await models.sequelize.transaction(async (transaction) => {
+      const photo = await models.Photo.findByPk(req.params.id, {
+        include: models.User,
+        transaction,
+      });
+      if (!photo) {
+        res.status(HttpStatus.NOT_FOUND).end();
+        return;
+      }
+      if (req.user.id === photo.UserId) {
+        res.status(HttpStatus.UNAUTHORIZED).end();
+        return;
+      }
+      [rating, created] = await models.Rating.findOrCreate({
+        where: {
+          PhotoId: photo.id,
+          UserId: req.user.id,
+        },
+        defaults: {
+          value: req.body.value,
+        },
+        transaction,
+      });
+      if (req.body.value === 0) {
+        await rating.destroy();
+      } else if (!created) {
+        await rating.update({ value: req.body.value }, { transaction });
+      }
+    });
+    res.json(rating.toJSON());
   } catch (error) {
     if (error.name === 'SequelizeValidationError') {
       res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
