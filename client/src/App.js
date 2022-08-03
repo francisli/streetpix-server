@@ -1,8 +1,8 @@
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import './App.scss';
 
-import { AuthContextProvider, AuthProtectedRoute } from './AuthContext';
+import { AuthContextProvider, AuthProtected } from './AuthContext';
 import Footer from './Footer';
 import Header from './Header';
 import Home from './Home';
@@ -19,34 +19,30 @@ function App() {
     <AuthContextProvider>
       <Router>
         <Header />
-        <Switch>
-          <Route exact path="/">
-            <Home />
-          </Route>
-          <Route path="/login">
-            <Login />
-          </Route>
-          <Route path="/passwords">
-            <PasswordRoutes />
-          </Route>
-          <Route path="/invites">
-            <InvitesRoutes />
-          </Route>
-          {process.env.REACT_APP_FEATURE_REGISTRATION === 'true' && (
-            <Route path="/register">
-              <Register />
-            </Route>
-          )}
-          <Route path="/members">
-            <UsersRoutes />
-          </Route>
-          <AuthProtectedRoute path="/meetings">
-            <MeetingsRoutes />
-          </AuthProtectedRoute>
-          <AuthProtectedRoute isAdminRequired={true} path="/admin">
-            <AdminRoutes />
-          </AuthProtectedRoute>
-        </Switch>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/passwords/*" element={<PasswordRoutes />} />
+          <Route path="/invites/*" element={<InvitesRoutes />} />
+          {process.env.REACT_APP_FEATURE_REGISTRATION === 'true' && <Route path="/register" element={<Register />} />}
+          <Route path="/members/*" element={<UsersRoutes />} />
+          <Route
+            path="/meetings/*"
+            element={
+              <AuthProtected>
+                <MeetingsRoutes />
+              </AuthProtected>
+            }
+          />
+          <Route
+            path="/admin/*"
+            element={
+              <AuthProtected isAdminRequired={true}>
+                <AdminRoutes />
+              </AuthProtected>
+            }
+          />
+        </Routes>
         <Footer />
       </Router>
     </AuthContextProvider>

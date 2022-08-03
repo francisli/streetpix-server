@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useLocation, useParams, useRouteMatch } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 
 import { useAuthContext } from '../AuthContext';
 import Api from '../Api';
@@ -8,9 +8,8 @@ import Photo from '../Photos/Photo';
 
 import './User.scss';
 
-function User({ userId }) {
+function User() {
   const auth = useAuthContext();
-  const { url } = useRouteMatch();
 
   const [user, setUser] = useState(null);
   const [photos, setPhotos] = useState([]);
@@ -19,7 +18,7 @@ function User({ userId }) {
   const [page, setPage] = useState(null);
   const [lastPage, setLastPage] = useState(null);
 
-  const { photoId } = useParams();
+  const { userId, photoId } = useParams();
   const [nextPhotoId, setNextPhotoId] = useState();
   const [prevPhotoId, setPrevPhotoId] = useState();
 
@@ -117,7 +116,7 @@ function User({ userId }) {
   return (
     <main className="container">
       {validPhotoId ? (
-        <Photo userId={userId} id={validPhotoId} page={page} nextId={nextPhotoId} prevId={prevPhotoId} onDeleted={onDeleted} />
+        <Photo id={validPhotoId} page={page} nextId={nextPhotoId} prevId={prevPhotoId} onDeleted={onDeleted} />
       ) : (
         <>
           {user && (
@@ -146,14 +145,14 @@ function User({ userId }) {
             {photos.map((photo) => (
               <div key={photo.id} className="thumbnail col-md-6 col-lg-4 col-xl-3">
                 <div className="thumbnail__content">
-                  <Link to={`${url}/${photo.id}`} className="square">
+                  <Link to={photo.id} className="square">
                     <div className="square__content" style={{ backgroundImage: `url(${photo.thumbUrl})` }}></div>
                   </Link>
                 </div>
               </div>
             ))}
           </div>
-          {lastPage && <Pagination page={page} lastPage={lastPage} url={url} />}
+          {lastPage && <Pagination page={page} lastPage={lastPage} url="" />}
         </>
       )}
     </main>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useHistory, Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { StatusCodes } from 'http-status-codes';
 
 import Api from './Api';
@@ -10,7 +10,7 @@ import ValidationError from './ValidationError';
 
 function Register() {
   const authContext = useAuthContext();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [user, setUser] = useState({
     firstName: '',
@@ -34,7 +34,7 @@ function Register() {
     try {
       const response = await Api.auth.register(user);
       authContext.setUser(response.data);
-      history.push('/', { flash: 'Your account has been created!' });
+      navigate('/');
     } catch (error) {
       if (error.response?.status === StatusCodes.UNPROCESSABLE_ENTITY) {
         setError(new ValidationError(error.response.data));

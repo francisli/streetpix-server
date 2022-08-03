@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { StatusCodes } from 'http-status-codes';
 
 import Api from '../Api';
@@ -10,7 +10,7 @@ import ValidationError from '../ValidationError';
 
 function Invite() {
   const { setUser: setAuthUser } = useAuthContext();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { inviteId } = useParams();
   const [invite, setInvite] = useState(null);
 
@@ -47,7 +47,7 @@ function Invite() {
     try {
       const response = await Api.invites.accept(invite.id, user);
       setAuthUser(response.data);
-      history.push(`/members/${user.username}/edit`, { flash: 'Your account has been created!' });
+      navigate(`/members/${user.username}/edit`, { flash: 'Your account has been created!' });
     } catch (error) {
       if (error.response?.status === StatusCodes.UNPROCESSABLE_ENTITY) {
         setError(new ValidationError(error.response.data));

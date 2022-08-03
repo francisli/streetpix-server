@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { DateTime } from 'luxon';
 
 import Api from '../Api';
@@ -8,7 +8,7 @@ import { useAuthContext } from '../AuthContext';
 import './Meetings.scss';
 
 function Meetings() {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { user } = useAuthContext();
   const [meetings, setMeetings] = useState([]);
   const [meetingTemplates, setMeetingTemplates] = useState([]);
@@ -72,7 +72,7 @@ function Meetings() {
           </thead>
           <tbody>
             {meetings.map((meeting) => (
-              <tr key={meeting.id} onClick={() => history.push(`/meetings/${meeting.id}`)}>
+              <tr key={meeting.id} onClick={() => navigate(`/meetings/${meeting.id}`)}>
                 <td>{DateTime.fromISO(meeting.startsAt).toFormat("ccc, LLL d 'at' h:mm a")}</td>
                 <td>{meeting.topic}</td>
                 <td></td>

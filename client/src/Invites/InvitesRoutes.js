@@ -1,16 +1,12 @@
-import { useRouteMatch, Route, Switch } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import Invite from './Invite';
 
 function InvitesRoutes() {
-  const { path } = useRouteMatch();
-
   return (
-    <Switch>
-      <Route path={`${path}/:inviteId`}>
-        <Invite />
-      </Route>
-    </Switch>
+    <Routes>
+      <Route path=":inviteId" element={<Invite />} />
+    </Routes>
   );
 }
 

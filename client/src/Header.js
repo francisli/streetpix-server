@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
-import { useHistory, Link, useLocation } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 
 import './Header.scss';
 import Api from './Api';
 import { useAuthContext } from './AuthContext';
 
 function Header() {
-  const history = useHistory();
   const location = useLocation();
+  const navigate = useNavigate();
   const [dismissedKey, setDismissedKey] = useState(null);
   const { user, setUser } = useAuthContext();
 
@@ -28,7 +28,7 @@ function Header() {
     event.preventDefault();
     await Api.auth.logout();
     setUser(null);
-    history.push('/');
+    navigate('/');
   }
 
   return (

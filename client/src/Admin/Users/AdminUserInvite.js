@@ -5,10 +5,10 @@ import { StatusCodes } from 'http-status-codes';
 import Api from '../../Api';
 import UnexpectedError from '../../UnexpectedError';
 import ValidationError from '../../ValidationError';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function AdminUserInvite() {
-  const history = useHistory();
+  const navigate = useNavigate();
   const [invite, setInvite] = useState({
     firstName: '',
     lastName: '',
@@ -30,7 +30,7 @@ function AdminUserInvite() {
     setError(null);
     try {
       await Api.invites.create(invite);
-      history.push('/admin/members', { flash: 'Invite sent!' });
+      navigate('/admin/members', { flash: 'Invite sent!' });
     } catch (error) {
       setLoading(false);
       if (error.response?.status === StatusCodes.UNPROCESSABLE_ENTITY) {

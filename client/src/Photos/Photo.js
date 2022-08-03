@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, useHistory, useRouteMatch } from 'react-router-dom';
+import { Link, useNavigate, useResolvedPath } from 'react-router-dom';
 import { FullScreen, useFullScreenHandle } from 'react-full-screen';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
@@ -15,23 +15,18 @@ import InteractivePhoto from './InteractivePhoto';
 import PhotoForm from './PhotoForm';
 import PhotoRating from './PhotoRating';
 
-function Photo({ meetingId, userId, id, page, nextId, prevId, onDeleted }) {
+function Photo({ id, page, nextId, prevId, onDeleted }) {
   const { user } = useAuthContext();
-  const { path } = useRouteMatch();
   const fshandle = useFullScreenHandle();
-  const history = useHistory();
+  const { pathname } = useResolvedPath('');
+  const navigate = useNavigate();
   const ref = useRef();
 
   const [data, setData] = useState(null);
   const [isEditing, setEditing] = useState(false);
 
-  let baseUrl = path;
-  if (userId) {
-    baseUrl = baseUrl.replace(':userId', userId);
-  } else if (meetingId) {
-    baseUrl = baseUrl.replace(':meetingId', meetingId);
-  }
-  const listUrl = `${baseUrl.replace('/:photoId?', '')}${!page || page === 1 ? '' : `?page=${page}`}`;
+  let baseUrl = pathname;
+  const listUrl = `${baseUrl}${!page || page === 1 ? '' : `?page=${page}`}`;
 
   useEffect(() => {
     Api.photos.get(id).then((response) => setData(response.data));
@@ -74,19 +69,19 @@ function Photo({ meetingId, userId, id, page, nextId, prevId, onDeleted }) {
     if (onDeleted) {
       onDeleted(id);
     }
-    history.replace(listUrl);
+    navigate(listUrl, { replace: true });
   }
 
   function onKeyDown(event) {
     switch (event.keyCode) {
       case 37:
         if (prevId) {
-          history.push(baseUrl.replace(':photoId?', prevId));
+          navigate(prevId);
         }
         break;
       case 39:
         if (nextId) {
-          history.push(baseUrl.replace(':photoId?', nextId));
+          navigate(nextId);
         }
         break;
       default:
@@ -193,7 +188,7 @@ function Photo({ meetingId, userId, id, page, nextId, prevId, onDeleted }) {
                   <div className="row">
                     <div className="col-4">
                       {prevId && (
-                        <Link to={baseUrl.replace(':photoId?', prevId)} className="btn btn-link p-0 text-secondary">
+                        <Link to={prevId} className="btn btn-link p-0 text-secondary">
                           &lArr; Prev
                         </Link>
                       )}
@@ -205,7 +200,7 @@ function Photo({ meetingId, userId, id, page, nextId, prevId, onDeleted }) {
                     </div>
                     <div className="col-4 text-end">
                       {nextId && (
-                        <Link to={baseUrl.replace(':photoId?', nextId)} className="btn btn-link p-0 text-secondary">
+                        <Link to={nextId} className="btn btn-link p-0 text-secondary">
                           Next &rArr;
                         </Link>
                       )}

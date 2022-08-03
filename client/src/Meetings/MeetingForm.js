@@ -6,10 +6,10 @@ import { DateTime } from 'luxon';
 import Api from '../Api';
 import UnexpectedError from '../UnexpectedError';
 import ValidationError from '../ValidationError';
-import { useHistory, useLocation, useParams } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 
 function MeetingForm({ isTemplate }) {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { search } = useLocation();
   const { meetingId } = useParams();
   const meetingTemplateId = useMemo(() => new URLSearchParams(search).get('meetingTemplateId'), [search]);
@@ -86,16 +86,16 @@ function MeetingForm({ isTemplate }) {
         if (isTemplate) {
           await Api.meetingTemplates.update(meeting.id, meeting);
           state.flash = 'Recurring Meeting updated!';
-          history.push('/meetings', state);
+          navigate.push('/meetings', state);
         } else {
           await Api.meetings.update(meeting.id, meeting);
           state.flash = 'Meeting updated!';
-          history.push(`/meetings/${meeting.id}`, state);
+          navigate.push(`/meetings/${meeting.id}`, state);
         }
       } else {
         await Api.meetings.create(meeting);
         state.flash = 'Meeting created!';
-        history.push('/meetings', state);
+        navigate.push('/meetings', state);
       }
     } catch (error) {
       setUploading(false);

@@ -1,20 +1,28 @@
-import { useRouteMatch, Switch, Redirect } from 'react-router-dom';
-import { AuthProtectedRoute } from '../AuthContext';
+import { Navigate, Routes, Route } from 'react-router-dom';
+import { AuthProtected } from '../AuthContext';
 
 import AdminUsersRoutes from './Users/AdminUsersRoutes';
 
 function AdminRoutes() {
-  const { path } = useRouteMatch();
-
   return (
-    <Switch>
-      <AuthProtectedRoute path={`${path}/members`}>
-        <AdminUsersRoutes />
-      </AuthProtectedRoute>
-      <AuthProtectedRoute exact path={path}>
-        <Redirect to={`${path}/members`} />
-      </AuthProtectedRoute>
-    </Switch>
+    <Routes>
+      <Route
+        path="members/*"
+        element={
+          <AuthProtected>
+            <AdminUsersRoutes />
+          </AuthProtected>
+        }
+      />
+      <Route
+        path=""
+        element={
+          <AuthProtected>
+            <Navigate to="members" />
+          </AuthProtected>
+        }
+      />
+    </Routes>
   );
 }
 

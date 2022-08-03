@@ -1,28 +1,22 @@
-import { useRouteMatch, Route, Switch } from 'react-router-dom';
-import { useAuthContext, AuthProtectedRoute } from '../AuthContext';
+import { Route, Routes } from 'react-router-dom';
+import { useAuthContext, AuthProtected } from '../AuthContext';
 
 import User from './User';
 import Users from './Users';
 import UserForm from './UserForm';
-import UserUpload from './UserUpload';
 
 function UserRoutes() {
   const { user } = useAuthContext();
-  const { path } = useRouteMatch();
 
   return (
-    <Switch>
-      <AuthProtectedRoute exact path={`${path}/${user?.username}/edit`}>
-        {user && <UserForm userId={user.id} />}
-      </AuthProtectedRoute>
-      <AuthProtectedRoute exact path={`${path}/${user?.username}/upload`}>
-        {user && <UserUpload />}
-      </AuthProtectedRoute>
-      <Route path={`${path}/:userId/:photoId?`} render={({ match }) => <User userId={match.params.userId} />} />
-      <Route exact path={path}>
-        <Users />
+    <Routes>
+      <Route path={`${user?.username}/edit`} element={<AuthProtected>{user && <UserForm userId={user.id} />}</AuthProtected>} />
+      <Route path=":userId" element={<User />}>
+        <Route path=":photoId" element={<></>} />
+        <Route path="" element={<></>} />
       </Route>
-    </Switch>
+      <Route path="" element={<Users />} />
+    </Routes>
   );
 }
 

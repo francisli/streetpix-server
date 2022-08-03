@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams, useRouteMatch } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { DateTime } from 'luxon';
 
 import Api from '../Api';
@@ -10,7 +10,6 @@ import './Meeting.scss';
 
 function Meeting() {
   const { user } = useAuthContext();
-  const { url } = useRouteMatch();
   const { meetingId } = useParams();
   const [meeting, setMeeting] = useState();
 
@@ -81,7 +80,7 @@ function Meeting() {
   return (
     <main className="container">
       {photoId ? (
-        <Photo meetingId={meetingId} id={photoId} nextId={nextPhotoId} prevId={prevPhotoId} onDeleted={onDeleted} />
+        <Photo id={photoId} nextId={nextPhotoId} prevId={prevPhotoId} onDeleted={onDeleted} />
       ) : (
         <>
           <h1>Meeting</h1>
@@ -124,7 +123,7 @@ function Meeting() {
                         .map((ms) => (
                           <div key={ms.Photo.id} className="thumbnail col-md-3">
                             <div className="thumbnail__content">
-                              <Link to={`${url}/${ms.Photo.id}`} className="square">
+                              <Link to={ms.Photo.id} className="square">
                                 <div className="square__content" style={{ backgroundImage: `url(${ms.Photo.thumbUrl})` }}></div>
                               </Link>
                             </div>
