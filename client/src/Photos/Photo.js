@@ -12,6 +12,7 @@ import License from '../Components/License';
 
 import './Photo.scss';
 import InteractivePhoto from './InteractivePhoto';
+import PhotoFeature from './PhotoFeature';
 import PhotoForm from './PhotoForm';
 import PhotoRating from './PhotoRating';
 
@@ -73,6 +74,9 @@ function Photo({ id, page, nextId, prevId, onDeleted }) {
   }
 
   function onKeyDown(event) {
+    if (isEditing) {
+      return;
+    }
     switch (event.keyCode) {
       case 37:
         if (prevId) {
@@ -156,14 +160,6 @@ function Photo({ id, page, nextId, prevId, onDeleted }) {
                     </div>
                     <div className="col-md-3 offset-md-1">
                       <dl className="small">
-                        {user && user.id !== data.UserId && (
-                          <>
-                            <dt>Your rating:</dt>
-                            <dd>
-                              <PhotoRating onChange={onChangeRating} value={rating?.value} />
-                            </dd>
-                          </>
-                        )}
                         <dt>Avg. rating:</dt>
                         <dd>
                           <OverlayTrigger trigger="click" placement="top" overlay={popover}>
@@ -172,9 +168,25 @@ function Photo({ id, page, nextId, prevId, onDeleted }) {
                             </button>
                           </OverlayTrigger>
                         </dd>
+                        {user && user.id !== data.UserId && (
+                          <>
+                            <dt>Your rating:</dt>
+                            <dd>
+                              <PhotoRating onChange={onChangeRating} value={rating?.value} />
+                            </dd>
+                          </>
+                        )}
+                        {user && user.id === data.UserId && (
+                          <>
+                            <dt>Public visibility:</dt>
+                            <dd>
+                              <PhotoFeature photo={data} />
+                            </dd>
+                          </>
+                        )}
                         <dd className="mt-3 d-flex gap-2">
                           <button onClick={fshandle.enter} className="btn btn-sm btn-outline-secondary">
-                            View Full Screen
+                            Full Screen
                           </button>
                           {data.User?.id === user?.id && (
                             <button onClick={onEdit} type="button" className="btn btn-sm btn-outline-secondary">

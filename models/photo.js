@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Photo.hasMany(models.Rating);
+      Photo.hasOne(models.Feature);
       Photo.hasOne(models.MeetingSubmission);
       Photo.belongsTo(models.User);
     }
@@ -77,13 +78,15 @@ module.exports = (sequelize, DataTypes) => {
         'caption',
         'description',
         'metadata',
-        'isPublic',
         'license',
         'acquireLicensePage',
         'UserId',
       ]);
       if (this.User) {
         json.User = this.User.toJSON();
+      }
+      if (this.Feature) {
+        json.Feature = this.Feature.toJSON();
       }
       if (this.Ratings) {
         json.Ratings = this.Ratings.map((r) => r.toJSON());
@@ -116,7 +119,6 @@ module.exports = (sequelize, DataTypes) => {
       caption: DataTypes.TEXT,
       description: DataTypes.TEXT,
       metadata: DataTypes.JSONB,
-      isPublic: DataTypes.BOOLEAN,
       license: DataTypes.TEXT,
       acquireLicensePage: DataTypes.TEXT,
       rating: DataTypes.FLOAT,

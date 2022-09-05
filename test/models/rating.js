@@ -9,6 +9,7 @@ describe('models.Rating', () => {
       ['512x512.png', 'e6ecab76-48ca-4a89-8593-281153dff454.jpg'],
       ['512x512.png', 'ea92aaca-4fa3-4ff7-96e9-dd0db71b5143.jpg'],
       ['512x512.png', 'd0cb02d1-e95f-4d05-8b90-f2db36357e83.jpg'],
+      ['512x512.png', '719a0396-782e-4edc-934c-72a23689f89f.jpg'],
     ]);
     await helper.loadFixtures(['users', 'photos']);
   });

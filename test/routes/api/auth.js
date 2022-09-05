@@ -46,6 +46,7 @@ describe('/api/auth', () => {
         isPublic: false,
         picture: null,
         pictureUrl: null,
+        createdAt: response.body.createdAt,
       });
     });
 

@@ -8,7 +8,6 @@
       "caption": "Test photo 1",
       "description": "This is a description of Test photo 1",
       "metadata": null,
-      "isPublic": false,
       "license": null,
       "acquireLicensePage": null
     }
@@ -22,7 +21,6 @@
       "caption": "Test photo 2",
       "description": "This is a description of Test photo 2",
       "metadata": null,
-      "isPublic": true,
       "license": null,
       "acquireLicensePage": null
     }
@@ -36,7 +34,19 @@
       "caption": "Test photo 3",
       "description": "This is a description of Test photo 3",
       "metadata": null,
-      "isPublic": true,
+      "license": null,
+      "acquireLicensePage": null
+    }
+  },
+  {
+    "model": "Photo",
+    "data": {
+      "id": "719a0396-782e-4edc-934c-72a23689f89f",
+      "UserId": 2,
+      "file": "719a0396-782e-4edc-934c-72a23689f89f.jpg",
+      "caption": "Test photo 4",
+      "description": "This is a description of Test photo 4",
+      "metadata": null,
       "license": null,
       "acquireLicensePage": null
     }

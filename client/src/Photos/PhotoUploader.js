@@ -16,7 +16,6 @@ function PhotoUploader({ id, className, maxFiles, meetingId }) {
       const data = {
         filename: status.file.name,
         file: status.signedId,
-        isPublic: user?.isPublic,
         license: user?.license,
         acquireLicensePage: user?.acquireLicensePage,
       };

@@ -112,10 +112,15 @@ const Api = {
     },
   },
   photos: {
-    index(userId, page) {
+    index(userId, filter, page) {
       const params = {};
       if (userId) {
         params.userId = userId;
+      }
+      if (filter) {
+        if (filter !== 'all') {
+          params.year = filter;
+        }
       }
       if (page) {
         params.page = page;
@@ -136,6 +141,9 @@ const Api = {
     },
     rate(id, value) {
       return instance.post(`/api/photos/${id}/rate`, { value });
+    },
+    feature(id, year, position) {
+      return instance.post(`/api/photos/${id}/feature`, { year, position });
     },
     delete(id) {
       return instance.delete(`/api/photos/${id}`);

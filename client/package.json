@@ -23,6 +23,7 @@
     "react-full-screen": "^1.1.0",
     "react-router-dom": "^6.3.0",
     "react-scripts": "^5.0.1",
+    "react-sortablejs": "^6.1.4",
     "react-use-websocket": "^3.0.0",
     "sass": "1.32.12",
     "web-vitals": "^1.1.2"

@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       User.hasMany(models.Photo);
+      User.hasMany(models.Feature);
     }
 
     static isValidPassword(password) {
@@ -41,6 +42,7 @@ module.exports = (sequelize, DataTypes) => {
         'license',
         'acquireLicensePage',
         'isPublic',
+        'createdAt',
       ]);
     }
 

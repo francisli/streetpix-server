@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { ReactSortable } from 'react-sortablejs';
+import classNames from 'classnames';
+import { DateTime } from 'luxon';
 
 import { useAuthContext } from '../AuthContext';
 import Api from '../Api';
@@ -10,15 +13,17 @@ import './User.scss';
 
 function User() {
   const auth = useAuthContext();
+  const navigate = useNavigate();
 
   const [user, setUser] = useState(null);
   const [photos, setPhotos] = useState([]);
+  const [isDragging, setDragging] = useState(false);
 
   const { search } = useLocation();
   const [page, setPage] = useState(null);
   const [lastPage, setLastPage] = useState(null);
 
-  const { userId, photoId } = useParams();
+  const { userId, filter, photoId } = useParams();
   const [nextPhotoId, setNextPhotoId] = useState();
   const [prevPhotoId, setPrevPhotoId] = useState();
 
@@ -42,7 +47,7 @@ function User() {
 
   useEffect(() => {
     if (userId && page) {
-      Api.photos.index(userId, page).then((response) => {
+      Api.photos.index(userId, filter, page).then((response) => {
         setPhotos(response.data);
         const linkHeader = Api.parseLinkHeader(response);
         let newLastPage = page;
@@ -55,7 +60,7 @@ function User() {
         setLastPage(newLastPage);
       });
     }
-  }, [userId, page]);
+  }, [userId, filter, page]);
 
   useEffect(() => {
     if (userId && validPhotoId && photos && page && lastPage) {
@@ -74,7 +79,7 @@ function User() {
         if (page === 1) {
           setPrevPhotoId(null);
         } else {
-          Api.photos.index(userId, page - 1).then((response) => {
+          Api.photos.index(userId, filter, page - 1).then((response) => {
             const prevPhotos = response.data;
             if (prevPhotos.length > 0) {
               setPrevPhotoId(prevPhotos[prevPhotos.length - 1].id);
@@ -90,7 +95,7 @@ function User() {
         if (page === lastPage) {
           setNextPhotoId(null);
         } else {
-          Api.photos.index(userId, page + 1).then((response) => {
+          Api.photos.index(userId, filter, page + 1).then((response) => {
             const nextPhotos = response.data;
             if (nextPhotos.length > 0) {
               setNextPhotoId(nextPhotos[0].id);
@@ -103,7 +108,7 @@ function User() {
         setNextPhotoId(photos[index + 1].id);
       }
     }
-  }, [userId, validPhotoId, photos, page, lastPage]);
+  }, [userId, filter, validPhotoId, photos, page, lastPage]);
 
   function onDeleted(id) {
     const index = photos.findIndex((photo) => photo.id === id);
@@ -111,6 +116,35 @@ function User() {
       photos.splice(index, 1);
       setPhotos([...photos]);
     }
+  }
+
+  function onClick(event, id) {
+    event.preventDefault();
+    if (!isDragging) {
+      navigate(id);
+    }
+  }
+
+  function onSortStart() {
+    setDragging(true);
+  }
+
+  async function onSortEnd(event) {
+    setTimeout(() => setDragging(false), 100);
+    if (filter === 'all') {
+      return;
+    }
+    try {
+      await Api.photos.feature(event.item.dataset.id, filter, event.newIndex + 1);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const year = DateTime.now().year;
+  let yearStarted;
+  if (user && user.createdAt) {
+    yearStarted = DateTime.fromISO(user.createdAt).year;
   }
 
   return (
@@ -141,18 +175,44 @@ function User() {
               )}
             </div>
           )}
-          <div className="row">
+          {yearStarted && (
+            <nav className="d-flex justify-content-center">
+              <ul className="pagination pagination-lg">
+                {auth.user && (
+                  <li className={classNames('page-item', { active: filter === 'all' })}>
+                    <Link to={`../${userId}/all`} className="page-link">
+                      All
+                    </Link>
+                  </li>
+                )}
+                {[...Array(year - yearStarted + 1)].map((_, i) => (
+                  <li className={classNames('page-item', { active: filter === `${year - i}` })} key={`year-${year - i}`}>
+                    <Link to={`../${userId}/${year - i}`} className="page-link">
+                      {year - i}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
+          <ReactSortable
+            onStart={onSortStart}
+            onEnd={onSortEnd}
+            disabled={filter === 'all' || !user || user?.id !== auth.user?.id}
+            className="row"
+            list={photos}
+            setList={setPhotos}>
             {photos.map((photo) => (
               <div key={photo.id} className="thumbnail col-md-6 col-lg-4 col-xl-3">
                 <div className="thumbnail__content">
-                  <Link to={photo.id} className="square">
+                  <Link to={photo.id} onClick={(event) => onClick(event, photo.id)} className="square">
                     <div className="square__content" style={{ backgroundImage: `url(${photo.thumbUrl})` }}></div>
                   </Link>
                 </div>
               </div>
             ))}
-          </div>
-          {lastPage && <Pagination page={page} lastPage={lastPage} url="" />}
+          </ReactSortable>
+          {filter === 'all' && lastPage && <Pagination page={page} lastPage={lastPage} url="" />}
         </>
       )}
     </main>

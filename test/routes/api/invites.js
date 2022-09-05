@@ -117,6 +117,7 @@ describe('/api/invites', () => {
         isPublic: false,
         picture: null,
         pictureUrl: null,
+        createdAt: response.body.createdAt,
       });
 
       const invite = await models.Invite.findByPk('14a500b7-f14c-48cd-b815-3685a8b54370');

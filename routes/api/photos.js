@@ -15,13 +15,16 @@ router.get('/', async (req, res) => {
     include: models.User,
     order: [
       ['createdAt', 'DESC'],
-      ['caption', 'ASC'],
+      ['filename', 'ASC'],
     ],
   };
-  if (!req.user) {
-    options.where = {
-      isPublic: true,
-    };
+  if (!req.user || req.query.year) {
+    options.include = [models.User, { model: models.Feature, required: true }];
+    if (req.query.year && req.query.year !== '') {
+      options.where = options.where || {};
+      options.where['$Feature.year$'] = req.query.year;
+      options.order.unshift([models.Feature, 'position', 'ASC']);
+    }
   }
   if (req.query.userId && req.query.userId !== '') {
     options.where = options.where || {};
@@ -37,9 +40,7 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', interceptors.requireLogin, async (req, res) => {
-  const doc = models.Photo.build(
-    _.pick(req.body, ['filename', 'file', 'caption', 'description', 'isPublic', 'license', 'acquireLicensePage'])
-  );
+  const doc = models.Photo.build(_.pick(req.body, ['filename', 'file', 'caption', 'description', 'license', 'acquireLicensePage']));
   doc.UserId = req.user.id;
   try {
     await doc.save();
@@ -61,7 +62,7 @@ router.get('/random', async (req, res) => {
     const photos = await models.Photo.findAll({
       include: models.User,
       where: {
-        isPublic: true,
+        // isPublic: true,
       },
       order: models.Sequelize.literal('RANDOM()'),
       limit: 1,
@@ -79,7 +80,7 @@ router.get('/random', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const doc = await models.Photo.findByPk(req.params.id, {
-      include: [models.Rating, models.User],
+      include: [models.Feature, models.Rating, models.User],
     });
     if (doc) {
       res.json(doc.toJSON());
@@ -107,9 +108,93 @@ router.patch('/:id', interceptors.requireLogin, async (req, res) => {
         res.status(HttpStatus.UNAUTHORIZED).end();
         return;
       }
-      await doc.update(_.pick(req.body, ['caption', 'description', 'isPublic', 'license', 'acquireLicensePage']), { transaction });
+      await doc.update(_.pick(req.body, ['caption', 'description', 'license', 'acquireLicensePage']), { transaction });
     });
     res.json(doc.toJSON());
+  } catch (error) {
+    if (error.name === 'SequelizeValidationError') {
+      res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
+        status: HttpStatus.UNPROCESSABLE_ENTITY,
+        errors: error.errors,
+      });
+    } else {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).end();
+    }
+  }
+});
+
+router.post('/:id/feature', interceptors.requireLogin, async (req, res) => {
+  let feature;
+  try {
+    await models.sequelize.transaction(async (transaction) => {
+      const photo = await models.Photo.findByPk(req.params.id, {
+        transaction,
+      });
+      if (!photo) {
+        res.status(HttpStatus.NOT_FOUND).end();
+        return;
+      }
+      if (!req.user.isAdmin && req.user.id !== photo.UserId) {
+        res.status(HttpStatus.UNAUTHORIZED).end();
+        return;
+      }
+      const year = parseInt(req.body.year, 10);
+      feature = await photo.getFeature({ transaction });
+      if (feature && Number.isNaN(year)) {
+        await feature.destroy();
+      } else if (feature && feature.year === year) {
+        const position = parseInt(req.body.position, 10);
+        if (position && feature.position !== position) {
+          const dir = position > feature.position ? 'ASC' : 'DESC';
+          await feature.update({ position }, { transaction });
+          const features = await req.user.getFeatures({
+            where: { year },
+            order: [
+              ['position', 'ASC'],
+              ['updatedAt', dir],
+            ],
+            transaction,
+          });
+          await Promise.all(
+            _.compact(
+              features.map((f, i) => {
+                if (f.position !== i + 1) {
+                  return f.update({ position: i + 1 }, { transaction });
+                }
+                return null;
+              })
+            )
+          );
+        }
+      } else {
+        const features = await req.user.getFeatures({
+          where: { year },
+          order: [['position', 'ASC']],
+          transaction,
+        });
+        if (features.length >= 12) {
+          res.status(HttpStatus.UNPROCESSABLE_ENTITY).end();
+          return;
+        }
+        if (feature) {
+          await feature.update({
+            year,
+            position: features.length + 1,
+          });
+        } else {
+          feature = await models.Feature.create(
+            {
+              UserId: req.user.id,
+              PhotoId: photo.id,
+              year,
+              position: features.length + 1,
+            },
+            { transaction }
+          );
+        }
+      }
+    });
+    res.json(feature.toJSON());
   } catch (error) {
     if (error.name === 'SequelizeValidationError') {
       res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
@@ -128,7 +213,6 @@ router.post('/:id/rate', interceptors.requireLogin, async (req, res) => {
   try {
     await models.sequelize.transaction(async (transaction) => {
       const photo = await models.Photo.findByPk(req.params.id, {
-        include: models.User,
         transaction,
       });
       if (!photo) {

@@ -17,6 +17,7 @@ describe('/api/meetings', () => {
       ['512x512.png', 'e6ecab76-48ca-4a89-8593-281153dff454.jpg'],
       ['512x512.png', 'ea92aaca-4fa3-4ff7-96e9-dd0db71b5143.jpg'],
       ['512x512.png', 'd0cb02d1-e95f-4d05-8b90-f2db36357e83.jpg'],
+      ['512x512.png', '719a0396-782e-4edc-934c-72a23689f89f.jpg'],
     ]);
     await helper.loadFixtures(['users', 'meetingTemplates', 'meetings', 'photos', 'meetingSubmissions']);
     testSession = session(app);
@@ -158,7 +159,6 @@ describe('/api/meetings', () => {
           file: '227d54fe-6abf-4130-a75e-3cc90d92dcb6.jpg',
           caption: 'This is a test caption',
           description: 'This is a test description',
-          isPublic: true,
         })
         .expect(HttpStatus.CREATED);
       const meetingSubmission = await models.MeetingSubmission.findByPk(response.body.id);
@@ -172,7 +172,6 @@ describe('/api/meetings', () => {
       assert(await helper.assetPathExists(path.join('photos', photo.id, 'large', '227d54fe-6abf-4130-a75e-3cc90d92dcb6.jpg')));
       assert.deepStrictEqual(photo.caption, 'This is a test caption');
       assert.deepStrictEqual(photo.description, 'This is a test description');
-      assert.deepStrictEqual(photo.isPublic, true);
     });
   });
 

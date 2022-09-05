@@ -8,7 +8,6 @@ function PhotoForm({ id, filename, file, meetingId, onCancel, onUpdated, onDelet
   const [data, setData] = useState({
     filename,
     file,
-    isPublic: user?.isPublic,
     license: user?.license,
     acquireLicensePage: user?.acquireLicensePage,
   });
@@ -104,19 +103,6 @@ function PhotoForm({ id, filename, file, meetingId, onCancel, onUpdated, onDelet
             Description
           </label>
           <textarea id="description" name="description" value={data?.description ?? ''} onChange={onChange} className="form-control" />
-        </div>
-        <div className="mb-3 form-check">
-          <input
-            id="isPublic"
-            name="isPublic"
-            checked={data?.isPublic ?? false}
-            onChange={onChangeCheckbox}
-            type="checkbox"
-            className="form-check-input"
-          />
-          <label htmlFor="isPublic" className="form-check-label">
-            Is visible to the public?
-          </label>
         </div>
         <div className="mb-3">
           <label htmlFor="license" className="form-label">

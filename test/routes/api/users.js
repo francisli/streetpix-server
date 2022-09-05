@@ -55,6 +55,7 @@ describe('/api/users', () => {
           license: 'allrightsreserved',
           acquireLicensePage: null,
           website: null,
+          createdAt: response.body.createdAt,
         });
       });
     });
@@ -87,6 +88,7 @@ describe('/api/users', () => {
           license: 'allrightsreserved',
           acquireLicensePage: null,
           website: null,
+          createdAt: response.body.createdAt,
         });
       });
 
