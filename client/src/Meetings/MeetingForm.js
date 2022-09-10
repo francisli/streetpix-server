@@ -86,16 +86,16 @@ function MeetingForm({ isTemplate }) {
         if (isTemplate) {
           await Api.meetingTemplates.update(meeting.id, meeting);
           state.flash = 'Recurring Meeting updated!';
-          navigate.push('/meetings', state);
+          navigate('/meetings', state);
         } else {
           await Api.meetings.update(meeting.id, meeting);
           state.flash = 'Meeting updated!';
-          navigate.push(`/meetings/${meeting.id}`, state);
+          navigate(`/meetings/${meeting.id}`, state);
         }
       } else {
         await Api.meetings.create(meeting);
         state.flash = 'Meeting created!';
-        navigate.push('/meetings', state);
+        navigate('/meetings', state);
       }
     } catch (error) {
       setUploading(false);
