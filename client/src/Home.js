@@ -27,7 +27,7 @@ function Home() {
         {photos?.map((p) => (
           <div key={p.id} className="home-grid__item">
             <Link to={`/members/${p.User.username}/${p.Feature.year}/${p.id}`}>
-              <img src={p.largeUrl} alt={p.caption} className="img-fluid" />
+              <img src={p.thumbUrl} alt={p.caption} className="img-fluid" />
             </Link>
           </div>
         ))}
