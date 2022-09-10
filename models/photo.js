@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 const _ = require('lodash');
-const { Model } = require('sequelize');
+const { Model, Op } = require('sequelize');
 const sharp = require('sharp');
 
 const s3 = require('../lib/s3');
@@ -54,7 +54,14 @@ module.exports = (sequelize, DataTypes) => {
 
     async updateRating(options = {}) {
       const { transaction } = options;
-      const ratings = await this.getRatings({ transaction });
+      const ratings = await this.getRatings({
+        where: {
+          UserId: {
+            [Op.ne]: this.UserId,
+          },
+        },
+        transaction,
+      });
       let rating = 0;
       if (ratings.length > 0) {
         let sum = 0;

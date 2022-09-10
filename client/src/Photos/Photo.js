@@ -56,7 +56,8 @@ function Photo({ id, page, nextId, prevId, onDeleted }) {
       newData.Ratings.push(rating);
     }
     // locally recalculate average
-    newData.rating = newData.Ratings.reduce((sum, rating) => sum + rating.value, 0) / newData.Ratings.length;
+    const ratings = newData.Ratings.filter((r) => r.UserId !== data.UserId);
+    newData.rating = ratings.reduce((sum, rating) => sum + rating.value, 0) / ratings.length;
     setData(newData);
     Api.photos.rate(id, newValue);
   }
@@ -97,7 +98,7 @@ function Photo({ id, page, nextId, prevId, onDeleted }) {
   let rating;
   if (data) {
     data.Ratings.forEach((r) => {
-      ratings[3 - r.value] += 1;
+      ratings[3 - r.value] += r.UserId !== data.UserId ? 1 : 0;
       if (r.UserId === user?.id) {
         rating = r;
       }
@@ -170,10 +171,6 @@ function Photo({ id, page, nextId, prevId, onDeleted }) {
                                 </button>
                               </OverlayTrigger>
                             </dd>
-                          </>
-                        )}
-                        {user && user.id !== data.UserId && (
-                          <>
                             <dt>Your rating:</dt>
                             <dd>
                               <PhotoRating onChange={onChangeRating} value={rating?.value} />
@@ -188,7 +185,7 @@ function Photo({ id, page, nextId, prevId, onDeleted }) {
                             </dd>
                           </>
                         )}
-                        <dd className="mt-3 d-flex justify-content-end gap-2">
+                        <dd className="mt-3 d-flex gap-2">
                           {listUrl !== '/' && (
                             <button onClick={fshandle.enter} className="btn btn-sm btn-outline-secondary">
                               Full Screen

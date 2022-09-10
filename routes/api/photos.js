@@ -215,10 +215,6 @@ router.post('/:id/rate', interceptors.requireLogin, async (req, res) => {
         res.status(HttpStatus.NOT_FOUND).end();
         return;
       }
-      if (req.user.id === photo.UserId) {
-        res.status(HttpStatus.UNAUTHORIZED).end();
-        return;
-      }
       [rating, created] = await models.Rating.findOrCreate({
         where: {
           PhotoId: photo.id,
