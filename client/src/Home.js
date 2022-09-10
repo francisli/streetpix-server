@@ -1,47 +1,37 @@
 import { useEffect, useState } from 'react';
+import Masonry from 'react-masonry-css';
 import { Link } from 'react-router-dom';
 
-import License from './Components/License';
 import Api from './Api';
+
 import './Home.scss';
 
 function Home() {
-  const [photo, setPhoto] = useState();
+  const [photos, setPhotos] = useState();
 
   useEffect(() => {
-    Api.photos.random().then((response) => setPhoto(response.data));
+    Api.photos.random().then((response) => setPhotos(response.data));
   }, []);
 
   return (
     <main className="container">
-      {photo && (
-        <>
-          <div className="home__photo mb-3">
-            <img src={photo.largeUrl} alt={photo.caption} className="img-fluid" />
+      <Masonry
+        breakpointCols={{
+          default: 4,
+          1100: 3,
+          700: 2,
+          500: 1,
+        }}
+        className="home-grid"
+        columnClassName="home-grid__column">
+        {photos?.map((p) => (
+          <div key={p.id} className="home_grid__item">
+            <Link to={`/members/${p.User.username}/${p.Feature.year}/${p.id}`}>
+              <img src={p.largeUrl} alt={p.caption} className="img-fluid" />
+            </Link>
           </div>
-          <div className="row justify-content-center">
-            <div className="col-md-6">
-              <div className="photo__caption">{photo.caption}</div>
-              <div className="photo__description">{photo.description}</div>
-              <div className="row">
-                <div className="col-md-6">
-                  <div className="photo__user text-secondary">
-                    Taken by:{' '}
-                    <Link to={`/members/${photo.User.username}`}>
-                      {photo.User?.firstName} {photo.User?.lastName}
-                    </Link>
-                  </div>
-                </div>
-                <div className="col-md-6">
-                  <div className="photo__license text-secondary">
-                    License: <License selected={photo.license} />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
+        ))}
+      </Masonry>
     </main>
   );
 }

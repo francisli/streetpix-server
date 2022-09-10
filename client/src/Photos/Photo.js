@@ -160,14 +160,18 @@ function Photo({ id, page, nextId, prevId, onDeleted }) {
                     </div>
                     <div className="col-md-3 offset-md-1">
                       <dl className="small">
-                        <dt>Avg. rating:</dt>
-                        <dd>
-                          <OverlayTrigger trigger="click" placement="top" overlay={popover}>
-                            <button type="button" className="btn btn-sm btn-link p-0">
-                              <FontAwesomeIcon icon={faStarSolid} /> {data.rating.toFixed(1)}
-                            </button>
-                          </OverlayTrigger>
-                        </dd>
+                        {user && (
+                          <>
+                            <dt>Avg. rating:</dt>
+                            <dd>
+                              <OverlayTrigger trigger="click" placement="top" overlay={popover}>
+                                <button type="button" className="btn btn-sm btn-link p-0">
+                                  <FontAwesomeIcon icon={faStarSolid} /> {data.rating.toFixed(1)}
+                                </button>
+                              </OverlayTrigger>
+                            </dd>
+                          </>
+                        )}
                         {user && user.id !== data.UserId && (
                           <>
                             <dt>Your rating:</dt>
@@ -184,10 +188,12 @@ function Photo({ id, page, nextId, prevId, onDeleted }) {
                             </dd>
                           </>
                         )}
-                        <dd className="mt-3 d-flex gap-2">
-                          <button onClick={fshandle.enter} className="btn btn-sm btn-outline-secondary">
-                            Full Screen
-                          </button>
+                        <dd className="mt-3 d-flex justify-content-end gap-2">
+                          {listUrl !== '/' && (
+                            <button onClick={fshandle.enter} className="btn btn-sm btn-outline-secondary">
+                              Full Screen
+                            </button>
+                          )}
                           {data.User?.id === user?.id && (
                             <button onClick={onEdit} type="button" className="btn btn-sm btn-outline-secondary">
                               Edit
@@ -206,9 +212,11 @@ function Photo({ id, page, nextId, prevId, onDeleted }) {
                       )}
                     </div>
                     <div className="col-4 text-center">
-                      <Link to={listUrl} className="btn btn-link p-0 text-secondary">
-                        Back to List
-                      </Link>
+                      {listUrl !== '/' && (
+                        <Link to={listUrl} className="btn btn-link p-0 text-secondary">
+                          Back to List
+                        </Link>
+                      )}
                     </div>
                     <div className="col-4 text-end">
                       {nextId && (

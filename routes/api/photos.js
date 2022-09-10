@@ -60,18 +60,14 @@ router.post('/', interceptors.requireLogin, async (req, res) => {
 router.get('/random', async (req, res) => {
   try {
     const photos = await models.Photo.findAll({
-      include: models.User,
-      where: {
-        // isPublic: true,
-      },
+      include: [
+        { model: models.Feature, required: true },
+        { model: models.User, where: { isPublic: true } },
+      ],
       order: models.Sequelize.literal('RANDOM()'),
-      limit: 1,
+      limit: 12,
     });
-    if (photos.length > 0) {
-      res.json(photos[0].toJSON());
-    } else {
-      res.status(HttpStatus.NO_CONTENT).end();
-    }
+    res.json(photos.map((p) => p.toJSON()));
   } catch (error) {
     res.status(HttpStatus.INTERNAL_SERVER_ERROR).end();
   }
