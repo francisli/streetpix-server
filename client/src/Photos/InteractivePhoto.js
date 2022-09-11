@@ -67,6 +67,9 @@ function InteractivePhoto({ id, alt, url, onKeyDown }) {
   }
 
   function onMouseMove(event) {
+    if (!user) {
+      return;
+    }
     const { dx, dy } = normalizeMouseLocation(event);
     if (dx && dy) {
       sendJsonMessage({ user: { id: user.id, firstName: user.firstName }, type: 'pointer', dx, dy });
@@ -87,6 +90,9 @@ function InteractivePhoto({ id, alt, url, onKeyDown }) {
   }
 
   function onMouseDown(event) {
+    if (!user) {
+      return;
+    }
     const { dx, dy } = normalizeMouseLocation(event);
     if (dx && dy) {
       if (cropStart && cropEnd) {
