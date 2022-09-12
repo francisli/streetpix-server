@@ -66,8 +66,8 @@ module.exports = (sequelize, DataTypes) => {
       // extract original photo date
       let takenAt = null;
       const dateTimeDigitized = tags?.exif?.DateTimeDigitized?.value?.[0];
-      const offsetTimeDigitized = tags?.exif?.OffsetTimeDigitized?.value?.[0];
-      if (dateTimeDigitized) {
+      const offsetTimeDigitized = tags?.exif?.OffsetTimeDigitized?.value?.[0] ?? tags?.exif?.OffsetTime?.value?.[0];
+      if (dateTimeDigitized && offsetTimeDigitized) {
         takenAt = DateTime.fromFormat(`${dateTimeDigitized}${offsetTimeDigitized ?? ''}`, 'yyyy:MM:dd HH:mm:ssZZ');
       }
       return this.update(
