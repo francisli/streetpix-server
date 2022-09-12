@@ -151,7 +151,7 @@ describe('/api/meetings', () => {
 
   describe('POST /:id/submissions', () => {
     it('submits a new photo for the Meeting', async () => {
-      await helper.loadUploads([['512x512.png', '227d54fe-6abf-4130-a75e-3cc90d92dcb6.jpg']]);
+      await helper.loadUploads([['metadata.jpg', '227d54fe-6abf-4130-a75e-3cc90d92dcb6.jpg']]);
       const response = await testSession
         .post('/api/meetings/4a8b1331-8d68-470b-bfc9-265c2cc8f039/submissions')
         .set('Accept', 'application/json')
@@ -172,6 +172,7 @@ describe('/api/meetings', () => {
       assert(await helper.assetPathExists(path.join('photos', photo.id, 'large', '227d54fe-6abf-4130-a75e-3cc90d92dcb6.jpg')));
       assert.deepStrictEqual(photo.caption, 'This is a test caption');
       assert.deepStrictEqual(photo.description, 'This is a test description');
+      assert.deepStrictEqual(photo.takenAt, new Date('2022-08-07T20:41:18.000Z'));
     });
   });
 

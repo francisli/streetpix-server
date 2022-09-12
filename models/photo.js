@@ -1,5 +1,7 @@
+const ExifReader = require('exifreader');
 const fs = require('fs-extra');
 const _ = require('lodash');
+const { DateTime } = require('luxon');
 const { Model, Op } = require('sequelize');
 const sharp = require('sharp');
 
@@ -26,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
       await sharp(srcPath).resize(size, size, { fit: 'inside' }).webp().toFile(destPath);
     }
 
-    static async generateThumbnails(prevPath, newPath) {
+    static async generateThumbnails(id, prevPath, newPath) {
       if (prevPath) {
         // remove old thumbnails
         if (process.env.AWS_S3_BUCKET) {
@@ -50,6 +52,31 @@ module.exports = (sequelize, DataTypes) => {
           await Photo.resize(newPath, newPath.replace('/file/', '/large/'), 1500);
         }
       }
+      const photo = await Photo.findByPk(id);
+      await photo.updateMetadata();
+    }
+
+    async updateMetadata(options = {}) {
+      const { transaction } = options;
+      const filePath = await this.getAssetFile('file');
+      if (!filePath) {
+        return null;
+      }
+      const tags = await ExifReader.load(filePath, { expanded: true });
+      // extract original photo date
+      let takenAt = null;
+      const dateTimeDigitized = tags?.exif?.DateTimeDigitized?.value?.[0];
+      const offsetTimeDigitized = tags?.exif?.OffsetTimeDigitized?.value?.[0];
+      if (dateTimeDigitized) {
+        takenAt = DateTime.fromFormat(`${dateTimeDigitized}${offsetTimeDigitized ?? ''}`, 'yyyy:MM:dd HH:mm:ssZZ');
+      }
+      return this.update(
+        {
+          takenAt,
+          metadata: _.pick(tags, ['file', 'gps', 'exif', 'iptc', 'icc']),
+        },
+        { transaction }
+      );
     }
 
     async updateRating(options = {}) {
@@ -88,6 +115,9 @@ module.exports = (sequelize, DataTypes) => {
         'license',
         'acquireLicensePage',
         'UserId',
+        'takenAt',
+        'createdAt',
+        'updatedAt',
       ]);
       if (this.User) {
         json.User = this.User.toJSON();
@@ -129,6 +159,7 @@ module.exports = (sequelize, DataTypes) => {
       license: DataTypes.TEXT,
       acquireLicensePage: DataTypes.TEXT,
       rating: DataTypes.FLOAT,
+      takenAt: DataTypes.DATE,
     },
     {
       sequelize,

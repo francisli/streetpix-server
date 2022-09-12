@@ -45,6 +45,22 @@ Sequelize.Model.prototype.assetUrl = function assetUrl(attribute) {
   return null;
 };
 
+Sequelize.Model.prototype.getAssetFile = async function getAssetFile(attribute) {
+  const assetPrefix = process.env.ASSET_PATH_PREFIX || '';
+  const pathPrefix = `${inflection.tableize(this.constructor.name)}/${this.id}/${attribute}`;
+  let filePath = this.get(attribute);
+  if (!filePath) {
+    return null;
+  }
+  if (process.env.AWS_S3_BUCKET) {
+    filePath = path.join(assetPrefix, pathPrefix, filePath);
+    filePath = await s3.getObject(filePath);
+  } else {
+    filePath = path.resolve(__dirname, '../public/assets', assetPrefix, pathPrefix, filePath);
+  }
+  return filePath;
+};
+
 Sequelize.Model.prototype.handleAssetFile = async function handleAssetFile(attribute, options, callback) {
   const pathPrefix = `${inflection.tableize(this.constructor.name)}/${this.id}/${attribute}`;
   if (!this.changed(attribute)) {
@@ -80,7 +96,7 @@ Sequelize.Model.prototype.handleAssetFile = async function handleAssetFile(attri
       }
     }
     if (callback) {
-      await callback(prevPath, newPath);
+      await callback(this.id, prevPath, newPath);
     }
   };
   if (options.transaction) {

@@ -5,6 +5,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar as faStarSolid } from '@fortawesome/free-solid-svg-icons';
+import { DateTime } from 'luxon';
 
 import Api from '../Api';
 import { useAuthContext } from '../AuthContext';
@@ -142,11 +143,38 @@ function Photo({ id, page, nextId, prevId, onDeleted }) {
             <div className="col-xl-8">
               {!isEditing && (
                 <>
+                  <div className="row mb-3">
+                    <div className="col-4">
+                      {prevId && (
+                        <Link to={prevId} className="btn btn-link p-0 text-secondary">
+                          &lArr; Prev
+                        </Link>
+                      )}
+                    </div>
+                    <div className="col-4 text-center">
+                      {listUrl !== '/' && (
+                        <Link to={listUrl} className="btn btn-link p-0 text-secondary">
+                          Back to List
+                        </Link>
+                      )}
+                    </div>
+                    <div className="col-4 text-end">
+                      {nextId && (
+                        <Link to={nextId} className="btn btn-link p-0 text-secondary">
+                          Next &rArr;
+                        </Link>
+                      )}
+                    </div>
+                  </div>
                   <div className="row">
                     <div className="col-md-8">
                       <dl>
-                        <dt>{data.caption}</dt>
-                        <dd>{data.description}</dd>
+                        {(data.caption || data.description) && (
+                          <>
+                            <dt>{data.caption}</dt>
+                            <dd>{data.description}</dd>
+                          </>
+                        )}
                         <dt>Taken by:</dt>
                         <dd>
                           <Link to={`/members/${data.User.username}`}>
@@ -185,6 +213,40 @@ function Photo({ id, page, nextId, prevId, onDeleted }) {
                             </dd>
                           </>
                         )}
+                        {data.takenAt && (
+                          <>
+                            <dt>Taken on:</dt>
+                            <dd>{DateTime.fromISO(data.takenAt).toLocaleString(DateTime.DATETIME_MED)}</dd>
+                          </>
+                        )}
+                        {data.metadata?.exif?.Model && (
+                          <>
+                            <dt>Camera model:</dt>
+                            <dd>{data.metadata.exif.Model.description}</dd>
+                          </>
+                        )}
+                        {data.metadata?.exif?.LensModel && (
+                          <>
+                            <dt>Lens model:</dt>
+                            <dd>{data.metadata.exif.LensModel.description}</dd>
+                          </>
+                        )}
+                        {(data.metadata?.exif?.FNumber || data.metadata?.exif?.ISOSpeedRatings) && (
+                          <div className="d-flex">
+                            {data.metadata?.exif?.FNumber && (
+                              <div className="flex-fill">
+                                <dt>F-stop:</dt>
+                                <dd>{data.metadata.exif.FNumber.description}</dd>
+                              </div>
+                            )}
+                            {data.metadata?.exif?.ISOSpeedRatings && (
+                              <div className="flex-fill">
+                                <dt>ISO:</dt>
+                                <dd>{data.metadata.exif.ISOSpeedRatings.description}</dd>
+                              </div>
+                            )}
+                          </div>
+                        )}
                         <dd className="mt-3 d-flex gap-2">
                           {listUrl !== '/' && (
                             <button onClick={fshandle.enter} className="btn btn-sm btn-outline-secondary">
@@ -198,29 +260,6 @@ function Photo({ id, page, nextId, prevId, onDeleted }) {
                           )}
                         </dd>
                       </dl>
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="col-4">
-                      {prevId && (
-                        <Link to={prevId} className="btn btn-link p-0 text-secondary">
-                          &lArr; Prev
-                        </Link>
-                      )}
-                    </div>
-                    <div className="col-4 text-center">
-                      {listUrl !== '/' && (
-                        <Link to={listUrl} className="btn btn-link p-0 text-secondary">
-                          Back to List
-                        </Link>
-                      )}
-                    </div>
-                    <div className="col-4 text-end">
-                      {nextId && (
-                        <Link to={nextId} className="btn btn-link p-0 text-secondary">
-                          Next &rArr;
-                        </Link>
-                      )}
                     </div>
                   </div>
                 </>
