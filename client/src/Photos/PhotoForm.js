@@ -29,14 +29,6 @@ function PhotoForm({ id, filename, file, meetingId, onCancel, onUpdated, onDelet
     setCreated(false);
   }
 
-  function onChangeCheckbox(event) {
-    const newData = { ...data };
-    newData[event.target.name] = event.target.checked;
-    setData(newData);
-    setUpdated(false);
-    setCreated(false);
-  }
-
   async function onSubmit(event) {
     event.preventDefault();
     setLoading(true);

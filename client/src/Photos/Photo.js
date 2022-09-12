@@ -6,6 +6,7 @@ import Popover from 'react-bootstrap/Popover';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar as faStarSolid } from '@fortawesome/free-solid-svg-icons';
 import { DateTime } from 'luxon';
+import inflection from 'inflection';
 
 import Api from '../Api';
 import { useAuthContext } from '../AuthContext';
@@ -129,6 +130,16 @@ function Photo({ id, page, nextId, prevId, onDeleted }) {
     </Popover>
   );
 
+  let cameraModel = null;
+  if (data?.metadata?.exif?.Make || data?.metadata?.exif?.Model) {
+    const make = inflection.capitalize(data.metadata?.exif?.Make?.description ?? '');
+    let model = data.metadata?.exif?.Model?.description ?? '';
+    if (model.startsWith(`${make} `)) {
+      model = model.substring(make.length + 1);
+    }
+    cameraModel = `${make} ${model}`.trim();
+  }
+
   return (
     <div className="photo" ref={ref} tabIndex={0} onKeyDown={onKeyDown}>
       {data && (
@@ -219,10 +230,10 @@ function Photo({ id, page, nextId, prevId, onDeleted }) {
                             <dd>{DateTime.fromISO(data.takenAt).toLocaleString(DateTime.DATETIME_MED)}</dd>
                           </>
                         )}
-                        {data.metadata?.exif?.Model && (
+                        {cameraModel && (
                           <>
                             <dt>Camera model:</dt>
-                            <dd>{data.metadata.exif.Model.description}</dd>
+                            <dd>{cameraModel}</dd>
                           </>
                         )}
                         {data.metadata?.exif?.LensModel && (
