@@ -1,8 +1,10 @@
+import classNames from 'classnames';
+
 import './UserPhoto.scss';
 
-function UserPhoto({ user }) {
+function UserPhoto({ className, user }) {
   return (
-    <div className="user-photo square mb-3">
+    <div className={classNames('user-photo square', className)}>
       <div
         className="user-photo__photo square__content"
         style={{ backgroundImage: user.picture ? `url(${user.pictureUrl})` : 'none' }}></div>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import classNames from 'classnames';
 
+import UserPhoto from './Users/UserPhoto';
 import './Header.scss';
 import Api from './Api';
 import { useAuthContext } from './AuthContext';
@@ -75,13 +76,13 @@ function Header() {
                 {user && (
                   <>
                     <li className="nav-item me-lg-3">
-                      <span className="nav-link d-inline-block me-2">
+                      <span className="nav-link d-inline-block me-2 me-lg-0">
                         Hello,{' '}
                         <Link to={`/members/${user.username}`} onClick={hideNavbar}>
                           {user.firstName}!
                         </Link>
                       </span>
-                      {user.pictureUrl && <div className="header__picture" style={{ backgroundImage: `url(${user.pictureUrl})` }}></div>}
+                      <UserPhoto className="header__picture" user={user} />
                     </li>
                     <li className="nav-item">
                       <a className="nav-link" href="/logout" onClick={onLogout}>
