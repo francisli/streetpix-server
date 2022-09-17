@@ -4,6 +4,7 @@ import Api from '../Api';
 import { useAuthContext } from '../AuthContext';
 
 import './Users.scss';
+import UserPhoto from './UserPhoto';
 
 function Users() {
   const { user } = useAuthContext();
@@ -26,11 +27,7 @@ function Users() {
       <div className="row justify-content-center">
         {users.map((user) => (
           <Link key={user.id} to={`/members/${user.username}`} className="users__user col-6 col-md-3 col-lg-2">
-            <div className="square mb-3">
-              <div
-                className="users__picture square__content"
-                style={{ backgroundImage: user.picture ? `url(${user.pictureUrl})` : 'none' }}></div>
-            </div>
+            <UserPhoto user={user} />
             <h4 className="users__name">
               {user.firstName} {user.lastName}
             </h4>

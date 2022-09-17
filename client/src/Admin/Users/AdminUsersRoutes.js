@@ -18,11 +18,11 @@ function AdminUsersRoutes() {
       />
       <Route
         path=":userId"
-        render={({ match }) => (
+        element={
           <AuthProtected isAdminRequired={true}>
-            <UserForm userId={match.params.userId} />
+            <UserForm />
           </AuthProtected>
-        )}
+        }
       />
       <Route
         path=""

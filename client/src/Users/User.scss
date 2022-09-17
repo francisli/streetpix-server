@@ -1,3 +1,5 @@
+@import '../common';
+
 .thumbnail {
   // border-right: 1px solid lightgray;
   margin-bottom: 24px;
@@ -5,6 +7,33 @@
 
 .thumbnail__content {
   padding: 48px 36px;
+}
+
+@include media-breakpoint-up(md) {
+  .user__header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 156px;
+  }
+}
+
+@include media-breakpoint-up(lg) {
+  .user__header {
+    min-height: 136px;
+  }
+}
+
+@include media-breakpoint-up(xl) {
+  .user__header {
+    min-height: 166px;
+  }
+}
+
+@include media-breakpoint-up(xxl) {
+  .user__header {
+    min-height: 196px;
+  }
 }
 
 .user__website {

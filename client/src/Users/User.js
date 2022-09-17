@@ -10,6 +10,7 @@ import Pagination from '../Components/Pagination';
 import Photo from '../Photos/Photo';
 
 import './User.scss';
+import UserPhoto from './UserPhoto';
 
 function User() {
   const auth = useAuthContext();
@@ -154,25 +155,32 @@ function User() {
       ) : (
         <>
           {user && (
-            <div className="row text-center mb-5">
-              <h1>
-                {user.firstName} {user.lastName}
-              </h1>
-              {user.bio && <p className="text-start">{user.bio}</p>}
-              {user.website && (
-                <p>
-                  <a className="user__website" href={user.website}>
-                    {user.website}
-                  </a>
-                </p>
-              )}
-              {user.id === auth.user?.id && (
-                <div>
-                  <Link to={`/members/${user.username}/edit`} className="btn btn-sm btn-outline-primary">
-                    Edit Profile
-                  </Link>
+            <div className="row justify-content-center mb-5">
+              <div className="col-6 col-md-3 col-lg-2">
+                <UserPhoto user={user} />
+              </div>
+              <div className="col-11 col-md-8 col-lg-6">
+                <div className="user__header">
+                  <h1 className="text-md-start mb-2">
+                    {user.firstName} {user.lastName}
+                  </h1>
+                  {user.bio && <p>{user.bio}</p>}
+                  {user.website && (
+                    <p className="text-center text-md-start">
+                      <a className="user__website" href={user.website}>
+                        {user.website}
+                      </a>
+                    </p>
+                  )}
+                  {user.id === auth.user?.id && (
+                    <div className="text-center text-md-start">
+                      <Link to={`/members/${user.username}/edit`} className="btn btn-sm btn-outline-primary">
+                        Edit Profile
+                      </Link>
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
           )}
           {yearStarted && (

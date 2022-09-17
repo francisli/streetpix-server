@@ -116,7 +116,7 @@ function AdminUsersList() {
                 </td>
                 <td>{user.isAdmin && <FontAwesomeIcon icon={faCheckSquare} />}</td>
                 <td>
-                  <Link to={`/admin/members/${user.username}`}>Edit&nbsp;Profile</Link>
+                  <Link to={`${user.username}`}>Edit&nbsp;Profile</Link>
                 </td>
               </tr>
             ))}

@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+
 import classNames from 'classnames';
 import { StatusCodes } from 'http-status-codes';
 
@@ -10,6 +12,8 @@ import ValidationError from '../ValidationError';
 
 function UserForm({ userId }) {
   const authContext = useAuthContext();
+  const params = useParams();
+  const userIdOrName = userId ?? params.userId;
 
   const [user, setUser] = useState({
     firstName: '',
@@ -30,10 +34,10 @@ function UserForm({ userId }) {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    if (userId) {
-      Api.users.get(userId).then((response) => setUser(response.data));
+    if (userIdOrName) {
+      Api.users.get(userIdOrName).then((response) => setUser(response.data));
     }
-  }, [userId]);
+  }, [userIdOrName]);
 
   function onChange(event) {
     const newUser = { ...user };

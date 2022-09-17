@@ -44,7 +44,7 @@ function Header() {
 
   return (
     <>
-      <nav className="header navbar navbar-expand-md navbar-light bg-light fixed-top">
+      <nav className="header navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div className="container">
           <Link className="navbar-brand" to="/" onClick={hideNavbar}>
             SF Bay Street Photography
@@ -71,11 +71,11 @@ function Header() {
                   </Link>
                 </li>
               )}
-              <div className="flex-grow-1 d-flex justify-content-end">
+              <div className="flex-grow-1 d-lg-flex text-end justify-content-end">
                 {user && (
                   <>
-                    <li className="nav-item me-3">
-                      <span className="nav-link d-inline-block">
+                    <li className="nav-item me-lg-3">
+                      <span className="nav-link d-inline-block me-2">
                         Hello,{' '}
                         <Link to={`/members/${user.username}`} onClick={hideNavbar}>
                           {user.firstName}!

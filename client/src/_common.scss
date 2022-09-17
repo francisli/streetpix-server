@@ -5,3 +5,9 @@ $font-stack-serif: 'Palatino Linotype', Palatino, Palladio, 'URW Palladio L', 'B
 $font-family-base: $font-stack-serif;
 
 $primary: #343a40;
+
+// Configuration
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/mixins';
+@import '~bootstrap/scss/utilities';
