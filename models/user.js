@@ -1,8 +1,10 @@
 const bcrypt = require('bcrypt');
+const fs = require('fs-extra');
 const { Model, Op } = require('sequelize');
 const _ = require('lodash');
 const { v4: uuid } = require('uuid');
 const mailer = require('../emails/mailer');
+const s3 = require('../lib/s3');
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
@@ -22,6 +24,27 @@ module.exports = (sequelize, DataTypes) => {
       return password.match(/^(?=.*?[A-Za-z])(?=.*?[0-9]).{8,30}$/) != null;
     }
 
+    static async generateThumbnails(id, prevPath, newPath) {
+      if (prevPath) {
+        // remove old thumbnails
+        if (process.env.AWS_S3_BUCKET) {
+          await s3.deleteObject(prevPath.replace('/picture/', '/thumb/'));
+        } else {
+          fs.removeSync(prevPath.replace('/picture/', '/thumb/'));
+        }
+      }
+      if (newPath) {
+        // create thumbnails
+        if (process.env.AWS_S3_BUCKET) {
+          const filePath = await s3.getObject(newPath);
+          await sequelize.models.Photo.resize(filePath, filePath.replace('/picture/', '/thumb/'), 500);
+          await s3.putObject(newPath.replace('/picture/', '/thumb/'), filePath.replace('/picture/', '/thumb/'));
+        } else {
+          await sequelize.models.Photo.resize(newPath, newPath.replace('/picture/', '/thumb/'), 500);
+        }
+      }
+    }
+
     authenticate(password) {
       return bcrypt.compare(password, this.hashedPassword);
     }
@@ -36,6 +59,7 @@ module.exports = (sequelize, DataTypes) => {
         'phone',
         'picture',
         'pictureUrl',
+        'pictureThumbUrl',
         'isAdmin',
         'bio',
         'website',
@@ -218,6 +242,12 @@ module.exports = (sequelize, DataTypes) => {
           return this.assetUrl('picture');
         },
       },
+      pictureThumbUrl: {
+        type: DataTypes.VIRTUAL(DataTypes.STRING),
+        get() {
+          return this.pictureUrl?.replace('/picture/', '/thumb/');
+        },
+      },
       bio: {
         type: DataTypes.TEXT,
       },
@@ -266,7 +296,7 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   User.afterSave(async (user, options) => {
-    user.handleAssetFile('picture', options);
+    user.handleAssetFile('picture', options, User.generateThumbnails);
   });
 
   return User;

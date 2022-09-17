@@ -7,8 +7,9 @@ function UserPhoto({ className, user }) {
     <div className={classNames('user-photo square', className)}>
       <div
         className="user-photo__photo square__content"
-        style={{ backgroundImage: user.picture ? `url(${user.pictureUrl})` : 'none' }}></div>
+        style={{ backgroundImage: user.picture ? `url(${user.pictureThumbUrl})` : 'none' }}></div>
     </div>
   );
 }
+
 export default UserPhoto;
