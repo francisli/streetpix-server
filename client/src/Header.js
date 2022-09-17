@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
+import classNames from 'classnames';
 
 import './Header.scss';
 import Api from './Api';
@@ -9,6 +10,7 @@ function Header() {
   const location = useLocation();
   const navigate = useNavigate();
   const [dismissedKey, setDismissedKey] = useState(null);
+  const [isNavbarShowing, setNavbarShowing] = useState(false);
   const { user, setUser } = useAuthContext();
 
   useEffect(
@@ -28,41 +30,43 @@ function Header() {
     event.preventDefault();
     await Api.auth.logout();
     setUser(null);
+    hideNavbar();
     navigate('/');
+  }
+
+  function toggleNavbar() {
+    setNavbarShowing(!isNavbarShowing);
+  }
+
+  function hideNavbar() {
+    setNavbarShowing(false);
   }
 
   return (
     <>
       <nav className="header navbar navbar-expand-md navbar-light bg-light fixed-top">
         <div className="container">
-          <Link className="navbar-brand" to="/">
+          <Link className="navbar-brand" to="/" onClick={hideNavbar}>
             SF Bay Street Photography
           </Link>
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarsExampleDefault"
-            aria-controls="navbarsExampleDefault"
-            aria-expanded="false"
-            aria-label="Toggle navigation">
+          <button onClick={toggleNavbar} className="navbar-toggler" type="button" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
           </button>
-          <div className="collapse navbar-collapse" id="navbarsExampleDefault">
+          <div className={classNames('collapse navbar-collapse', { show: isNavbarShowing })}>
             <ul className="navbar-nav flex-grow-1 mb-2 mb-md-0">
               <li className="nav-item">
-                <Link className="nav-link" to="/">
+                <Link className="nav-link" to="/" onClick={hideNavbar}>
                   Home
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/members">
+                <Link className="nav-link" to="/members" onClick={hideNavbar}>
                   Members
                 </Link>
               </li>
               {user && (
                 <li className="nav-item">
-                  <Link className="nav-link" to="/meetings">
+                  <Link className="nav-link" to="/meetings" onClick={hideNavbar}>
                     Meetings
                   </Link>
                 </li>
@@ -72,7 +76,10 @@ function Header() {
                   <>
                     <li className="nav-item me-3">
                       <span className="nav-link d-inline-block">
-                        Hello, <Link to={`/members/${user.username}`}>{user.firstName}!</Link>
+                        Hello,{' '}
+                        <Link to={`/members/${user.username}`} onClick={hideNavbar}>
+                          {user.firstName}!
+                        </Link>
                       </span>
                       {user.pictureUrl && <div className="header__picture" style={{ backgroundImage: `url(${user.pictureUrl})` }}></div>}
                     </li>
@@ -85,7 +92,7 @@ function Header() {
                 )}
                 {!user && (
                   <li className="nav-item">
-                    <Link className="nav-link" to="/login">
+                    <Link className="nav-link" to="/login" onClick={hideNavbar}>
                       Log in
                     </Link>
                   </li>
