@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { DateTime } from 'luxon';
 
 import Api from '../Api';
 import { useAuthContext } from '../AuthContext';
+import Pagination from '../Components/Pagination';
 
 import './Meetings.scss';
 
@@ -11,16 +12,31 @@ function Meetings() {
   const navigate = useNavigate();
   const { user } = useAuthContext();
   const [meetings, setMeetings] = useState([]);
+  const { search } = useLocation();
+  const params = new URLSearchParams(search);
+  const page = parseInt(params.get('page') ?? '1', 10);
+  const [lastPage, setLastPage] = useState(1);
   const [meetingTemplates, setMeetingTemplates] = useState([]);
 
   useEffect(() => {
     if (user) {
-      Api.meetings.index().then((response) => setMeetings(response.data));
+      Api.meetings.index(page).then((response) => {
+        setMeetings(response.data);
+        const linkHeader = Api.parseLinkHeader(response);
+        let newLastPage = page;
+        if (linkHeader?.last) {
+          const match = linkHeader.last.match(/page=(\d+)/);
+          newLastPage = parseInt(match[1], 10);
+        } else if (linkHeader?.next) {
+          newLastPage = page + 1;
+        }
+        setLastPage(newLastPage);
+      });
       if (user.isAdmin) {
         Api.meetingTemplates.index().then((response) => setMeetingTemplates(response.data));
       }
     }
-  }, [user]);
+  }, [user, page]);
 
   return (
     <main className="meetings container">
@@ -59,9 +75,9 @@ function Meetings() {
               </div>
             </>
           )}
+          <h2>Meetings</h2>
         </>
       )}
-      <h2>Upcoming Meetings</h2>
       <div className="table-responsive mb-5">
         <table className="table table-hover">
           <thead>
@@ -80,6 +96,7 @@ function Meetings() {
             ))}
           </tbody>
         </table>
+        <Pagination page={page} lastPage={lastPage} />
       </div>
     </main>
   );

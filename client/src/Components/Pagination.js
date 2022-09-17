@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 
-function Pagination({ page, lastPage, url }) {
+function Pagination({ page, lastPage, url = '' }) {
   function onClick() {
     window.scrollTo(0, 0);
   }

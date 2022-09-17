@@ -73,8 +73,12 @@ const Api = {
     },
   },
   meetings: {
-    index() {
-      return instance.get(`/api/meetings`);
+    index(page) {
+      const params = {};
+      if (page) {
+        params.page = page;
+      }
+      return instance.get(`/api/meetings`, { params });
     },
     create(data) {
       return instance.post('/api/meetings', data);
