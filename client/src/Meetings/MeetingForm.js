@@ -44,12 +44,21 @@ function MeetingForm({ isTemplate }) {
         request = Api.meetings.get(meetingId);
       }
       request.then((response) => {
-        let { startsAt } = response.data;
+        let { id, MeetingTemplateId, startsAt, callLink, callDetails, topic, maxUploadsCount, allowedUserIds } = response.data;
         startsAt = DateTime.fromISO(startsAt).toISO();
         if (startsAt.includes('.')) {
           startsAt = startsAt.substring(0, startsAt.indexOf('.'));
         }
-        setMeeting({ ...response.data, startsAt });
+        setMeeting({
+          id,
+          MeetingTemplateId,
+          startsAt,
+          callLink,
+          callDetails,
+          topic,
+          maxUploadsCount,
+          allowedUserIds,
+        });
       });
     } else {
       setMeeting({
