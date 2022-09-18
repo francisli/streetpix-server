@@ -28,6 +28,7 @@
     "react-sortablejs": "^6.1.4",
     "react-use-websocket": "^3.0.0",
     "sass": "1.32.12",
+    "seedrandom": "^3.0.5",
     "web-vitals": "^1.1.2"
   },
   "scripts": {

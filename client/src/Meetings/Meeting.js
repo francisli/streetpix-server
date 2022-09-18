@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { LinkItUrl } from 'react-linkify-it';
 import { DateTime } from 'luxon';
+import seedrandom from 'seedrandom';
 
 import Api from '../Api';
 import { useAuthContext } from '../AuthContext';
@@ -13,6 +14,7 @@ function Meeting() {
   const { user } = useAuthContext();
   const { meetingId } = useParams();
   const [meeting, setMeeting] = useState();
+  const [sort, setSort] = useState('random');
 
   const { photoId } = useParams();
 
@@ -33,16 +35,21 @@ function Meeting() {
       }
       photosByUser[user.id].push(meetingSubmission);
     }
-    users.sort((u1, u2) => {
-      let result = u1.firstName.localeCompare(u2.firstName);
-      if (result === 0) {
-        result = u1.lastName.localeCompare(u2.lastName);
-      }
-      if (result === 0) {
-        result = u1.id - u2.id;
-      }
-      return result;
-    });
+    if (sort === 'alpha') {
+      users.sort((u1, u2) => {
+        let result = u1.firstName.localeCompare(u2.firstName);
+        if (result === 0) {
+          result = u1.lastName.localeCompare(u2.lastName);
+        }
+        if (result === 0) {
+          result = u1.id - u2.id;
+        }
+        return result;
+      });
+    } else {
+      const rng = seedrandom(meetingId);
+      users.sort((a, b) => 0.5 - rng());
+    }
   }
 
   let prevPhotoId;
@@ -87,7 +94,7 @@ function Meeting() {
           <h1>Meeting</h1>
           {meeting && (
             <div className="row">
-              <div className="col-md-4">
+              <div className="col-lg-4 mb-5">
                 <dl>
                   <dt>Date/Time</dt>
                   <dd>{DateTime.fromISO(meeting.startsAt).toFormat("cccc, LLLL d 'at' h:mm a")}</dd>
@@ -99,20 +106,50 @@ function Meeting() {
                   <dd>
                     <div className="mb-3">{meeting.callDetails}</div>
                     {user.isAdmin && (
-                      <Link to={`/meetings/${meetingId}/edit`} className="btn btn-outline-primary me-3">
+                      <Link to={`/meetings/${meetingId}/edit`} className="btn btn-outline-primary me-3 mb-3">
                         Edit Meeting
                       </Link>
                     )}
-                    <a className="btn btn-outline-primary" href={meeting.callLink} target="_blank" rel="noreferrer">
+                    <a className="btn btn-outline-primary me-3 mb-3" href={meeting.callLink} target="_blank" rel="noreferrer">
                       Join Call
                     </a>
-                    <Link to={`/meetings/${meetingId}/upload`} className="btn btn-outline-primary ms-3">
+                    <Link to={`/meetings/${meetingId}/upload`} className="btn btn-outline-primary mb-3">
                       Upload Photos
                     </Link>
                   </dd>
                 </dl>
               </div>
-              <div className="col-md-8">
+              <div className="col-lg-8">
+                <div className="row mb-4 justify-content-end">
+                  <div className="col-lg-5 col-xl-4">
+                    <div className="btn-group d-block">
+                      <input
+                        type="radio"
+                        className="btn-check"
+                        name="sort"
+                        id="random"
+                        autocomplete="off"
+                        onClick={() => setSort('random')}
+                        checked={sort === 'random'}
+                      />
+                      <label class="btn btn-outline-primary w-50" for="random">
+                        Random
+                      </label>
+                      <input
+                        type="radio"
+                        className="btn-check"
+                        name="sort"
+                        id="alpha"
+                        autocomplete="off"
+                        onClick={() => setSort('alpha')}
+                        checked={sort === 'alpha'}
+                      />
+                      <label class="btn btn-outline-primary w-50" for="alpha">
+                        Alphabetical
+                      </label>
+                    </div>
+                  </div>
+                </div>
                 {users.map((u) => (
                   <React.Fragment key={u.id}>
                     <div className="d-flex align-items-center">
