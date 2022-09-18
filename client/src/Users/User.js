@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ReactSortable } from 'react-sortablejs';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar as faStarSolid } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames';
 import { DateTime } from 'luxon';
 
@@ -21,10 +23,11 @@ function User() {
   const [isDragging, setDragging] = useState(false);
 
   const { search } = useLocation();
-  const [page, setPage] = useState(null);
+  const [page, setPage] = useState();
   const [lastPage, setLastPage] = useState(null);
+  const [sort, setSort] = useState();
 
-  const { userId, filter, photoId } = useParams();
+  const { userId, year, photoId } = useParams();
   const [nextPhotoId, setNextPhotoId] = useState();
   const [prevPhotoId, setPrevPhotoId] = useState();
 
@@ -37,18 +40,22 @@ function User() {
   }, [userId]);
 
   useEffect(() => {
-    if (!validPhotoId || !page) {
+    if (!validPhotoId || !page || !sort) {
       const params = new URLSearchParams(search);
       const newPage = parseInt(params.get('page') ?? '1', 10);
       if (newPage !== page) {
         setPage(newPage);
       }
+      const newSort = params.get('sort') ?? 'createdAt';
+      if (newSort !== sort) {
+        setSort(newSort);
+      }
     }
-  }, [validPhotoId, search, page]);
+  }, [validPhotoId, search, page, sort]);
 
   useEffect(() => {
-    if (userId && page) {
-      Api.photos.index(userId, filter, page).then((response) => {
+    if (userId && page && sort) {
+      Api.photos.index({ userId, year, page, sort }).then((response) => {
         setPhotos(response.data);
         const linkHeader = Api.parseLinkHeader(response);
         let newLastPage = page;
@@ -61,7 +68,7 @@ function User() {
         setLastPage(newLastPage);
       });
     }
-  }, [userId, filter, page]);
+  }, [userId, year, page, sort]);
 
   useEffect(() => {
     if (userId && validPhotoId && photos && page && lastPage) {
@@ -80,7 +87,7 @@ function User() {
         if (page === 1) {
           setPrevPhotoId(null);
         } else {
-          Api.photos.index(userId, filter, page - 1).then((response) => {
+          Api.photos.index({ userId, year, sort, page: page - 1 }).then((response) => {
             const prevPhotos = response.data;
             if (prevPhotos.length > 0) {
               setPrevPhotoId(prevPhotos[prevPhotos.length - 1].id);
@@ -96,7 +103,7 @@ function User() {
         if (page === lastPage) {
           setNextPhotoId(null);
         } else {
-          Api.photos.index(userId, filter, page + 1).then((response) => {
+          Api.photos.index({ userId, year, sort, page: page + 1 }).then((response) => {
             const nextPhotos = response.data;
             if (nextPhotos.length > 0) {
               setNextPhotoId(nextPhotos[0].id);
@@ -109,7 +116,11 @@ function User() {
         setNextPhotoId(photos[index + 1].id);
       }
     }
-  }, [userId, filter, validPhotoId, photos, page, lastPage]);
+  }, [userId, year, sort, validPhotoId, photos, page, lastPage]);
+
+  function onSort(event) {
+    navigate(`?page=${page}&sort=${event.target.value}`);
+  }
 
   function onDeleted(id) {
     const index = photos.findIndex((photo) => photo.id === id);
@@ -126,23 +137,23 @@ function User() {
     }
   }
 
-  function onSortStart() {
+  function onReorderStart() {
     setDragging(true);
   }
 
-  async function onSortEnd(event) {
+  async function onReorderEnd(event) {
     setTimeout(() => setDragging(false), 100);
-    if (filter === 'all') {
+    if (year === 'all') {
       return;
     }
     try {
-      await Api.photos.feature(event.item.dataset.id, filter, event.newIndex + 1);
+      await Api.photos.feature(event.item.dataset.id, year, event.newIndex + 1);
     } catch (error) {
       console.log(error);
     }
   }
 
-  const year = DateTime.now().year;
+  const currentYear = DateTime.now().year;
   let yearStarted;
   if (user && user.createdAt) {
     yearStarted = DateTime.fromISO(user.createdAt).year;
@@ -151,7 +162,7 @@ function User() {
   return (
     <main className="container">
       {validPhotoId ? (
-        <Photo id={validPhotoId} page={page} nextId={nextPhotoId} prevId={prevPhotoId} onDeleted={onDeleted} />
+        <Photo id={validPhotoId} page={page} sort={sort} nextId={nextPhotoId} prevId={prevPhotoId} onDeleted={onDeleted} />
       ) : (
         <>
           {user && (
@@ -187,40 +198,76 @@ function User() {
             <nav className="d-flex justify-content-center">
               <ul className="pagination pagination-lg">
                 {auth.user && (
-                  <li className={classNames('page-item', { active: filter === 'all' })}>
+                  <li className={classNames('page-item', { active: year === 'all' })}>
                     <Link to={`../${userId}/all`} className="page-link">
                       All
                     </Link>
                   </li>
                 )}
-                {[...Array(year - yearStarted + 1)].map((_, i) => (
-                  <li className={classNames('page-item', { active: filter === `${year - i}` })} key={`year-${year - i}`}>
-                    <Link to={`../${userId}/${year - i}`} className="page-link">
-                      {year - i}
+                {[...Array(currentYear - yearStarted + 1)].map((_, i) => (
+                  <li className={classNames('page-item', { active: year === `${year - i}` })} key={`year-${currentYear - i}`}>
+                    <Link to={`../${userId}/${currentYear - i}`} className="page-link">
+                      {currentYear - i}
                     </Link>
                   </li>
                 ))}
               </ul>
             </nav>
           )}
-          <ReactSortable
-            onStart={onSortStart}
-            onEnd={onSortEnd}
-            disabled={filter === 'all' || !user || user?.id !== auth.user?.id}
-            className="row"
-            list={photos}
-            setList={setPhotos}>
-            {photos.map((photo) => (
-              <div key={photo.id} className="thumbnail col-md-6 col-lg-4 col-xl-3">
-                <div className="thumbnail__content">
-                  <Link to={photo.id} onClick={(event) => onClick(event, photo.id)} className="square">
-                    <div className="square__content" style={{ backgroundImage: `url(${photo.thumbUrl})` }}></div>
-                  </Link>
+          {year === 'all' && (
+            <>
+              <div className="row">
+                <div className="col-lg-3 col-xl-2">
+                  <dl className="user__options">
+                    <dt>Sort</dt>
+                    <dd>
+                      <select className="form-select" onChange={onSort} value={sort}>
+                        <option value="createdAt">Upload date</option>
+                        <option value="takenAt">Capture date</option>
+                        <option value="rating">Avg. rating</option>
+                      </select>
+                    </dd>
+                  </dl>
+                </div>
+                <div className="offset-lg-1 col-lg-8 col-xl-9">
+                  <div className="row">
+                    {photos.map((photo) => (
+                      <div key={photo.id} className="thumbnail col-md-6 col-xl-4">
+                        <div className="thumbnail__content">
+                          <Link to={photo.id} onClick={(event) => onClick(event, photo.id)} className="square">
+                            <div className="square__content" style={{ backgroundImage: `url(${photo.thumbUrl})` }}></div>
+                          </Link>
+                          <div className="user__thumbnail-rating">
+                            <FontAwesomeIcon icon={faStarSolid} /> {photo.rating.toFixed(1)}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-            ))}
-          </ReactSortable>
-          {filter === 'all' && lastPage && <Pagination page={page} lastPage={lastPage} url="" />}
+              {lastPage && <Pagination page={page} lastPage={lastPage} url="" />}
+            </>
+          )}
+          {year !== 'all' && (
+            <ReactSortable
+              onStart={onReorderStart}
+              onEnd={onReorderEnd}
+              disabled={!user || user?.id !== auth.user?.id}
+              className="row"
+              list={photos}
+              setList={setPhotos}>
+              {photos.map((photo) => (
+                <div key={photo.id} className="thumbnail col-md-6 col-lg-4 col-xl-3">
+                  <div className="thumbnail__content">
+                    <Link to={photo.id} onClick={(event) => onClick(event, photo.id)} className="square">
+                      <div className="square__content" style={{ backgroundImage: `url(${photo.thumbUrl})` }}></div>
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </ReactSortable>
+          )}
         </>
       )}
     </main>

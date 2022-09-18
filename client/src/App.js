@@ -13,6 +13,7 @@ import AdminRoutes from './Admin/AdminRoutes';
 import InvitesRoutes from './Invites/InvitesRoutes';
 import MeetingsRoutes from './Meetings/MeetingsRoutes';
 import UsersRoutes from './Users/UsersRoutes';
+import Browse from './Browse';
 
 function App() {
   return (
@@ -26,6 +27,16 @@ function App() {
           <Route path="/invites/*" element={<InvitesRoutes />} />
           {process.env.REACT_APP_FEATURE_REGISTRATION === 'true' && <Route path="/register" element={<Register />} />}
           <Route path="/members/*" element={<UsersRoutes />} />
+          <Route
+            path="/browse"
+            element={
+              <AuthProtected>
+                <Browse />
+              </AuthProtected>
+            }>
+            <Route path=":photoId" element={<></>} />
+            <Route path="" element={<></>} />
+          </Route>
           <Route
             path="/meetings/*"
             element={

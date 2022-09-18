@@ -14,7 +14,7 @@ function UserRoutes() {
   return (
     <Routes>
       <Route path={`${user?.username}/edit`} element={<AuthProtected>{user && <UserForm userId={user.id} />}</AuthProtected>} />
-      <Route path=":userId/:filter" element={<User />}>
+      <Route path=":userId/:year" element={<User />}>
         <Route path=":photoId" element={<></>} />
         <Route path="" element={<></>} />
       </Route>

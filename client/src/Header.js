@@ -66,11 +66,18 @@ function Header() {
                 </Link>
               </li>
               {user && (
-                <li className="nav-item">
-                  <Link className="nav-link" to="/meetings" onClick={hideNavbar}>
-                    Meetings
-                  </Link>
-                </li>
+                <>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/browse" onClick={hideNavbar}>
+                      Browse
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/meetings" onClick={hideNavbar}>
+                      Meetings
+                    </Link>
+                  </li>
+                </>
               )}
               <div className="flex-grow-1 d-lg-flex text-end justify-content-end">
                 {user && (

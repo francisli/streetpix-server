@@ -116,18 +116,10 @@ const Api = {
     },
   },
   photos: {
-    index(userId, filter, page) {
-      const params = {};
-      if (userId) {
-        params.userId = userId;
-      }
-      if (filter) {
-        if (filter !== 'all') {
-          params.year = filter;
-        }
-      }
-      if (page) {
-        params.page = page;
+    index({ userId, year, page, sort }) {
+      const params = { userId, page, sort };
+      if (year && year !== 'all') {
+        params.year = year;
       }
       return instance.get('/api/photos', { params });
     },

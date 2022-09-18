@@ -91,10 +91,10 @@ function Meeting() {
   if (startTime && endTime) {
     let { minutes } = endTime.diff(startTime, 'minutes');
     photoDuration = Math.floor(minutes / photoCount);
-    // if (photoId) {
-    //   ({ minutes } = endTime.diff(DateTime.now(), 'minutes'));
-    //   photoDuration = Math.min(photoDuration, Math.floor(minutes / (photoCount - currentCount)));
-    // }
+    if (photoId && currentCount > 0) {
+      ({ minutes } = endTime.diff(DateTime.now(), 'minutes'));
+      photoDuration = Math.min(photoDuration, Math.floor(minutes / (photoCount - currentCount)));
+    }
   }
 
   function onDeleted(id) {

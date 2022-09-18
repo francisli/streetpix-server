@@ -19,7 +19,7 @@ import PhotoFeature from './PhotoFeature';
 import PhotoForm from './PhotoForm';
 import PhotoRating from './PhotoRating';
 
-function Photo({ id, page, nextId, prevId, onDeleted, timerDuration }) {
+function Photo({ id, page, sort, nextId, prevId, onDeleted, timerDuration }) {
   const { user } = useAuthContext();
   const fshandle = useFullScreenHandle();
   const { pathname } = useResolvedPath('');
@@ -31,7 +31,7 @@ function Photo({ id, page, nextId, prevId, onDeleted, timerDuration }) {
   const [countdown, setCountdown] = useState();
 
   let baseUrl = pathname;
-  const listUrl = `${baseUrl}${!page || page === 1 ? '' : `?page=${page}`}`;
+  const listUrl = `${baseUrl}${!page || page === 1 ? '' : `?page=${page}`}${!sort || sort === 'createdAt' ? '' : `?sort=${sort}`}`;
 
   useEffect(() => {
     Api.photos.get(id).then((response) => setData(response.data));

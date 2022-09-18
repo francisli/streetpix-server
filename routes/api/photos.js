@@ -18,6 +18,18 @@ router.get('/', async (req, res) => {
       ['filename', 'ASC'],
     ],
   };
+  if (req.user && req.query.sort) {
+    switch (req.query.sort) {
+      case 'takenAt':
+        options.order[0] = ['takenAt', 'DESC'];
+        break;
+      case 'rating':
+        options.order[0] = ['rating', 'DESC'];
+        break;
+      default:
+        break;
+    }
+  }
   if (!req.user || req.query.year) {
     options.include = [models.User, { model: models.Feature, required: true }];
     if (req.query.year && req.query.year !== '') {
