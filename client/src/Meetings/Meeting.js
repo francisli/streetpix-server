@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { LinkItUrl } from 'react-linkify-it';
 import { DateTime } from 'luxon';
 
 import Api from '../Api';
@@ -91,7 +92,9 @@ function Meeting() {
                   <dt>Date/Time</dt>
                   <dd>{DateTime.fromISO(meeting.startsAt).toFormat("cccc, LLLL d 'at' h:mm a")}</dd>
                   <dt>Topic</dt>
-                  <dd className="meeting__topic">{meeting.topic}</dd>
+                  <dd className="meeting__topic">
+                    <LinkItUrl>{meeting.topic}</LinkItUrl>
+                  </dd>
                   <dt>Call Details</dt>
                   <dd>
                     <div className="mb-3">{meeting.callDetails}</div>

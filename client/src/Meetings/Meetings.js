@@ -90,7 +90,7 @@ function Meetings() {
             {meetings.map((meeting) => (
               <tr key={meeting.id} onClick={() => navigate(`/meetings/${meeting.id}`)}>
                 <td>{DateTime.fromISO(meeting.startsAt).toFormat("ccc, LLL d 'at' h:mm a")}</td>
-                <td>{meeting.topic}</td>
+                <td>{meeting.topic.split('\n')[0].trim()}</td>
                 <td></td>
               </tr>
             ))}
