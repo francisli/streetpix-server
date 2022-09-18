@@ -246,7 +246,7 @@ function User() {
                   </div>
                 </div>
               </div>
-              {lastPage && <Pagination page={page} lastPage={lastPage} url="" />}
+              {lastPage && <Pagination page={page} lastPage={lastPage} otherParams={{ sort }} />}
             </>
           )}
           {year !== 'all' && (

@@ -153,7 +153,7 @@ function Browse() {
               </div>
             </div>
           </div>
-          {lastPage && <Pagination page={page} lastPage={lastPage} url="" />}
+          {lastPage && <Pagination page={page} lastPage={lastPage} otherParams={{ sort }} />}
         </>
       )}
     </main>
