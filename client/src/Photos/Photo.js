@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar as faStarSolid } from '@fortawesome/free-solid-svg-icons';
 import { DateTime } from 'luxon';
 import inflection from 'inflection';
+import classNames from 'classnames';
 
 import Api from '../Api';
 import { useAuthContext } from '../AuthContext';
@@ -18,7 +19,7 @@ import PhotoFeature from './PhotoFeature';
 import PhotoForm from './PhotoForm';
 import PhotoRating from './PhotoRating';
 
-function Photo({ id, page, nextId, prevId, onDeleted }) {
+function Photo({ id, page, nextId, prevId, onDeleted, timerDuration }) {
   const { user } = useAuthContext();
   const fshandle = useFullScreenHandle();
   const { pathname } = useResolvedPath('');
@@ -27,6 +28,7 @@ function Photo({ id, page, nextId, prevId, onDeleted }) {
 
   const [data, setData] = useState(null);
   const [isEditing, setEditing] = useState(false);
+  const [countdown, setCountdown] = useState();
 
   let baseUrl = pathname;
   const listUrl = `${baseUrl}${!page || page === 1 ? '' : `?page=${page}`}`;
@@ -34,7 +36,24 @@ function Photo({ id, page, nextId, prevId, onDeleted }) {
   useEffect(() => {
     Api.photos.get(id).then((response) => setData(response.data));
     ref.current?.focus();
-  }, [id]);
+    if (timerDuration) {
+      const startTime = DateTime.now().plus({ seconds: 2 });
+      const interval = setInterval(() => {
+        let { seconds } = DateTime.now().diff(startTime, ['seconds']);
+        seconds = Math.max(0, seconds);
+        let prefix = '';
+        seconds = timerDuration * 60 - seconds;
+        if (seconds < 0) {
+          seconds = -seconds;
+          prefix = '-';
+        }
+        setCountdown(`${prefix}${Math.floor(seconds / 60)}:${`${Math.floor(seconds % 60)}`.padStart(2, '0')}`);
+      }, 1000);
+      return () => clearInterval(interval);
+    } else {
+      setCountdown();
+    }
+  }, [id, timerDuration]);
 
   function onEdit() {
     setEditing(true);
@@ -147,7 +166,16 @@ function Photo({ id, page, nextId, prevId, onDeleted }) {
           <div className="mb-4">
             <FullScreen handle={fshandle}>
               {!fshandle.active && <img src={data.largeUrl} alt={data.caption} className="photo__image" />}
-              {fshandle.active && <InteractivePhoto id={data.id} alt={data.caption} url={data.largeUrl} onKeyDown={onKeyDown} />}
+              {fshandle.active && (
+                <>
+                  <InteractivePhoto id={data.id} alt={data.caption} url={data.largeUrl} onKeyDown={onKeyDown} />
+                  {countdown && (
+                    <div className={classNames('photo__countdown', { 'photo__countdown--expired': countdown.startsWith('-') })}>
+                      {countdown}
+                    </div>
+                  )}
+                </>
+              )}
             </FullScreen>
           </div>
           <div className="row justify-content-center">

@@ -3,6 +3,8 @@ import { Link, useParams } from 'react-router-dom';
 import { LinkItUrl } from 'react-linkify-it';
 import { DateTime } from 'luxon';
 import seedrandom from 'seedrandom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faClock } from '@fortawesome/free-regular-svg-icons';
 
 import Api from '../Api';
 import { useAuthContext } from '../AuthContext';
@@ -15,6 +17,8 @@ function Meeting() {
   const { meetingId } = useParams();
   const [meeting, setMeeting] = useState();
   const [sort, setSort] = useState('random');
+  const [startTime, setStartTime] = useState();
+  const [endTime, setEndTime] = useState();
 
   const { photoId } = useParams();
 
@@ -26,6 +30,7 @@ function Meeting() {
 
   const users = [];
   const photosByUser = {};
+  let photoCount = 0;
   if (meeting?.MeetingSubmissions) {
     for (const meetingSubmission of meeting.MeetingSubmissions) {
       const user = meetingSubmission.Photo.User;
@@ -34,6 +39,7 @@ function Meeting() {
         photosByUser[user.id] = [];
       }
       photosByUser[user.id].push(meetingSubmission);
+      photoCount += 1;
     }
     if (sort === 'alpha') {
       users.sort((u1, u2) => {
@@ -54,6 +60,7 @@ function Meeting() {
 
   let prevPhotoId;
   let nextPhotoId;
+  let currentCount = 0;
   if (photoId) {
     let found = false;
     for (const user of users) {
@@ -69,12 +76,25 @@ function Meeting() {
             continue;
           }
           prevPhotoId = ms.Photo.id;
+          if (!found) {
+            currentCount += 1;
+          }
         }
       }
       if (found && nextPhotoId) {
         break;
       }
     }
+  }
+
+  let photoDuration;
+  if (startTime && endTime) {
+    let { minutes } = endTime.diff(startTime, 'minutes');
+    photoDuration = Math.floor(minutes / photoCount);
+    // if (photoId) {
+    //   ({ minutes } = endTime.diff(DateTime.now(), 'minutes'));
+    //   photoDuration = Math.min(photoDuration, Math.floor(minutes / (photoCount - currentCount)));
+    // }
   }
 
   function onDeleted(id) {
@@ -85,10 +105,26 @@ function Meeting() {
     }
   }
 
+  function setUpTimer() {
+    setStartTime(DateTime.now());
+    let newEndTime = DateTime.now().plus({ hours: 2 }).set({ minute: 0 });
+    setEndTime(newEndTime);
+  }
+
+  function onChangeEndTime(event) {
+    const { value } = event.target;
+    if (value) {
+      const newEndTime = DateTime.fromFormat(value, 'HH:mm');
+      setEndTime(newEndTime);
+    } else {
+      setEndTime();
+    }
+  }
+
   return (
     <main className="container">
       {photoId ? (
-        <Photo id={photoId} nextId={nextPhotoId} prevId={prevPhotoId} onDeleted={onDeleted} />
+        <Photo id={photoId} nextId={nextPhotoId} prevId={prevPhotoId} onDeleted={onDeleted} timerDuration={photoDuration} />
       ) : (
         <>
           <h1>Meeting</h1>
@@ -120,7 +156,34 @@ function Meeting() {
                 </dl>
               </div>
               <div className="col-lg-8">
-                <div className="row mb-4 justify-content-end">
+                <div className="row mb-4 justify-content-between">
+                  <div className="col-lg-7 mb-3">
+                    {!endTime && (
+                      <button onClick={setUpTimer} className="btn btn-outline-primary">
+                        <FontAwesomeIcon icon={faClock} /> Set up Timer
+                      </button>
+                    )}
+                    {endTime && (
+                      <form className="d-flex">
+                        <label className="col-form-label text-nowrap me-2" htmlFor="endTime">
+                          End at:
+                        </label>
+                        <input
+                          type="time"
+                          id="endTime"
+                          className="form-control me-2 "
+                          onChange={onChangeEndTime}
+                          style={{ maxWidth: '130px' }}
+                          min={startTime.toLocaleString(DateTime.TIME_24_SIMPLE)}
+                          value={endTime.toLocaleString(DateTime.TIME_24_SIMPLE)}
+                        />
+                        <span className="col-form-label text-muted text-nowrap me-2">({photoDuration} min/ph)</span>
+                        <button onClick={() => setEndTime()} className="btn btn-sm btn-outline-primary">
+                          Cancel
+                        </button>
+                      </form>
+                    )}
+                  </div>
                   <div className="col-lg-5 col-xl-4">
                     <div className="btn-group d-block">
                       <input
@@ -128,11 +191,11 @@ function Meeting() {
                         className="btn-check"
                         name="sort"
                         id="random"
-                        autocomplete="off"
-                        onClick={() => setSort('random')}
+                        autoComplete="off"
+                        onChange={() => setSort('random')}
                         checked={sort === 'random'}
                       />
-                      <label class="btn btn-outline-primary w-50" for="random">
+                      <label className="btn btn-outline-primary w-50" htmlFor="random">
                         Random
                       </label>
                       <input
@@ -140,11 +203,11 @@ function Meeting() {
                         className="btn-check"
                         name="sort"
                         id="alpha"
-                        autocomplete="off"
-                        onClick={() => setSort('alpha')}
+                        autoComplete="off"
+                        onChange={() => setSort('alpha')}
                         checked={sort === 'alpha'}
                       />
-                      <label class="btn btn-outline-primary w-50" for="alpha">
+                      <label className="btn btn-outline-primary w-50" htmlFor="alpha">
                         Alphabetical
                       </label>
                     </div>
