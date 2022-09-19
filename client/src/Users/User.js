@@ -168,7 +168,7 @@ function User() {
           {user && (
             <div className="row justify-content-center mb-5">
               <div className="col-6 col-md-3 col-lg-2">
-                <UserPhoto user={user} />
+                <UserPhoto className="mb-3" user={user} />
               </div>
               <div className="col-11 col-md-8 col-lg-6">
                 <div className="user__header">
