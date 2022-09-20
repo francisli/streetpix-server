@@ -133,7 +133,7 @@ function Meeting() {
               <div className="col-lg-4 mb-5">
                 <dl>
                   <dt>Date/Time</dt>
-                  <dd>{DateTime.fromISO(meeting.startsAt).toFormat("cccc, LLLL d 'at' h:mm a")}</dd>
+                  <dd>{DateTime.fromISO(meeting.startsAt).toFormat("cccc, LLLL d, yyyy 'at' h:mm a")}</dd>
                   <dt>Topic</dt>
                   <dd className="meeting__topic">
                     <LinkItUrl>{meeting.topic}</LinkItUrl>
