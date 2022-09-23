@@ -40,12 +40,17 @@ function PhotoUploader({ id, className, maxFiles, meetingId }) {
       multiple={true}
       maxFiles={maxFiles}
       onUploaded={onUploaded}>
-      {(statuses) => {
+      {({ statuses, onRemove, rejectedFiles }) => {
         if (statuses.length === 0) {
           return (
             <div className="photouploader__prompt card">
               <div className="card-body">
                 <div className="card-text text-center">Drag-and-drop photo files here, or click here to browse and select files.</div>
+                {rejectedFiles?.length > maxFiles && (
+                  <div className="card-text text-center mt-3">
+                    <b>Too many files!</b>
+                  </div>
+                )}
               </div>
             </div>
           );
@@ -63,7 +68,7 @@ function PhotoUploader({ id, className, maxFiles, meetingId }) {
                     </div>
                     <div className="col-8">
                       {status.status !== 'submitted' && <span>Please wait...</span>}
-                      {status.status === 'submitted' && <PhotoForm id={status.photoId} />}
+                      {status.status === 'submitted' && <PhotoForm id={status.photoId} onDeleted={() => onRemove(status)} />}
                     </div>
                   </div>
                 </div>
