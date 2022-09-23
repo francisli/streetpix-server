@@ -167,7 +167,7 @@ function UserForm({ userId }) {
                 Email
               </label>
               <input
-                type="text"
+                type="email"
                 data-lpignore="true"
                 className={classNames('form-control', { 'is-invalid': error?.errorsFor?.('email') })}
                 id="email"

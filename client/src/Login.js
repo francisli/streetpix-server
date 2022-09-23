@@ -48,10 +48,11 @@ function Login() {
               <form onSubmit={onSubmit}>
                 <div className="mb-3">
                   <label className="form-label" htmlFor="email">
-                    Email
+                    Email or Username
                   </label>
                   <input
                     type="text"
+                    inputMode="email"
                     className="form-control"
                     id="email"
                     name="email"

@@ -11,7 +11,13 @@ passport.use(
       usernameField: 'email',
     },
     (email, password, done) => {
-      models.User.findOne({ where: { email } })
+      const options = {};
+      if (email.includes('@')) {
+        options.where = { email };
+      } else {
+        options.where = { username: email };
+      }
+      models.User.findOne(options)
         .then((user) => {
           bcrypt
             .compare(password, user.hashedPassword)
