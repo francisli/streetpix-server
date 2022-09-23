@@ -207,86 +207,72 @@ function Photo({ id, page, sort, nextId, prevId, onDeleted, timerDuration }) {
                   </div>
                   <div className="row">
                     <div className="col-md-8">
-                      <dl>
-                        {(data.caption || data.description) && (
-                          <>
-                            <dt>{data.caption}</dt>
-                            <dd>{data.description}</dd>
-                          </>
-                        )}
-                        <dt>Taken by:</dt>
-                        <dd>
-                          <Link to={`/members/${data.User.username}`}>
-                            {data.User?.firstName} {data.User?.lastName}
-                          </Link>
-                        </dd>
-                        <dt>License:</dt>
-                        <dd>
-                          <License selected={data.license} />
-                        </dd>
-                      </dl>
+                      {(data.caption || data.description) && (
+                        <dl>
+                          <dt>{data.caption}</dt>
+                          <dd>{data.description}</dd>
+                        </dl>
+                      )}
+                      <div className="row">
+                        <div className="col-6">
+                          <dl className="small">
+                            <dt>Taken by:</dt>
+                            <dd>
+                              <Link to={`/members/${data.User.username}`}>
+                                {data.User?.firstName} {data.User?.lastName}
+                              </Link>
+                            </dd>
+                            {user && data.takenAt && (
+                              <>
+                                <dt>Taken on:</dt>
+                                <dd>{DateTime.fromISO(data.takenAt).toLocaleString(DateTime.DATETIME_MED)}</dd>
+                              </>
+                            )}
+                            <dt>License:</dt>
+                            <dd>
+                              <License selected={data.license} />
+                            </dd>
+                          </dl>
+                        </div>
+                        <div className="col-6">
+                          {user && (
+                            <dl className="small">
+                              {cameraModel && (
+                                <>
+                                  <dt>Camera model:</dt>
+                                  <dd>{cameraModel}</dd>
+                                </>
+                              )}
+                              {data.metadata?.exif?.LensModel && (
+                                <>
+                                  <dt>Lens model:</dt>
+                                  <dd>{data.metadata.exif.LensModel.description}</dd>
+                                </>
+                              )}
+                              {(data.metadata?.exif?.FNumber || data.metadata?.exif?.ISOSpeedRatings) && (
+                                <div className="d-flex">
+                                  {data.metadata?.exif?.FNumber && (
+                                    <div className="flex-fill">
+                                      <dt>F-stop:</dt>
+                                      <dd>{data.metadata.exif.FNumber.description}</dd>
+                                    </div>
+                                  )}
+                                  {data.metadata?.exif?.ISOSpeedRatings && (
+                                    <div className="flex-fill">
+                                      <dt>ISO:</dt>
+                                      <dd>{data.metadata.exif.ISOSpeedRatings.description}</dd>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </dl>
+                          )}
+                        </div>
+                      </div>
                     </div>
                     <div className="col-md-3 offset-md-1">
                       <dl className="small">
-                        {user && (
-                          <>
-                            <dt>Avg. rating:</dt>
-                            <dd>
-                              <OverlayTrigger trigger="click" placement="top" overlay={popover}>
-                                <button type="button" className="btn btn-sm btn-link p-0">
-                                  <FontAwesomeIcon icon={faStarSolid} /> {data.rating.toFixed(1)}
-                                </button>
-                              </OverlayTrigger>
-                            </dd>
-                            <dt>Your rating:</dt>
-                            <dd>
-                              <PhotoRating onChange={onChangeRating} value={rating?.value} />
-                            </dd>
-                          </>
-                        )}
-                        {user && user.id === data.UserId && (
-                          <>
-                            <dt>Public visibility:</dt>
-                            <dd>
-                              <PhotoFeature photo={data} />
-                            </dd>
-                          </>
-                        )}
-                        {data.takenAt && (
-                          <>
-                            <dt>Taken on:</dt>
-                            <dd>{DateTime.fromISO(data.takenAt).toLocaleString(DateTime.DATETIME_MED)}</dd>
-                          </>
-                        )}
-                        {cameraModel && (
-                          <>
-                            <dt>Camera model:</dt>
-                            <dd>{cameraModel}</dd>
-                          </>
-                        )}
-                        {data.metadata?.exif?.LensModel && (
-                          <>
-                            <dt>Lens model:</dt>
-                            <dd>{data.metadata.exif.LensModel.description}</dd>
-                          </>
-                        )}
-                        {(data.metadata?.exif?.FNumber || data.metadata?.exif?.ISOSpeedRatings) && (
-                          <div className="d-flex">
-                            {data.metadata?.exif?.FNumber && (
-                              <div className="flex-fill">
-                                <dt>F-stop:</dt>
-                                <dd>{data.metadata.exif.FNumber.description}</dd>
-                              </div>
-                            )}
-                            {data.metadata?.exif?.ISOSpeedRatings && (
-                              <div className="flex-fill">
-                                <dt>ISO:</dt>
-                                <dd>{data.metadata.exif.ISOSpeedRatings.description}</dd>
-                              </div>
-                            )}
-                          </div>
-                        )}
-                        <dd className="mt-3 d-flex gap-2">
+                        <dd className="d-flex gap-2 mb-3">
                           {listUrl !== '/' && (
                             <button onClick={fshandle.enter} className="btn btn-sm btn-outline-secondary">
                               Full Screen
@@ -298,6 +284,36 @@ function Photo({ id, page, sort, nextId, prevId, onDeleted, timerDuration }) {
                             </button>
                           )}
                         </dd>
+                        {user && (
+                          <>
+                            <div className="d-flex">
+                              <div className="flex-fill">
+                                <dt>Avg. rating:</dt>
+                                <dd>
+                                  <OverlayTrigger trigger="click" placement="top" overlay={popover}>
+                                    <button type="button" className="btn btn-sm btn-link p-0">
+                                      <FontAwesomeIcon icon={faStarSolid} /> {data.rating.toFixed(1)}
+                                    </button>
+                                  </OverlayTrigger>
+                                </dd>
+                              </div>
+                              <div className="flex-fill">
+                                <dt>Your rating:</dt>
+                                <dd>
+                                  <PhotoRating onChange={onChangeRating} value={rating?.value} />
+                                </dd>
+                              </div>
+                            </div>
+                          </>
+                        )}
+                        {user && user.id === data.UserId && (
+                          <>
+                            <dt>Public visibility:</dt>
+                            <dd>
+                              <PhotoFeature photo={data} />
+                            </dd>
+                          </>
+                        )}
                       </dl>
                     </div>
                   </div>

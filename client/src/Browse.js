@@ -142,7 +142,11 @@ function Browse() {
                         <div className="square__content" style={{ backgroundImage: `url(${photo.thumbUrl})` }}></div>
                       </Link>
                       <div className="browse__thumbnail-metadata mt-2">
-                        <FontAwesomeIcon icon={faStarSolid} /> {photo.rating.toFixed(1)}
+                        {photo.rating > 0 && (
+                          <>
+                            <FontAwesomeIcon icon={faStarSolid} /> {photo.rating.toFixed(1)}
+                          </>
+                        )}
                       </div>
                       <div className="browse__thumbnail-metadata">
                         {photo.User.firstName} {photo.User.lastName}

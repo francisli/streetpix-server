@@ -238,7 +238,11 @@ function User() {
                             <div className="square__content" style={{ backgroundImage: `url(${photo.thumbUrl})` }}></div>
                           </Link>
                           <div className="user__thumbnail-rating">
-                            <FontAwesomeIcon icon={faStarSolid} /> {photo.rating.toFixed(1)}
+                            {photo.rating > 0 && (
+                              <>
+                                <FontAwesomeIcon icon={faStarSolid} /> {photo.rating.toFixed(1)}
+                              </>
+                            )}
                           </div>
                         </div>
                       </div>
