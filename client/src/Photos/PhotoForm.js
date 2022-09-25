@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Modal from 'react-bootstrap/Modal';
 
 import Api from '../Api';
 import { useAuthContext } from '../AuthContext';
@@ -14,6 +15,7 @@ function PhotoForm({ id, filename, file, meetingId, onCancel, onUpdated, onDelet
   const [isLoading, setLoading] = useState(false);
   const [isCreated, setCreated] = useState(false);
   const [isUpdated, setUpdated] = useState(false);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -59,19 +61,24 @@ function PhotoForm({ id, filename, file, meetingId, onCancel, onUpdated, onDelet
     return false;
   }
 
+  function showConfirmDeleteModal() {
+    setShowConfirmDelete(true);
+  }
+
+  function hideConfirmDeleteModal() {
+    setShowConfirmDelete(false);
+  }
+
   async function onDelete(event) {
-    event.preventDefault();
-    if (window.confirm('Are you sure you wish to delete this photo?')) {
-      try {
-        setLoading(true);
-        await Api.photos.delete(id);
-        if (onDeleted) {
-          onDeleted();
-        }
-      } catch (error) {
-        setLoading(false);
-        console.log(error);
+    try {
+      setLoading(true);
+      await Api.photos.delete(id);
+      if (onDeleted) {
+        onDeleted();
       }
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
     }
   }
 
@@ -141,12 +148,26 @@ function PhotoForm({ id, filename, file, meetingId, onCancel, onUpdated, onDelet
             {isUpdated && <span className="text-success">Photo updated!</span>}
           </div>
           {id && (
-            <button onClick={onDelete} className="btn btn-outline-danger" type="button">
+            <button onClick={showConfirmDeleteModal} className="btn btn-outline-danger" type="button">
               Delete
             </button>
           )}
         </div>
       </fieldset>
+      <Modal centered show={showConfirmDelete} onHide={hideConfirmDeleteModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Are you sure?</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you wish to delete this photo? This cannot be undone.</Modal.Body>
+        <Modal.Footer>
+          <button onClick={hideConfirmDeleteModal} type="button" className="btn btn-outline-secondary">
+            Cancel
+          </button>
+          <button onClick={onDelete} type="button" className="btn btn-outline-danger">
+            Delete
+          </button>
+        </Modal.Footer>
+      </Modal>
     </form>
   );
 }
