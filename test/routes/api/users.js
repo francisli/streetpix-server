@@ -44,7 +44,30 @@ describe('/api/users', () => {
           id: 2,
           firstName: 'Regular',
           lastName: 'User',
-          username: 'regular',
+          username: 'regular123',
+          email: 'regular.user@test.com',
+          phone: null,
+          isAdmin: false,
+          isPublic: false,
+          picture: null,
+          pictureUrl: null,
+          bio: null,
+          license: 'allrightsreserved',
+          acquireLicensePage: null,
+          website: null,
+          createdAt: response.body.createdAt,
+        });
+      });
+
+      it('returns a User by its username', async () => {
+        /// request user list
+        const response = await testSession.get('/api/users/regular123').set('Accept', 'application/json').expect(HttpStatus.OK);
+
+        assert.deepStrictEqual(response.body, {
+          id: 2,
+          firstName: 'Regular',
+          lastName: 'User',
+          username: 'regular123',
           email: 'regular.user@test.com',
           phone: null,
           isAdmin: false,

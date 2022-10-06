@@ -40,7 +40,7 @@ router.get('/', async (req, res) => {
   }
   if (req.query.userId && req.query.userId !== '') {
     options.where = options.where || {};
-    if (req.query.userId.match(/[0-9]+/)) {
+    if (req.query.userId.match(/^[0-9]+$/)) {
       options.where.UserId = req.query.userId;
     } else {
       options.where['$User.username$'] = req.query.userId;

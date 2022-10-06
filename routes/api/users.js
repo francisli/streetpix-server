@@ -37,7 +37,7 @@ router.get('/me', (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     let user;
-    if (req.params.id.match(/[0-9]+/)) {
+    if (req.params.id.match(/^[0-9]+$/)) {
       user = await models.User.findByPk(req.params.id);
     } else {
       user = await models.User.findOne({ where: { username: req.params.id } });

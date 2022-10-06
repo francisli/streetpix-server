@@ -50,7 +50,7 @@ describe('/api/photos', () => {
 
       it('returns all public photos for a user by username', async () => {
         /// request photos
-        const response = await testSession.get('/api/photos?userId=admin').set('Accept', 'application/json').expect(HttpStatus.OK);
+        const response = await testSession.get('/api/photos?userId=admin1').set('Accept', 'application/json').expect(HttpStatus.OK);
         assert.deepStrictEqual(response.body?.length, 1);
 
         const docs = response.body;
@@ -102,7 +102,7 @@ describe('/api/photos', () => {
 
       it('returns all photos for a user by username', async () => {
         /// request photos
-        const response = await testSession.get('/api/photos?userId=admin').set('Accept', 'application/json').expect(HttpStatus.OK);
+        const response = await testSession.get('/api/photos?userId=admin1').set('Accept', 'application/json').expect(HttpStatus.OK);
         assert.deepStrictEqual(response.body?.length, 2);
 
         const docs = response.body;
