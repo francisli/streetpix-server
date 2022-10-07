@@ -257,6 +257,12 @@ function Photo({ id, page, sort, nextId, prevId, onDeleted, timerDuration }) {
                                       <dd>{data.metadata.exif.FNumber.description}</dd>
                                     </div>
                                   )}
+                                  {data.metadata?.exif?.ShutterSpeedValue && (
+                                    <div className="flex-fill">
+                                      <dt>Shutter:</dt>
+                                      <dd>{data.metadata.exif.ShutterSpeedValue.description}</dd>
+                                    </div>
+                                  )}
                                   {data.metadata?.exif?.ISOSpeedRatings && (
                                     <div className="flex-fill">
                                       <dt>ISO:</dt>
