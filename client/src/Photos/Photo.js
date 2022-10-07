@@ -42,7 +42,7 @@ function Photo({ id, page, sort, nextId, prevId, onDeleted, timerDuration }) {
         let { seconds } = DateTime.now().diff(startTime, ['seconds']);
         seconds = Math.max(0, seconds);
         let prefix = '';
-        seconds = timerDuration * 60 - seconds;
+        seconds = timerDuration - seconds;
         if (seconds < 0) {
           seconds = -seconds;
           prefix = '-';

@@ -89,11 +89,11 @@ function Meeting() {
 
   let photoDuration;
   if (startTime && endTime) {
-    let { minutes } = endTime.diff(startTime, 'minutes');
-    photoDuration = Math.floor(minutes / photoCount);
+    let { seconds } = endTime.diff(startTime, 'seconds');
+    photoDuration = Math.floor(seconds / photoCount);
     if (photoId && currentCount > 0) {
-      ({ minutes } = endTime.diff(DateTime.now(), 'minutes'));
-      photoDuration = Math.min(photoDuration, Math.floor(minutes / (photoCount - currentCount)));
+      ({ seconds } = endTime.diff(DateTime.now(), 'seconds'));
+      photoDuration = Math.min(photoDuration, Math.floor(seconds / (photoCount - currentCount)));
     }
   }
 
@@ -177,7 +177,10 @@ function Meeting() {
                           min={startTime.toLocaleString(DateTime.TIME_24_SIMPLE)}
                           value={endTime.toLocaleString(DateTime.TIME_24_SIMPLE)}
                         />
-                        <span className="col-form-label text-muted text-nowrap me-2">({photoDuration} min/ph)</span>
+                        <span className="col-form-label text-muted text-nowrap me-2">
+                          {photoDuration >= 60 && <>({Math.floor(photoDuration / 60)} min/ph)</>}
+                          {photoDuration < 60 && <>({photoDuration} sec/ph)</>}
+                        </span>
                         <button onClick={() => setEndTime()} className="btn btn-sm btn-outline-primary">
                           Cancel
                         </button>
