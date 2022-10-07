@@ -39,6 +39,14 @@ function PhotoRating({ onChange, value }) {
       <span onMouseEnter={() => onMouseEnter(3)} onMouseLeave={onMouseLeave} onClick={onClick}>
         <FontAwesomeIcon icon={(newValue ?? value ?? 0) >= 3 ? faStarSolid : faStar} />
       </span>
+      &nbsp;
+      <span onMouseEnter={() => onMouseEnter(4)} onMouseLeave={onMouseLeave} onClick={onClick}>
+        <FontAwesomeIcon icon={(newValue ?? value ?? 0) >= 4 ? faStarSolid : faStar} />
+      </span>
+      &nbsp;
+      <span onMouseEnter={() => onMouseEnter(5)} onMouseLeave={onMouseLeave} onClick={onClick}>
+        <FontAwesomeIcon icon={(newValue ?? value ?? 0) >= 5 ? faStarSolid : faStar} />
+      </span>
     </span>
   );
 }

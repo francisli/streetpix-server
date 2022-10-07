@@ -115,11 +115,11 @@ function Photo({ id, page, sort, nextId, prevId, onDeleted, timerDuration }) {
     }
   }
 
-  const ratings = [0, 0, 0];
+  const ratings = [0, 0, 0, 0, 0];
   let rating;
   if (data) {
     data.Ratings.forEach((r) => {
-      ratings[3 - r.value] += r.UserId !== data.UserId ? 1 : 0;
+      ratings[5 - r.value] += r.UserId !== data.UserId ? 1 : 0;
       if (r.UserId === user?.id) {
         rating = r;
       }
@@ -137,7 +137,7 @@ function Photo({ id, page, sort, nextId, prevId, onDeleted, timerDuration }) {
               <tr key={index}>
                 <td>{r}</td>
                 <td className="text-nowrap">
-                  {[...Array(3 - index)].map((_, i) => (
+                  {[...Array(5 - index)].map((_, i) => (
                     <FontAwesomeIcon key={`${index}-${i}`} icon={faStarSolid} />
                   ))}
                 </td>
