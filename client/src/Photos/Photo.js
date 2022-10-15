@@ -27,6 +27,7 @@ function Photo({ id, page, sort, nextId, prevId, onDeleted, timerDuration }) {
   const ref = useRef();
 
   const [data, setData] = useState(null);
+  const [isLoading, setLoading] = useState(true);
   const [isEditing, setEditing] = useState(false);
   const [countdown, setCountdown] = useState();
 
@@ -34,8 +35,9 @@ function Photo({ id, page, sort, nextId, prevId, onDeleted, timerDuration }) {
   const listUrl = `${baseUrl}${!page || page === 1 ? '' : `?page=${page}`}${!sort || sort === 'createdAt' ? '' : `?sort=${sort}`}`;
 
   useEffect(() => {
+    setLoading(true);
     Api.photos.get(id).then((response) => setData(response.data));
-    ref.current?.focus();
+    setTimeout(() => ref.current?.focus(), 0);
     if (timerDuration) {
       const startTime = DateTime.now().plus({ seconds: 2 });
       const interval = setInterval(() => {
@@ -54,6 +56,10 @@ function Photo({ id, page, sort, nextId, prevId, onDeleted, timerDuration }) {
       setCountdown();
     }
   }, [id, timerDuration]);
+
+  function onLoad() {
+    setLoading(false);
+  }
 
   function onEdit() {
     setEditing(true);
@@ -164,11 +170,11 @@ function Photo({ id, page, sort, nextId, prevId, onDeleted, timerDuration }) {
       {data && (
         <>
           <div className="mb-4">
-            <FullScreen handle={fshandle}>
-              {!fshandle.active && <img src={data.largeUrl} alt={data.caption} className="photo__image" />}
+            <FullScreen className="photo__fullscreen" handle={fshandle}>
+              {!fshandle.active && <img src={data.largeUrl} alt={data.caption} onLoad={onLoad} className="photo__image" />}
               {fshandle.active && (
                 <>
-                  <InteractivePhoto id={data.id} alt={data.caption} url={data.largeUrl} onKeyDown={onKeyDown} />
+                  <InteractivePhoto id={data.id} alt={data.caption} url={data.largeUrl} onKeyDown={onKeyDown} onLoad={onLoad} />
                   {countdown && (
                     <div className={classNames('photo__countdown', { 'photo__countdown--expired': countdown.startsWith('-') })}>
                       {countdown}
@@ -176,6 +182,9 @@ function Photo({ id, page, sort, nextId, prevId, onDeleted, timerDuration }) {
                   )}
                 </>
               )}
+              <div className={classNames('photo__loader', { 'd-none': !isLoading })}>
+                <h1>Loading...</h1>
+              </div>
             </FullScreen>
           </div>
           <div className="row justify-content-center">

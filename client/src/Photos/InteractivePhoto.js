@@ -5,7 +5,7 @@ import { useAuthContext } from '../AuthContext';
 
 import './InteractivePhoto.scss';
 
-function InteractivePhoto({ id, alt, url, onKeyDown }) {
+function InteractivePhoto({ id, alt, url, onKeyDown, onLoad }) {
   const { user } = useAuthContext();
   const ref = useRef();
   const imgRef = useRef();
@@ -139,7 +139,10 @@ function InteractivePhoto({ id, alt, url, onKeyDown }) {
       style.top = Math.floor((ref.current.offsetHeight - style.height) / 2);
       setImageStyle(style);
     }
-  }, []);
+    if (onLoad) {
+      onLoad();
+    }
+  }, [onLoad]);
 
   useEffect(() => {
     function resizeHandler(event) {
@@ -150,6 +153,10 @@ function InteractivePhoto({ id, alt, url, onKeyDown }) {
       window.removeEventListener('resize', resizeHandler);
     };
   }, [calculateImageRect]);
+
+  useEffect(() => {
+    setTimeout(() => ref.current?.focus(), 0);
+  }, []);
 
   let crop;
   if (cropStart && imageStyle) {

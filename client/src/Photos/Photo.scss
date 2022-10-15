@@ -5,6 +5,25 @@
   }
 }
 
+.photo__fullscreen {
+  position: relative;
+}
+
+.photo__loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  h1 {
+    position: relative;
+    color: white;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
 .photo__image {
   display: block;
   margin: 0 auto;
