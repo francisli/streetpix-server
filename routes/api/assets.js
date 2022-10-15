@@ -61,7 +61,8 @@ router.get('/:path([^?]+)', async (req, res) => {
     assetPath = path.join(process.env.ASSET_PATH_PREFIX, assetPath);
   }
   if (process.env.AWS_S3_BUCKET) {
-    const url = await s3.getSignedAssetUrl(assetPath);
+    const url = await s3.getSignedAssetUrl(assetPath, 900);
+    res.set('Cache-Control', 'public, max-age=845');
     res.redirect(url);
   } else {
     res.redirect(`/assets/${assetPath}`);
