@@ -8,6 +8,24 @@
   background-repeat: no-repeat;
 }
 
+.interactive-photo__panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 1rem 0;
+  .btn-outline-primary {
+    border-color: white;
+    color: white;
+    &:hover {
+      background-color: white;
+      color: black;
+    }
+  }
+}
+
 .interactive-photo__image {
   position: absolute;
   display: block;

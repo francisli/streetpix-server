@@ -1,15 +1,20 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import useWebSocket from 'react-use-websocket';
+import classNames from 'classnames';
 
 import { useAuthContext } from '../AuthContext';
 
 import './InteractivePhoto.scss';
+import PhotoPanel from './PhotoPanel';
 
-function InteractivePhoto({ id, alt, url, onKeyDown, onLoad }) {
+function InteractivePhoto({ prevId, listUrl, nextId, onChangeRating, onKeyDown, onLoad, data }) {
   const { user } = useAuthContext();
   const ref = useRef();
   const imgRef = useRef();
   const [imageStyle, setImageStyle] = useState();
+  const [isPanelShowing, setPanelShowing] = useState(false);
+
+  const { id, caption: alt, largeUrl: url } = data;
 
   const socketUrl = `${window.location.origin.replace(/^http/, 'ws')}/photo?id=${id}`;
   const { lastJsonMessage, sendJsonMessage } = useWebSocket(socketUrl, { shouldReconnect: () => true });
@@ -67,6 +72,9 @@ function InteractivePhoto({ id, alt, url, onKeyDown, onLoad }) {
   }
 
   function onMouseMove(event) {
+    if (!cropStart && !isPanelShowing && event.clientY >= event.target.offsetHeight - 10) {
+      setPanelShowing(true);
+    }
     if (!user) {
       return;
     }
@@ -80,6 +88,13 @@ function InteractivePhoto({ id, alt, url, onKeyDown, onLoad }) {
     }
   }
 
+  function onPanelLeave(event) {
+    if (event.clientY <= ref.current.offsetHeight - event.target.offsetHeight + 10) {
+      console.log('!!!', event);
+      setPanelShowing(false);
+    }
+  }
+
   function onKeyDownInternal(event) {
     if (cropStart) {
       setCropStart();
@@ -90,7 +105,7 @@ function InteractivePhoto({ id, alt, url, onKeyDown, onLoad }) {
   }
 
   function onMouseDown(event) {
-    if (!user) {
+    if (!user || isPanelShowing) {
       return;
     }
     const { dx, dy } = normalizeMouseLocation(event);
@@ -195,6 +210,22 @@ function InteractivePhoto({ id, alt, url, onKeyDown, onLoad }) {
         />
       )}
       {crop && <div className="interactive-photo__crop interactive-photo__crop--bottom" style={{ height: crop.bottom }} />}
+      <div onMouseLeave={onPanelLeave} className={classNames('interactive-photo__panel', { 'd-none': !isPanelShowing })}>
+        <div className="container">
+          <div className="row justify-content-center">
+            <div className="col-xl-8">
+              <PhotoPanel
+                isFullScreen={true}
+                prevId={prevId}
+                listUrl={listUrl}
+                nextId={nextId}
+                data={data}
+                onChangeRating={onChangeRating}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
