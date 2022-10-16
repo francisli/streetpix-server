@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useCookies } from 'react-cookie';
 import { Link, useParams } from 'react-router-dom';
 import { LinkItUrl } from 'react-linkify-it';
 import { DateTime } from 'luxon';
@@ -16,9 +17,31 @@ function Meeting() {
   const { user } = useAuthContext();
   const { meetingId } = useParams();
   const [meeting, setMeeting] = useState();
-  const [sort, setSort] = useState('random');
-  const [startTime, setStartTime] = useState();
-  const [endTime, setEndTime] = useState();
+  const [cookies, setCookie, removeCookie] = useCookies(['sort', 'startTime', 'endTime']);
+  const { sort = 'random' } = cookies;
+  function setSort(newSort) {
+    setCookie('sort', newSort);
+  }
+  const startTime = cookies.startTime ? DateTime.fromSeconds(parseInt(cookies.startTime, 10)) : null;
+  function setStartTime(newStartTime) {
+    if (newStartTime) {
+      setCookie('startTime', `${newStartTime.toSeconds()}`);
+    } else {
+      removeCookie('startTime');
+    }
+  }
+  const endTime = cookies.endTime ? DateTime.fromSeconds(parseInt(cookies.endTime, 10)) : null;
+  function setEndTime(newEndTime) {
+    if (newEndTime) {
+      setCookie('endTime', `${newEndTime.toSeconds()}`);
+    } else {
+      removeCookie('endTime');
+    }
+  }
+  // check if timer is from another day, if so, clear
+  if (endTime && endTime.toLocaleString(DateTime.DATE_SHORT) !== DateTime.now().toLocaleString(DateTime.DATE_SHORT)) {
+    setEndTime();
+  }
 
   const { photoId } = useParams();
 
