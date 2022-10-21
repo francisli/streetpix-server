@@ -27,7 +27,7 @@ function Meeting() {
     if (newStartTime) {
       setCookie('startTime', `${newStartTime.toSeconds()}`);
     } else {
-      removeCookie('startTime');
+      setCookie('startTime', '');
     }
   }
   const endTime = cookies.endTime ? DateTime.fromSeconds(parseInt(cookies.endTime, 10)) : null;
@@ -35,7 +35,7 @@ function Meeting() {
     if (newEndTime) {
       setCookie('endTime', `${newEndTime.toSeconds()}`);
     } else {
-      removeCookie('endTime');
+      setCookie('endTime', '');
     }
   }
   // check if timer is from another day, if so, clear
