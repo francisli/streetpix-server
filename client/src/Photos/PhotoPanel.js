@@ -64,7 +64,7 @@ function PhotoPanel({ isFullScreen, prevId, listUrl, nextId, data, onChangeRatin
     <>
       {!isFullScreen && (
         <div className="row mb-3">
-          <div className="col-4">
+          <div className="col-4 text-end">
             {prevId && (
               <Link to={prevId} className="btn btn-link p-0 text-secondary">
                 &lArr; Prev
@@ -78,7 +78,7 @@ function PhotoPanel({ isFullScreen, prevId, listUrl, nextId, data, onChangeRatin
               </Link>
             )}
           </div>
-          <div className="col-4 text-end">
+          <div className="col-4">
             {nextId && (
               <Link to={nextId} className="btn btn-link p-0 text-secondary">
                 Next &rArr;
@@ -229,7 +229,7 @@ function PhotoPanel({ isFullScreen, prevId, listUrl, nextId, data, onChangeRatin
       </div>
       {isFullScreen && (
         <div className="row mb-3">
-          <div className="col-4">
+          <div className="col-4 text-end">
             {prevId && (
               <Link to={prevId} className="btn btn-outline-primary">
                 &lArr; Prev
@@ -243,7 +243,7 @@ function PhotoPanel({ isFullScreen, prevId, listUrl, nextId, data, onChangeRatin
               </Link>
             )}
           </div>
-          <div className="col-4 text-end">
+          <div className="col-4">
             {nextId && (
               <Link to={nextId} className="btn btn-outline-primary">
                 Next &rArr;
