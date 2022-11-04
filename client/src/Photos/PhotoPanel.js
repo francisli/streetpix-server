@@ -139,21 +139,27 @@ function PhotoPanel({ isFullScreen, prevId, listUrl, nextId, data, onChangeRatin
                     </>
                   )}
                   {(data.metadata?.exif?.FNumber || data.metadata?.exif?.ISOSpeedRatings) && (
-                    <div className="d-flex">
+                    <div className="d-flex justify-content-between">
+                      {data.metadata?.exif?.FocalLength && (
+                        <div>
+                          <dt>Focal len:</dt>
+                          <dd>{data.metadata.exif.FocalLength.description}</dd>
+                        </div>
+                      )}
                       {data.metadata?.exif?.FNumber && (
-                        <div className="flex-fill">
+                        <div>
                           <dt>F-stop:</dt>
                           <dd>{data.metadata.exif.FNumber.description}</dd>
                         </div>
                       )}
                       {data.metadata?.exif?.ShutterSpeedValue && (
-                        <div className="flex-fill">
+                        <div>
                           <dt>Shutter:</dt>
                           <dd>{data.metadata.exif.ShutterSpeedValue.description}</dd>
                         </div>
                       )}
                       {data.metadata?.exif?.ISOSpeedRatings && (
-                        <div className="flex-fill">
+                        <div>
                           <dt>ISO:</dt>
                           <dd>{data.metadata.exif.ISOSpeedRatings.description}</dd>
                         </div>

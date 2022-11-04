@@ -139,7 +139,7 @@ function Photo({ id, page, sort, nextId, prevId, onDeleted, timerDuration }) {
                   )}
                 </>
               )}
-              <div className={classNames('photo__loader', { 'd-none': !isLoading })}>
+              <div className={classNames('photo__loader', { 'd-none': !isLoading, 'photo__loader--fullscreen': fshandle.active })}>
                 <h1>Loading...</h1>
               </div>
             </FullScreen>
