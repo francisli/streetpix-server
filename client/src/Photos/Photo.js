@@ -78,7 +78,9 @@ function Photo({ id, page, sort, nextId, prevId, onDeleted, timerDuration }) {
     }
     // locally recalculate average
     const ratings = newData.Ratings.filter((r) => r.UserId !== data.UserId);
-    newData.rating = ratings.reduce((sum, rating) => sum + rating.value, 0) / ratings.length;
+    if (ratings.length > 0) {
+      newData.rating = ratings.reduce((sum, rating) => sum + rating.value, 0) / ratings.length;
+    }
     setData(newData);
     Api.photos.rate(id, newValue);
   }

@@ -22,5 +22,13 @@
       "PhotoId": "d0cb02d1-e95f-4d05-8b90-f2db36357e83",
       "position": 1
     }
+  },
+  {
+    "model": "MeetingSubmission",
+    "data": {
+      "MeetingId": "4a8b1331-8d68-470b-bfc9-265c2cc8f039",
+      "PhotoId": "719a0396-782e-4edc-934c-72a23689f89f",
+      "position": 1
+    }
   }
 ]

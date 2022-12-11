@@ -1,6 +1,7 @@
 const express = require('express');
 const HttpStatus = require('http-status-codes');
 const _ = require('lodash');
+const { Op } = require('sequelize');
 
 const models = require('../../models');
 const interceptors = require('../interceptors');
@@ -12,43 +13,66 @@ router.get('/', async (req, res) => {
   const options = {
     page: req.query.page || '1',
     paginate: 12,
-    include: models.User,
+    include: [{ model: models.User }],
+    where: {},
     order: [
       ['createdAt', 'DESC'],
       ['filename', 'ASC'],
     ],
   };
-  if (req.user && req.query.sort) {
+  if (!req.user || req.query.year) {
+    options.include.push({ model: models.Feature, required: true });
+    if (req.query.year && req.query.year !== '') {
+      options.where['$Feature.year$'] = req.query.year;
+      options.order.unshift([models.Feature, 'position', 'ASC']);
+    }
+  } else if (req.user && req.query.sort) {
     switch (req.query.sort) {
+      case 'meeting':
+        options.include.push({ model: models.MeetingSubmission, include: models.Meeting });
+        options.order = [
+          [models.MeetingSubmission, models.Meeting, 'startsAt', 'DESC'],
+          [models.MeetingSubmission, 'createdAt', 'DESC'],
+        ];
+        break;
       case 'takenAt':
         options.order[0] = ['takenAt', 'DESC'];
+        options.where.takenAt = {
+          [Op.ne]: null,
+        };
         break;
       case 'rating':
         options.order[0] = ['rating', 'DESC'];
+        options.where.rating = {
+          [Op.gt]: 0,
+        };
+        break;
+      case 'myRating':
+        options.include.push({ model: models.Rating, where: { UserId: req.user.id } });
+        options.order.unshift([models.Rating, 'value', 'DESC']);
         break;
       default:
         break;
     }
   }
-  if (!req.user || req.query.year) {
-    options.include = [models.User, { model: models.Feature, required: true }];
-    if (req.query.year && req.query.year !== '') {
-      options.where = options.where || {};
-      options.where['$Feature.year$'] = req.query.year;
-      options.order.unshift([models.Feature, 'position', 'ASC']);
-    }
-  }
   if (req.query.userId && req.query.userId !== '') {
-    options.where = options.where || {};
     if (req.query.userId.match(/^[0-9]+$/)) {
-      options.where.UserId = req.query.userId;
+      options.include[0].where = { id: req.query.userId };
     } else {
-      options.where['$User.username$'] = req.query.userId;
+      options.include[0].where = { username: req.query.userId };
     }
   }
   const { records, pages, total } = await models.Photo.paginate(options);
   helpers.setPaginationHeaders(req, res, options.page, pages, total);
-  res.json(records.map((record) => record.toJSON()));
+  res.json(
+    records.map((record) => {
+      const json = record.toJSON();
+      if (req.user) {
+        json.rating = record.rating;
+      }
+      return json;
+    })
+  );
 });
 
 router.post('/', interceptors.requireLogin, async (req, res) => {

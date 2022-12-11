@@ -63,6 +63,9 @@ module.exports = (sequelize, DataTypes) => {
         return null;
       }
       const tags = await ExifReader.load(filePath, { expanded: true });
+      const attributes = {
+        metadata: _.pick(tags, ['file', 'gps', 'exif', 'iptc', 'icc']),
+      };
       // extract original photo date
       let takenAt = null;
       const dateTimeDigitized = tags?.exif?.DateTimeDigitized?.value?.[0];
@@ -70,13 +73,10 @@ module.exports = (sequelize, DataTypes) => {
       if (dateTimeDigitized && offsetTimeDigitized) {
         takenAt = DateTime.fromFormat(`${dateTimeDigitized}${offsetTimeDigitized ?? ''}`, 'yyyy:MM:dd HH:mm:ssZZ');
       }
-      return this.update(
-        {
-          takenAt,
-          metadata: _.pick(tags, ['file', 'gps', 'exif', 'iptc', 'icc']),
-        },
-        { transaction }
-      );
+      if (takenAt) {
+        attributes.takenAt = takenAt;
+      }
+      return this.update(attributes, { transaction });
     }
 
     async updateRating(options = {}) {
@@ -122,6 +122,13 @@ module.exports = (sequelize, DataTypes) => {
       }
       if (this.Feature) {
         json.Feature = this.Feature.toJSON();
+      }
+      if (this.MeetingSubmission && this.MeetingSubmission.Meeting) {
+        json.MeetingSubmission = {
+          Meeting: {
+            startsAt: this.MeetingSubmission.Meeting.startsAt,
+          },
+        };
       }
       if (this.Ratings) {
         json.Ratings = this.Ratings.map((r) => r.toJSON());

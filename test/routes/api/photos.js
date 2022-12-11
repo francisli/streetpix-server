@@ -18,7 +18,7 @@ describe('/api/photos', () => {
       ['512x512.png', 'd0cb02d1-e95f-4d05-8b90-f2db36357e83.jpg'],
       ['512x512.png', '719a0396-782e-4edc-934c-72a23689f89f.jpg'],
     ]);
-    await helper.loadFixtures(['users', 'photos', 'features']);
+    await helper.loadFixtures(['users', 'photos', 'features', 'ratings', 'meetingTemplates', 'meetings', 'meetingSubmissions']);
     testSession = session(app);
   });
 
@@ -88,6 +88,47 @@ describe('/api/photos', () => {
         assert.deepStrictEqual(docs[1].caption, 'Test photo 3');
         assert.deepStrictEqual(docs[2].caption, 'Test photo 2');
         assert.deepStrictEqual(docs[3].caption, 'Test photo 1');
+      });
+
+      it('returns all photos sorted by meeting date', async () => {
+        /// request photos
+        const response = await testSession.get('/api/photos?sort=meeting').set('Accept', 'application/json').expect(HttpStatus.OK);
+        assert.deepStrictEqual(response.body?.length, 4);
+
+        const docs = response.body;
+        assert.deepStrictEqual(docs[0].caption, 'Test photo 3');
+        assert.deepStrictEqual(docs[1].caption, 'Test photo 2');
+        assert.deepStrictEqual(docs[2].caption, 'Test photo 4');
+        assert.deepStrictEqual(docs[3].caption, 'Test photo 1');
+      });
+
+      it('returns photos with takenAt, sorted by takenAt', async () => {
+        /// request photos
+        const response = await testSession.get('/api/photos?sort=takenAt').set('Accept', 'application/json').expect(HttpStatus.OK);
+        assert.deepStrictEqual(response.body?.length, 2);
+
+        const docs = response.body;
+        assert.deepStrictEqual(docs[0].caption, 'Test photo 3');
+        assert.deepStrictEqual(docs[1].caption, 'Test photo 2');
+      });
+
+      it('returns photos with rating, sorted by rating', async () => {
+        /// request photos
+        const response = await testSession.get('/api/photos?sort=rating').set('Accept', 'application/json').expect(HttpStatus.OK);
+        assert.deepStrictEqual(response.body?.length, 2);
+
+        const docs = response.body;
+        assert.deepStrictEqual(docs[0].caption, 'Test photo 4');
+        assert.deepStrictEqual(docs[1].caption, 'Test photo 1');
+      });
+
+      it('returns photos user has rated, sorted by rating', async () => {
+        /// request photos
+        const response = await testSession.get('/api/photos?sort=myRating').set('Accept', 'application/json').expect(HttpStatus.OK);
+        assert.deepStrictEqual(response.body?.length, 1);
+
+        const docs = response.body;
+        assert.deepStrictEqual(docs[0].caption, 'Test photo 1');
       });
 
       it('returns all photos for a user', async () => {

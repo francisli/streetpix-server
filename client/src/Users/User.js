@@ -1,15 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ReactSortable } from 'react-sortablejs';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar as faStarSolid } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames';
 import { DateTime } from 'luxon';
 
 import { useAuthContext } from '../AuthContext';
 import Api from '../Api';
-import Pagination from '../Components/Pagination';
 import Photo from '../Photos/Photo';
+import Photos from '../Photos/Photos';
 
 import './User.scss';
 import UserPhoto from './UserPhoto';
@@ -46,7 +44,7 @@ function User() {
       if (newPage !== page) {
         setPage(newPage);
       }
-      const newSort = params.get('sort') ?? 'createdAt';
+      const newSort = params.get('sort') ?? 'meeting';
       if (newSort !== sort) {
         setSort(newSort);
       }
@@ -119,7 +117,7 @@ function User() {
   }, [userId, year, sort, validPhotoId, photos, page, lastPage]);
 
   function onSort(event) {
-    navigate(`?page=${page}&sort=${event.target.value}`);
+    navigate(`?sort=${event.target.value}`);
   }
 
   function onDeleted(id) {
@@ -214,45 +212,7 @@ function User() {
               </ul>
             </nav>
           )}
-          {year === 'all' && (
-            <>
-              <div className="row">
-                <div className="col-lg-3 col-xl-2">
-                  <dl className="user__options">
-                    <dt>Sort</dt>
-                    <dd>
-                      <select className="form-select" onChange={onSort} value={sort}>
-                        <option value="createdAt">Upload date</option>
-                        <option value="takenAt">Capture date</option>
-                        <option value="rating">Avg. rating</option>
-                      </select>
-                    </dd>
-                  </dl>
-                </div>
-                <div className="offset-lg-1 col-lg-8 col-xl-9">
-                  <div className="row">
-                    {photos.map((photo) => (
-                      <div key={photo.id} className="thumbnail col-md-6 col-xl-4">
-                        <div className="thumbnail__content">
-                          <Link to={photo.id} onClick={(event) => onClick(event, photo.id)} className="square">
-                            <div className="square__content" style={{ backgroundImage: `url(${photo.thumbUrl})` }}></div>
-                          </Link>
-                          <div className="user__thumbnail-rating">
-                            {photo.rating > 0 && (
-                              <>
-                                <FontAwesomeIcon icon={faStarSolid} /> {photo.rating.toFixed(1)}
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              {lastPage && <Pagination page={page} lastPage={lastPage} otherParams={{ sort }} />}
-            </>
-          )}
+          {year === 'all' && <Photos lastPage={lastPage} page={page} photos={photos} sort={sort} onSort={onSort} />}
           {year !== 'all' && (
             <ReactSortable
               onStart={onReorderStart}

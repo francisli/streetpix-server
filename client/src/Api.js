@@ -120,6 +120,8 @@ const Api = {
       const params = { userId, page, sort };
       if (year && year !== 'all') {
         params.year = year;
+        delete params.page;
+        delete params.sort;
       }
       return instance.get('/api/photos', { params });
     },

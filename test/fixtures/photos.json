@@ -9,7 +9,8 @@
       "description": "This is a description of Test photo 1",
       "metadata": null,
       "license": null,
-      "acquireLicensePage": null
+      "acquireLicensePage": null,
+      "rating": 4
     }
   },
   {
@@ -22,7 +23,8 @@
       "description": "This is a description of Test photo 2",
       "metadata": null,
       "license": null,
-      "acquireLicensePage": null
+      "acquireLicensePage": null,
+      "takenAt": "2022-02-09T19:00:00"
     }
   },
   {
@@ -35,7 +37,8 @@
       "description": "This is a description of Test photo 3",
       "metadata": null,
       "license": null,
-      "acquireLicensePage": null
+      "acquireLicensePage": null,
+      "takenAt": "2022-02-10T19:00:00"
     }
   },
   {
@@ -48,7 +51,8 @@
       "description": "This is a description of Test photo 4",
       "metadata": null,
       "license": null,
-      "acquireLicensePage": null
+      "acquireLicensePage": null,
+      "rating": 5
     }
   }
 ]

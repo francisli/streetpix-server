@@ -1,15 +1,5 @@
 @import '../common';
 
-.user__options {
-  padding-top: 48px;
-}
-
-.user__thumbnail-rating {
-  margin-top: 0.5rem;
-  text-align: center;
-  font-size: smaller;
-}
-
 @include media-breakpoint-up(md) {
   .user__header {
     display: flex;
