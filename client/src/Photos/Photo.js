@@ -9,6 +9,7 @@ import { useAuthContext } from '../AuthContext';
 
 import './Photo.scss';
 import InteractivePhoto from './InteractivePhoto';
+import NotesPanel from './NotesPanel';
 import PhotoForm from './PhotoForm';
 import PhotoPanel from './PhotoPanel';
 
@@ -147,16 +148,19 @@ function Photo({ id, page, sort, nextId, prevId, onDeleted, timerDuration }) {
           <div className="row justify-content-center">
             <div className="col-xl-8">
               {!isEditing && (
-                <PhotoPanel
-                  isFullScreen={false}
-                  prevId={prevId}
-                  listUrl={listUrl}
-                  nextId={nextId}
-                  data={data}
-                  onChangeRating={onChangeRating}
-                  onEdit={onEdit}
-                  onFullScreen={fshandle.enter}
-                />
+                <>
+                  <PhotoPanel
+                    isFullScreen={false}
+                    prevId={prevId}
+                    listUrl={listUrl}
+                    nextId={nextId}
+                    data={data}
+                    onChangeRating={onChangeRating}
+                    onEdit={onEdit}
+                    onFullScreen={fshandle.enter}
+                  />
+                  {user && user.id === data.UserId && <NotesPanel data={data} onUpdated={onUpdated} />}
+                </>
               )}
               {isEditing && <PhotoForm id={id} onCancel={onCancel} onUpdated={onUpdated} onDeleted={onDeletedInternal} />}
             </div>

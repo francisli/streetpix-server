@@ -87,11 +87,21 @@ router.get('/random', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
   try {
-    const doc = await models.Photo.findByPk(req.params.id, {
+    const photo = await models.Photo.findByPk(req.params.id, {
       include: [models.Feature, models.Rating, models.User],
     });
-    if (doc) {
-      res.json(doc.toJSON());
+    if (photo) {
+      const json = photo.toJSON();
+      if (req.user) {
+        json.rating = photo.rating;
+        json.metadata = photo.metadata;
+        if (req.user.id === photo.UserId) {
+          json.notes = photo.notes;
+        }
+      } else {
+        json.Ratings = [];
+      }
+      res.json(json);
     } else {
       res.status(HttpStatus.NOT_FOUND).end();
     }
@@ -116,7 +126,7 @@ router.patch('/:id', interceptors.requireLogin, async (req, res) => {
         res.status(HttpStatus.UNAUTHORIZED).end();
         return;
       }
-      await doc.update(_.pick(req.body, ['caption', 'description', 'license', 'acquireLicensePage']), { transaction });
+      await doc.update(_.pick(req.body, ['caption', 'description', 'notes', 'license', 'acquireLicensePage']), { transaction });
     });
     res.json(doc.toJSON());
   } catch (error) {
