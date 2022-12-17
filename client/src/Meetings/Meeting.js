@@ -155,27 +155,35 @@ function Meeting() {
             <div className="row">
               <div className="col-lg-4 mb-5">
                 <dl>
+                  <dd>
+                    {user.isAdmin && (
+                      <Link to={`/meetings/${meetingId}/edit`} className="btn btn-outline-primary me-3 mb-3">
+                        Edit Meeting
+                      </Link>
+                    )}
+                    {meeting.callLink && (
+                      <a className="btn btn-outline-primary me-3 mb-3" href={meeting.callLink} target="_blank" rel="noreferrer">
+                        Join Call
+                      </a>
+                    )}
+                    <Link to={`/meetings/${meetingId}/upload`} className="btn btn-outline-primary mb-3">
+                      Upload Photos
+                    </Link>
+                  </dd>
                   <dt>Date/Time</dt>
                   <dd>{DateTime.fromISO(meeting.startsAt).toFormat("cccc, LLLL d, yyyy 'at' h:mm a")}</dd>
                   <dt>Topic</dt>
                   <dd className="meeting__topic">
                     <LinkItUrl>{meeting.topic}</LinkItUrl>
                   </dd>
-                  <dt>Call Details</dt>
-                  <dd>
-                    <div className="mb-3">{meeting.callDetails}</div>
-                    {user.isAdmin && (
-                      <Link to={`/meetings/${meetingId}/edit`} className="btn btn-outline-primary me-3 mb-3">
-                        Edit Meeting
-                      </Link>
-                    )}
-                    <a className="btn btn-outline-primary me-3 mb-3" href={meeting.callLink} target="_blank" rel="noreferrer">
-                      Join Call
-                    </a>
-                    <Link to={`/meetings/${meetingId}/upload`} className="btn btn-outline-primary mb-3">
-                      Upload Photos
-                    </Link>
-                  </dd>
+                  {meeting.callDetails && (
+                    <>
+                      <dt>Call details</dt>
+                      <dd className="meeting__call-details">
+                        <LinkItUrl>{meeting.callDetails}</LinkItUrl>
+                      </dd>
+                    </>
+                  )}
                 </dl>
               </div>
               <div className="col-lg-8">
