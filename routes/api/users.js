@@ -12,6 +12,9 @@ router.get('/', async (req, res) => {
   const page = req.query.page || 1;
   const options = {
     page,
+    where: {
+      deactivatedAt: null,
+    },
     order: [
       ['lastName', 'ASC'],
       ['firstName', 'ASC'],
@@ -19,7 +22,9 @@ router.get('/', async (req, res) => {
     ],
   };
   if (!req.user) {
-    options.where = { isPublic: true };
+    options.where.isPublic = true;
+  } else if (req.user?.isAdmin && req.query.showAll) {
+    delete options.where.deactivatedAt;
   }
   const { records, pages, total } = await models.User.paginate(options);
   helpers.setPaginationHeaders(req, res, page, pages, total);
@@ -94,6 +99,34 @@ router.patch('/:id', interceptors.requireLogin, (req, res) => {
       }
     }
   });
+});
+
+router.delete('/:id', interceptors.requireAdmin, async (req, res) => {
+  let user;
+  await models.sequelize.transaction(async (transaction) => {
+    try {
+      user = await models.User.findByPk(req.params.id, { transaction });
+      if (!user) {
+        res.status(HttpStatus.NOT_FOUND).end();
+        return;
+      }
+      const { deactivatedAt } = user;
+      await user.update({ deactivatedAt: deactivatedAt ? null : new Date() }, { transaction });
+    } catch (error) {
+      user = null;
+      if (error.name === 'SequelizeValidationError') {
+        res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: error.errors,
+        });
+      } else {
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).end();
+      }
+    }
+  });
+  if (user) {
+    res.status(HttpStatus.OK).end();
+  }
 });
 
 module.exports = router;

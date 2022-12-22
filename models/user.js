@@ -67,6 +67,7 @@ module.exports = (sequelize, DataTypes) => {
         'acquireLicensePage',
         'isPublic',
         'createdAt',
+        'deactivatedAt',
       ]);
     }
 

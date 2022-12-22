@@ -151,14 +151,19 @@ const Api = {
     me() {
       return instance.get('/api/users/me');
     },
-    index() {
-      return instance.get(`/api/users`);
+    index(args) {
+      const { showAll } = args ?? {};
+      const params = { showAll };
+      return instance.get(`/api/users`, { params });
     },
     get(id) {
       return instance.get(`/api/users/${id}`);
     },
     update(id, data) {
       return instance.patch(`/api/users/${id}`, data);
+    },
+    deactivate(id) {
+      return instance.delete(`/api/users/${id}`);
     },
   },
 };

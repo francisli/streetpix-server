@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import Modal from 'react-bootstrap/Modal';
 
 import Api from '../Api';
 import { useAuthContext } from '../AuthContext';
+import Confirm from '../Components/Confirm';
 
 function PhotoForm({ id, filename, file, meetingId, onCancel, onUpdated, onDeleted }) {
   const { user } = useAuthContext();
@@ -154,20 +154,15 @@ function PhotoForm({ id, filename, file, meetingId, onCancel, onUpdated, onDelet
           )}
         </div>
       </fieldset>
-      <Modal centered show={showConfirmDelete} onHide={hideConfirmDeleteModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Are you sure?</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Are you sure you wish to delete this photo? This cannot be undone.</Modal.Body>
-        <Modal.Footer>
-          <button onClick={hideConfirmDeleteModal} type="button" className="btn btn-outline-secondary">
-            Cancel
-          </button>
-          <button onClick={onDelete} type="button" className="btn btn-outline-danger">
-            Delete
-          </button>
-        </Modal.Footer>
-      </Modal>
+      <Confirm
+        isShowing={showConfirmDelete}
+        onHide={hideConfirmDeleteModal}
+        onConfirm={onDelete}
+        title="Are you sure?"
+        cancelLabel="Cancel"
+        dangerLabel="Delete">
+        Are you sure you wish to delete this photo? This cannot be undone.
+      </Confirm>
     </form>
   );
 }

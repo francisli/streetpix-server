@@ -5,6 +5,7 @@ const session = require('supertest-session');
 
 const helper = require('../../helper');
 const app = require('../../../app');
+const models = require('../../../models');
 
 describe('/api/users', () => {
   let testSession;
@@ -56,6 +57,7 @@ describe('/api/users', () => {
           acquireLicensePage: null,
           website: null,
           createdAt: response.body.createdAt,
+          deactivatedAt: null,
         });
       });
 
@@ -79,6 +81,7 @@ describe('/api/users', () => {
           acquireLicensePage: null,
           website: null,
           createdAt: response.body.createdAt,
+          deactivatedAt: null,
         });
       });
     });
@@ -112,6 +115,7 @@ describe('/api/users', () => {
           acquireLicensePage: null,
           website: null,
           createdAt: response.body.createdAt,
+          deactivatedAt: null,
         });
       });
 
@@ -181,6 +185,14 @@ describe('/api/users', () => {
             message: 'Email already registered',
           })
         );
+      });
+    });
+
+    describe('DELETE /:id', () => {
+      it('deactivates a User by its id', async () => {
+        await testSession.delete('/api/users/2').set('Accept', 'application/json').expect(HttpStatus.OK);
+        const user = await models.User.findByPk(2);
+        assert(user.deactivatedAt);
       });
     });
   });

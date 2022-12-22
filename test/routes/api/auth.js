@@ -47,6 +47,7 @@ describe('/api/auth', () => {
         picture: null,
         pictureUrl: null,
         createdAt: response.body.createdAt,
+        deactivatedAt: null,
       });
     });
 

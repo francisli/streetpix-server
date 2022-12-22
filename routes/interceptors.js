@@ -56,7 +56,9 @@ function sendErrorForbidden(req, res) {
 
 function requireLoginInternal(req, res, next, requireAdmin) {
   if (req.user) {
-    if (requireAdmin) {
+    if (req.user.deactivatedAt) {
+      sendErrorForbidden(req, res);
+    } else if (requireAdmin) {
       if (req.user.isAdmin) {
         next();
       } else {

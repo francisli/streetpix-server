@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
   const options = {
     page: req.query.page || '1',
     paginate: 12,
-    include: [{ model: models.User }],
+    include: [{ model: models.User, where: { deactivatedAt: null } }],
     where: {},
     order: [
       ['createdAt', 'DESC'],
@@ -57,9 +57,9 @@ router.get('/', async (req, res) => {
   }
   if (req.query.userId && req.query.userId !== '') {
     if (req.query.userId.match(/^[0-9]+$/)) {
-      options.include[0].where = { id: req.query.userId };
+      options.include[0].where.id = req.query.userId;
     } else {
-      options.include[0].where = { username: req.query.userId };
+      options.include[0].where.username = req.query.userId;
     }
   }
   const { records, pages, total } = await models.Photo.paginate(options);
