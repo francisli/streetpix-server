@@ -11,26 +11,29 @@ const router = express.Router();
 
 router.get('/', interceptors.requireLogin, async (req, res) => {
   const options = {
-    include: [
-      {
-        model: models.MeetingSubmission,
-        include: [
-          {
-            model: models.Photo,
-            required: false,
-            where: {
-              UserId: req.user.id,
-            },
-          },
-        ],
-      },
-    ],
     page: req.query.page || '1',
     order: [['startsAt', 'DESC']],
   };
   const { records, pages, total } = await models.Meeting.paginate(options);
   helpers.setPaginationHeaders(req, res, options.page, pages, total);
-  res.json(records.map((record) => record.toJSON()));
+  res.json(
+    await Promise.all(
+      records.map(async (record) => {
+        const data = record.toJSON();
+        data.MeetingSubmissions = (
+          await record.getMeetingSubmissions({
+            include: {
+              model: models.Photo,
+              where: {
+                UserId: req.user.id,
+              },
+            },
+          })
+        ).map((ms) => ms.toJSON());
+        return data;
+      })
+    )
+  );
 });
 
 router.post('/', interceptors.requireAdmin, async (req, res) => {
