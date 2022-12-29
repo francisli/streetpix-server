@@ -83,7 +83,8 @@ function Meetings() {
           <thead>
             <tr>
               <th className="w-20">Date/Time</th>
-              <th className="">Topic</th>
+              <th className="w-30">Topic</th>
+              <th>My Uploads</th>
             </tr>
           </thead>
           <tbody>
@@ -91,7 +92,15 @@ function Meetings() {
               <tr key={meeting.id} onClick={() => navigate(`/meetings/${meeting.id}`)}>
                 <td className="text-nowrap">{DateTime.fromISO(meeting.startsAt).toFormat("ccc, LLL d, yyyy 'at' h:mm a")}</td>
                 <td>{meeting.topic.split('\n')[0].trim()}</td>
-                <td></td>
+                <td className="meetings__previews">
+                  {meeting.MeetingSubmissions.sort((a, b) => a.position - b.position).map((ms) => (
+                    <div key={ms.id} className="meetings__preview">
+                      <div className="square">
+                        <div className="square__content" style={{ backgroundImage: `url(${ms.Photo?.thumbUrl})` }}></div>
+                      </div>
+                    </div>
+                  ))}
+                </td>
               </tr>
             ))}
           </tbody>

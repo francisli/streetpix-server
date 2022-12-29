@@ -11,6 +11,20 @@ const router = express.Router();
 
 router.get('/', interceptors.requireLogin, async (req, res) => {
   const options = {
+    include: [
+      {
+        model: models.MeetingSubmission,
+        include: [
+          {
+            model: models.Photo,
+            required: false,
+            where: {
+              UserId: req.user.id,
+            },
+          },
+        ],
+      },
+    ],
     page: req.query.page || '1',
     order: [['startsAt', 'DESC']],
   };
