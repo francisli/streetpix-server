@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Photo.hasMany(models.Rating);
+      Photo.hasMany(models.Version);
       Photo.hasOne(models.Feature);
       Photo.hasOne(models.MeetingSubmission);
       Photo.belongsTo(models.User);
