@@ -87,6 +87,11 @@ router.patch('/:id', interceptors.requireLogin, (req, res) => {
         fields.push('isAdmin');
       }
       await user.update(_.pick(req.body, fields), { transaction });
+      if (req.user.isAdmin && req.body.createdAt) {
+        user.changed('createdAt', true);
+        user.set('createdAt', req.body.createdAt, { raw: true });
+        await user.save({ silent: true, fields: ['createdAt'] });
+      }
       res.json(user.toJSON());
     } catch (error) {
       if (error.name === 'SequelizeValidationError') {
