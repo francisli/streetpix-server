@@ -28,6 +28,7 @@ function UserForm({ userId }) {
     isPublic: false,
     license: 'allrightsreserved',
     acquireLicensePage: '',
+    createdAt: '',
   });
   const [isUploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
@@ -35,7 +36,13 @@ function UserForm({ userId }) {
 
   useEffect(() => {
     if (userIdOrName) {
-      Api.users.get(userIdOrName).then((response) => setUser(response.data));
+      Api.users.get(userIdOrName).then((response) => {
+        const { data } = response;
+        if (data.createdAt?.includes('.')) {
+          data.createdAt = data.createdAt.substring(0, data.createdAt.indexOf('.'));
+        }
+        setUser(data);
+      });
     }
   }, [userIdOrName]);
 
@@ -301,6 +308,22 @@ function UserForm({ userId }) {
               />
               {error?.errorMessagesHTMLFor?.('acquireLicensePage')}
             </div>
+            {authContext.user.isAdmin && (
+              <div className="mb-3">
+                <label className="form-label" htmlFor="createdAt">
+                  Joined on
+                </label>
+                <input
+                  type="datetime-local"
+                  className={classNames('form-control', { 'is-invalid': error?.errorsFor?.('createdAt') })}
+                  id="createdAt"
+                  name="createdAt"
+                  onChange={onChange}
+                  value={user.createdAt ?? ''}
+                />
+                {error?.errorMessagesHTMLFor?.('createdAt')}
+              </div>
+            )}
             <div className="mb-3 d-grid">
               <button disabled={isUploading} className="btn btn-primary" type="submit">
                 Submit
