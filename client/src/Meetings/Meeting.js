@@ -17,7 +17,7 @@ function Meeting() {
   const { user } = useAuthContext();
   const { meetingId } = useParams();
   const [meeting, setMeeting] = useState();
-  const [cookies, setCookie, removeCookie] = useCookies(['sort', 'startTime', 'endTime']);
+  const [cookies, setCookie] = useCookies(['sort', 'startTime', 'endTime']);
   const { sort = 'random' } = cookies;
   function setSort(newSort) {
     setCookie('sort', newSort);
