@@ -1,6 +1,8 @@
 'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
+    await queryInterface.addColumn('Photos', 'thumbUrl', Sequelize.TEXT);
+    await queryInterface.addColumn('Photos', 'largeUrl', Sequelize.TEXT);
     await queryInterface.createTable('Versions', {
       id: {
         allowNull: false,
@@ -36,5 +38,7 @@ module.exports = {
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Versions');
+    await queryInterface.removeColumn('Photos', 'largeUrl');
+    await queryInterface.removeColumn('Photos', 'thumbUrl');
   },
 };

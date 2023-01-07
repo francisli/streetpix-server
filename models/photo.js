@@ -1,11 +1,7 @@
 const ExifReader = require('exifreader');
-const fs = require('fs-extra');
 const _ = require('lodash');
 const { DateTime } = require('luxon');
 const { Model, Op } = require('sequelize');
-const sharp = require('sharp');
-
-const s3 = require('../lib/s3');
 
 module.exports = (sequelize, DataTypes) => {
   class Photo extends Model {
@@ -23,43 +19,9 @@ module.exports = (sequelize, DataTypes) => {
       Photo.belongsTo(models.User);
     }
 
-    static async resize(srcPath, destPath, size) {
-      const destDirPath = destPath.substring(0, destPath.lastIndexOf('/'));
-      fs.ensureDirSync(destDirPath);
-      await sharp(srcPath).resize(size, size, { fit: 'inside' }).webp().toFile(destPath);
-    }
-
-    static async generateThumbnails(id, prevPath, newPath) {
-      if (prevPath) {
-        // remove old thumbnails
-        if (process.env.AWS_S3_BUCKET) {
-          await s3.deleteObject(prevPath.replace('/file/', '/thumb/'));
-          await s3.deleteObject(prevPath.replace('/file/', '/large/'));
-        } else {
-          fs.removeSync(prevPath.replace('/file/', '/thumb/'));
-          fs.removeSync(prevPath.replace('/file/', '/large/'));
-        }
-      }
-      if (newPath) {
-        // create thumbnails
-        if (process.env.AWS_S3_BUCKET) {
-          const filePath = await s3.getObject(newPath);
-          await Photo.resize(filePath, filePath.replace('/file/', '/thumb/'), 600);
-          await Photo.resize(filePath, filePath.replace('/file/', '/large/'), 1500);
-          await s3.putObject(newPath.replace('/file/', '/thumb/'), filePath.replace('/file/', '/thumb/'));
-          await s3.putObject(newPath.replace('/file/', '/large/'), filePath.replace('/file/', '/large/'));
-        } else {
-          await Photo.resize(newPath, newPath.replace('/file/', '/thumb/'), 600);
-          await Photo.resize(newPath, newPath.replace('/file/', '/large/'), 1500);
-        }
-      }
-      const photo = await Photo.findByPk(id);
-      await photo.updateMetadata();
-    }
-
-    async updateMetadata(options = {}) {
+    async updateMetadata(version, options = {}) {
       const { transaction } = options;
-      const filePath = await this.getAssetFile('file');
+      const filePath = await version.getAssetFile('file');
       if (!filePath) {
         return null;
       }
@@ -104,9 +66,6 @@ module.exports = (sequelize, DataTypes) => {
     toJSON() {
       const json = _.pick(this.get(), [
         'id',
-        'filename',
-        'file',
-        'fileUrl',
         'thumbUrl',
         'largeUrl',
         'caption',
@@ -141,24 +100,8 @@ module.exports = (sequelize, DataTypes) => {
     {
       filename: DataTypes.TEXT,
       file: DataTypes.TEXT,
-      fileUrl: {
-        type: DataTypes.VIRTUAL,
-        get() {
-          return this.assetUrl('file');
-        },
-      },
-      thumbUrl: {
-        type: DataTypes.VIRTUAL(DataTypes.STRING),
-        get() {
-          return this.fileUrl.replace('/file/', '/thumb/');
-        },
-      },
-      largeUrl: {
-        type: DataTypes.VIRTUAL(DataTypes.STRING),
-        get() {
-          return this.fileUrl.replace('/file/', '/large/');
-        },
-      },
+      thumbUrl: DataTypes.TEXT,
+      largeUrl: DataTypes.TEXT,
       caption: DataTypes.TEXT,
       description: DataTypes.TEXT,
       notes: DataTypes.TEXT,

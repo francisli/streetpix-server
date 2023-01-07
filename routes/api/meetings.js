@@ -132,6 +132,8 @@ router.patch('/:id', interceptors.requireAdmin, async (req, res) => {
 
 router.post('/:id/submissions', interceptors.requireLogin, async (req, res) => {
   try {
+    let photo;
+    let version;
     let meetingSubmission;
     await models.sequelize.transaction(async (transaction) => {
       const meeting = await models.Meeting.findByPk(req.params.id, {
@@ -151,9 +153,12 @@ router.post('/:id/submissions', interceptors.requireLogin, async (req, res) => {
       if (priorSubmissions.length >= meeting.maxUploadCount) {
         res.status(HttpStatus.FORBIDDEN).end();
       }
-      const photo = models.Photo.build(_.pick(req.body, ['filename', 'file', 'caption', 'description', 'license', 'acquireLicensePage']));
+      photo = models.Photo.build(_.pick(req.body, ['caption', 'description', 'license', 'acquireLicensePage']));
       photo.UserId = req.user.id;
       await photo.save({ transaction });
+      version = models.Version.build(_.pick(req.body, ['filename', 'file']));
+      version.PhotoId = photo.id;
+      await version.save({ transaction });
       meetingSubmission = await models.MeetingSubmission.create(
         {
           MeetingId: meeting.id,
@@ -164,8 +169,10 @@ router.post('/:id/submissions', interceptors.requireLogin, async (req, res) => {
       );
       meetingSubmission.setDataValue('Photo', photo);
     });
+    await photo.updateMetadata(version);
     res.status(HttpStatus.CREATED).json(meetingSubmission.toJSON());
   } catch (error) {
+    console.trace(error);
     if (error.name === 'SequelizeValidationError') {
       res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
         status: HttpStatus.UNPROCESSABLE_ENTITY,

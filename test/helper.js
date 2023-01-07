@@ -55,6 +55,7 @@ async function resetDatabase() {
     DELETE FROM "Meetings";
     DELETE FROM "MeetingTemplates";
     DELETE FROM "Features";
+    DELETE FROM "Versions";
     DELETE FROM "Photos";
     DELETE FROM "Users";
   `);

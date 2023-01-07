@@ -1,0 +1,46 @@
+#!/usr/bin/env node
+
+'use strict';
+
+const models = require('../models');
+const fs = require('fs-extra');
+const path = require('path');
+const s3 = require('../lib/s3');
+
+async function generateFirstVersions() {
+  const photos = await models.Photo.findAll({
+    include: 'Versions',
+  });
+  for (const photo of photos) {
+    process.stdout.write('.');
+    if (photo.Versions.length == 0) {
+      try {
+        let filePath = await photo.getAssetFile('file');
+        if (process.env.AWS_S3_BUCKET) {
+          await s3.putObject(path.resolve('uploads/', photo.file), filePath);
+        } else {
+          const tmpDir = path.resolve(__dirname, '../tmp/uploads');
+          const tmpFile = path.resolve(tmpDir, photo.file);
+          fs.copySync(filePath, tmpFile);
+        }
+        const version = await models.Version.create({
+          PhotoId: photo.id,
+          filename: photo.filename,
+          file: photo.file,
+        });
+      } catch {
+        // noop
+      }
+    }
+  }
+  console.log('\nDone!');
+}
+
+generateFirstVersions()
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  })
+  .then(() => {
+    process.exit(0);
+  });

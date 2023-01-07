@@ -164,15 +164,27 @@ describe('/api/meetings', () => {
       const meetingSubmission = await models.MeetingSubmission.findByPk(response.body.id);
       assert(meetingSubmission);
       assert.deepStrictEqual(meetingSubmission.position, 2);
-      const photo = await meetingSubmission.getPhoto();
+      const photo = await meetingSubmission.getPhoto({ include: 'Versions' });
       assert(photo);
-      assert.deepStrictEqual(photo.file, '227d54fe-6abf-4130-a75e-3cc90d92dcb6.jpg');
-      assert(await helper.assetPathExists(path.join('photos', photo.id, 'file', '227d54fe-6abf-4130-a75e-3cc90d92dcb6.jpg')));
-      assert(await helper.assetPathExists(path.join('photos', photo.id, 'thumb', '227d54fe-6abf-4130-a75e-3cc90d92dcb6.jpg')));
-      assert(await helper.assetPathExists(path.join('photos', photo.id, 'large', '227d54fe-6abf-4130-a75e-3cc90d92dcb6.jpg')));
       assert.deepStrictEqual(photo.caption, 'This is a test caption');
       assert.deepStrictEqual(photo.description, 'This is a test description');
       assert.deepStrictEqual(photo.takenAt, new Date('2022-08-07T20:41:18.000Z'));
+
+      assert.deepStrictEqual(photo.Versions.length, 1);
+      const version = photo.Versions[0];
+      assert.deepStrictEqual(version.file, '227d54fe-6abf-4130-a75e-3cc90d92dcb6.jpg');
+      assert(await helper.assetPathExists(path.join('versions', version.id, 'file', '227d54fe-6abf-4130-a75e-3cc90d92dcb6.jpg')));
+      assert(await helper.assetPathExists(path.join('versions', version.id, 'thumb', '227d54fe-6abf-4130-a75e-3cc90d92dcb6.jpg')));
+      assert(await helper.assetPathExists(path.join('versions', version.id, 'large', '227d54fe-6abf-4130-a75e-3cc90d92dcb6.jpg')));
+
+      assert.deepStrictEqual(
+        photo.thumbUrl,
+        path.join('/api/assets/versions', version.id, 'thumb', '227d54fe-6abf-4130-a75e-3cc90d92dcb6.jpg')
+      );
+      assert.deepStrictEqual(
+        photo.largeUrl,
+        path.join('/api/assets/versions', version.id, 'large', '227d54fe-6abf-4130-a75e-3cc90d92dcb6.jpg')
+      );
     });
   });
 
