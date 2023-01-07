@@ -66,6 +66,7 @@ module.exports = (sequelize, DataTypes) => {
     toJSON() {
       const json = _.pick(this.get(), [
         'id',
+        'filename',
         'thumbUrl',
         'largeUrl',
         'caption',

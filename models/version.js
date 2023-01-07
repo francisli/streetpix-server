@@ -48,6 +48,7 @@ module.exports = (sequelize, DataTypes) => {
       }
       const version = await Version.findByPk(id, { include: 'Photo' });
       await version.Photo.update({
+        filename: version.filename,
         thumbUrl: version.thumbUrl,
         largeUrl: version.largeUrl,
       });
