@@ -292,7 +292,10 @@ router.post('/:id/rate', interceptors.requireLogin, async (req, res) => {
 
 router.delete('/:id', interceptors.requireLogin, async (req, res) => {
   await models.sequelize.transaction(async (transaction) => {
-    const photo = await models.Photo.findByPk(req.params.id, { transaction });
+    const photo = await models.Photo.findByPk(req.params.id, {
+      include: 'Versions',
+      transaction,
+    });
     if (!photo) {
       res.status(HttpStatus.NOT_FOUND).end();
       return;
@@ -301,6 +304,7 @@ router.delete('/:id', interceptors.requireLogin, async (req, res) => {
       res.status(HttpStatus.UNAUTHORIZED).end();
       return;
     }
+    await Promise.all(photo.Versions.map((v) => v.destroy({ transaction })));
     await photo.destroy({ transaction });
     res.status(HttpStatus.OK).end();
   });
