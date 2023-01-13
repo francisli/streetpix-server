@@ -35,14 +35,18 @@ function PhotoPanel({ isFullScreen, prevId, listUrl, nextId, data, onChangeRatin
         <table className="table table-sm table-borderless m-0">
           <tbody>
             {ratings.map((r, index) => (
-              <tr key={index}>
-                <td>{r}</td>
-                <td className="text-nowrap">
-                  {[...Array(5 - index)].map((_, i) => (
-                    <FontAwesomeIcon key={`${index}-${i}`} icon={faStarSolid} />
-                  ))}
-                </td>
-              </tr>
+              <>
+                {index < 5 && (
+                  <tr key={index}>
+                    <td>{r}</td>
+                    <td className="text-nowrap">
+                      {[...Array(5 - index)].map((_, i) => (
+                        <FontAwesomeIcon key={`${index}-${i}`} icon={faStarSolid} />
+                      ))}
+                    </td>
+                  </tr>
+                )}
+              </>
             ))}
           </tbody>
         </table>
@@ -191,6 +195,12 @@ function PhotoPanel({ isFullScreen, prevId, listUrl, nextId, data, onChangeRatin
               <>
                 <div className="d-flex">
                   <div className="flex-fill">
+                    <dt>Your rating:</dt>
+                    <dd>
+                      <PhotoRating onChange={onChangeRating} value={rating?.value} />
+                    </dd>
+                  </div>
+                  <div className="flex-fill">
                     <dt>Avg. rating:</dt>
                     <dd>
                       {isFullScreen && (
@@ -205,12 +215,6 @@ function PhotoPanel({ isFullScreen, prevId, listUrl, nextId, data, onChangeRatin
                           </button>
                         </OverlayTrigger>
                       )}
-                    </dd>
-                  </div>
-                  <div className="flex-fill">
-                    <dt>Your rating:</dt>
-                    <dd>
-                      <PhotoRating onChange={onChangeRating} value={rating?.value} />
                     </dd>
                   </div>
                 </div>

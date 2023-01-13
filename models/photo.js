@@ -149,13 +149,13 @@ module.exports = (sequelize, DataTypes) => {
       thumbUrl: {
         type: DataTypes.VIRTUAL(DataTypes.STRING),
         get() {
-          return this.fileUrl.replace('/file/', '/thumb/');
+          return this.fileUrl?.replace('/file/', '/thumb/');
         },
       },
       largeUrl: {
         type: DataTypes.VIRTUAL(DataTypes.STRING),
         get() {
-          return this.fileUrl.replace('/file/', '/large/');
+          return this.fileUrl?.replace('/file/', '/large/');
         },
       },
       caption: DataTypes.TEXT,

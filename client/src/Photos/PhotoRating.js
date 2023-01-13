@@ -27,27 +27,37 @@ function PhotoRating({ onChange, value }) {
   }
 
   return (
-    <span className="photorating">
-      <span onMouseEnter={() => onMouseEnter(1)} onMouseLeave={onMouseLeave} onClick={onClick}>
-        <FontAwesomeIcon icon={(newValue ?? value ?? 0) >= 1 ? faStarSolid : faStar} />
-      </span>
-      &nbsp;
-      <span onMouseEnter={() => onMouseEnter(2)} onMouseLeave={onMouseLeave} onClick={onClick}>
-        <FontAwesomeIcon icon={(newValue ?? value ?? 0) >= 2 ? faStarSolid : faStar} />
-      </span>
-      &nbsp;
-      <span onMouseEnter={() => onMouseEnter(3)} onMouseLeave={onMouseLeave} onClick={onClick}>
-        <FontAwesomeIcon icon={(newValue ?? value ?? 0) >= 3 ? faStarSolid : faStar} />
-      </span>
-      &nbsp;
-      <span onMouseEnter={() => onMouseEnter(4)} onMouseLeave={onMouseLeave} onClick={onClick}>
-        <FontAwesomeIcon icon={(newValue ?? value ?? 0) >= 4 ? faStarSolid : faStar} />
-      </span>
-      &nbsp;
-      <span onMouseEnter={() => onMouseEnter(5)} onMouseLeave={onMouseLeave} onClick={onClick}>
-        <FontAwesomeIcon icon={(newValue ?? value ?? 0) >= 5 ? faStarSolid : faStar} />
-      </span>
-    </span>
+    <div className="photorating">
+      <div>
+        <span onMouseEnter={() => onMouseEnter(1)} onMouseLeave={onMouseLeave} onClick={onClick}>
+          <FontAwesomeIcon icon={(newValue ?? value ?? 0) >= 1 ? faStarSolid : faStar} />
+        </span>
+        &nbsp;
+        <span onMouseEnter={() => onMouseEnter(2)} onMouseLeave={onMouseLeave} onClick={onClick}>
+          <FontAwesomeIcon icon={(newValue ?? value ?? 0) >= 2 ? faStarSolid : faStar} />
+        </span>
+        &nbsp;
+        <span onMouseEnter={() => onMouseEnter(3)} onMouseLeave={onMouseLeave} onClick={onClick}>
+          <FontAwesomeIcon icon={(newValue ?? value ?? 0) >= 3 ? faStarSolid : faStar} />
+        </span>
+        &nbsp;
+        <span onMouseEnter={() => onMouseEnter(4)} onMouseLeave={onMouseLeave} onClick={onClick}>
+          <FontAwesomeIcon icon={(newValue ?? value ?? 0) >= 4 ? faStarSolid : faStar} />
+        </span>
+        &nbsp;
+        <span onMouseEnter={() => onMouseEnter(5)} onMouseLeave={onMouseLeave} onClick={onClick}>
+          <FontAwesomeIcon icon={(newValue ?? value ?? 0) >= 5 ? faStarSolid : faStar} />
+        </span>
+      </div>
+      <div>
+        {!newValue && <>&nbsp;</>}
+        {newValue == 1 && 'unmoved'}
+        {newValue == 2 && 'not sure'}
+        {newValue == 3 && 'has potential'}
+        {newValue == 4 && 'good'}
+        {newValue == 5 && 'print it'}
+      </div>
+    </div>
   );
 }
 export default PhotoRating;
