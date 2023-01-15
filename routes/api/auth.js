@@ -15,12 +15,10 @@ router.post('/login', (req, res, next) => {
       req.logIn(user, (logInErr) => {
         if (logInErr) {
           next(logInErr);
+        } else if (user.deactivatedAt) {
+          res.status(HttpStatus.FORBIDDEN).end();
         } else {
-          if (user.deactivatedAt) {
-            res.status(HttpStatus.FORBIDDEN).end();
-          } else {
-            res.status(HttpStatus.OK).json(user);
-          }
+          res.status(HttpStatus.OK).json(user);
         }
       });
     } else {

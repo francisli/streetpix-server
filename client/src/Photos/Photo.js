@@ -13,15 +13,17 @@ import NotesPanel from './NotesPanel';
 import PhotoForm from './PhotoForm';
 import PhotoPanel from './PhotoPanel';
 
-function Photo({ id, page, sort, nextId, prevId, onDeleted, timerDuration }) {
+function Photo({ id, page, sort, nextId, prevId, index, count, onDeleted, timerDuration }) {
   const { user } = useAuthContext();
   const fshandle = useFullScreenHandle();
   const { pathname } = useResolvedPath('');
   const navigate = useNavigate();
   const ref = useRef();
+  const timeoutRef = useRef();
 
   const [data, setData] = useState(null);
   const [isLoading, setLoading] = useState(true);
+  const [isShowingName, setShowingName] = useState(false);
   const [isEditing, setEditing] = useState(false);
   const [countdown, setCountdown] = useState();
 
@@ -30,6 +32,7 @@ function Photo({ id, page, sort, nextId, prevId, onDeleted, timerDuration }) {
 
   useEffect(() => {
     setLoading(true);
+    setShowingName(true);
     Api.photos.get(id).then((response) => setData(response.data));
     setTimeout(() => ref.current?.focus(), 0);
     if (timerDuration) {
@@ -53,6 +56,8 @@ function Photo({ id, page, sort, nextId, prevId, onDeleted, timerDuration }) {
 
   function onLoad() {
     setLoading(false);
+    clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => setShowingName(false), 500);
   }
 
   function onEdit() {
@@ -143,8 +148,15 @@ function Photo({ id, page, sort, nextId, prevId, onDeleted, timerDuration }) {
                 </>
               )}
               <div className={classNames('photo__loader', { 'd-none': !isLoading, 'photo__loader--fullscreen': fshandle.active })}>
-                <h1>Loading...</h1>
+                <h2>Loading...</h2>
               </div>
+              {isShowingName && count && fshandle.active && (
+                <div className="photo__name">
+                  <h1>
+                    {data.User?.firstName} {data.User?.lastName} ({index + 1}/{count})
+                  </h1>
+                </div>
+              )}
             </FullScreen>
           </div>
           <div className="row justify-content-center">

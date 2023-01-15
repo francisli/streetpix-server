@@ -17,7 +17,7 @@ function Meeting() {
   const { user } = useAuthContext();
   const { meetingId } = useParams();
   const [meeting, setMeeting] = useState();
-  const [cookies, setCookie, removeCookie] = useCookies(['sort', 'startTime', 'endTime']);
+  const [cookies, setCookie] = useCookies(['sort', 'startTime', 'endTime']);
   const { sort = 'random' } = cookies;
   function setSort(newSort) {
     setCookie('sort', newSort);
@@ -84,11 +84,17 @@ function Meeting() {
   let prevPhotoId;
   let nextPhotoId;
   let currentCount = 0;
+  let currentUserIndex = 0;
+  let currentUserCount = 0;
   if (photoId) {
     let found = false;
     for (const user of users) {
       const submissions = photosByUser[user.id];
       if (submissions) {
+        if (!found) {
+          currentUserIndex = 0;
+          currentUserCount = submissions.length;
+        }
         for (const ms of submissions) {
           if (found) {
             nextPhotoId = ms.Photo.id;
@@ -101,6 +107,7 @@ function Meeting() {
           prevPhotoId = ms.Photo.id;
           if (!found) {
             currentCount += 1;
+            currentUserIndex += 1;
           }
         }
       }
@@ -147,7 +154,15 @@ function Meeting() {
   return (
     <main className="container">
       {photoId ? (
-        <Photo id={photoId} nextId={nextPhotoId} prevId={prevPhotoId} onDeleted={onDeleted} timerDuration={photoDuration} />
+        <Photo
+          id={photoId}
+          nextId={nextPhotoId}
+          prevId={prevPhotoId}
+          index={currentUserIndex}
+          count={currentUserCount}
+          onDeleted={onDeleted}
+          timerDuration={photoDuration}
+        />
       ) : (
         <>
           <h1>Meeting</h1>
