@@ -36,9 +36,16 @@ describe('/api/meetings', () => {
   describe('GET /', () => {
     it('returns a list of Meetings', async () => {
       const response = await testSession.get('/api/meetings').set('Accept', 'application/json').expect(HttpStatus.OK);
-      assert.deepStrictEqual(response.body.length, 2);
+      assert.deepStrictEqual(response.body.length, 3);
       assert.deepStrictEqual(response.body[0].topic, 'Topic 2');
       assert.deepStrictEqual(response.body[1].topic, 'Topic 1');
+      assert.deepStrictEqual(response.body[2].topic, 'Topic 0');
+    });
+
+    it('filters by year', async () => {
+      const response = await testSession.get('/api/meetings?year=2021').set('Accept', 'application/json').expect(HttpStatus.OK);
+      assert.deepStrictEqual(response.body.length, 1);
+      assert.deepStrictEqual(response.body[0].topic, 'Topic 0');
     });
   });
 

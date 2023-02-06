@@ -8,12 +8,21 @@ const models = require('../../models');
 const interceptors = require('../interceptors');
 
 const router = express.Router();
+const { Op } = models.Sequelize;
 
 router.get('/', interceptors.requireLogin, async (req, res) => {
   const options = {
     page: req.query.page || '1',
     order: [['startsAt', 'DESC']],
   };
+  if (req.query.year && req.query.year !== 'all' && !Number.isNaN(parseInt(req.query.year, 10))) {
+    options.where = {
+      startsAt: {
+        [Op.gte]: DateTime.fromISO(`${req.query.year}-01-01T00:00:00-08`).toJSDate(),
+        [Op.lt]: DateTime.fromISO(`${parseInt(req.query.year, 10) + 1}-01-01T00:00:00-08`).toJSDate(),
+      },
+    };
+  }
   const { records, pages, total } = await models.Meeting.paginate(options);
   helpers.setPaginationHeaders(req, res, options.page, pages, total);
   res.json(
