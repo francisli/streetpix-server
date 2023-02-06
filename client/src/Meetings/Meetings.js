@@ -16,11 +16,12 @@ function Meetings() {
   const params = new URLSearchParams(search);
   const page = parseInt(params.get('page') ?? '1', 10);
   const [lastPage, setLastPage] = useState(1);
+  const year = params.get('year') ?? `${DateTime.now().year}`;
   const [meetingTemplates, setMeetingTemplates] = useState([]);
 
   useEffect(() => {
     if (user) {
-      Api.meetings.index(page).then((response) => {
+      Api.meetings.index(year, page).then((response) => {
         setMeetings(response.data);
         const linkHeader = Api.parseLinkHeader(response);
         let newLastPage = page;
@@ -36,11 +37,30 @@ function Meetings() {
         Api.meetingTemplates.index().then((response) => setMeetingTemplates(response.data));
       }
     }
-  }, [user, page]);
+  }, [user, year, page]);
+
+  function setYear(event) {
+    navigate(`?year=${event.target.value}`);
+  }
+
+  const currentYear = DateTime.now().year;
+  const yearStarted = 2021;
+  const yearSelector = (
+    <div className="d-flex align-items-center">
+      Year:
+      <select className="form-select ms-2" value={year} onChange={setYear}>
+        <option value="all">All</option>
+        {[...Array(currentYear - yearStarted + 1)].map((_, i) => (
+          <option>{currentYear - i}</option>
+        ))}
+      </select>
+    </div>
+  );
 
   return (
     <main className="meetings container">
       <h1>Meetings</h1>
+      {!user?.isAdmin && <div className="d-flex justify-content-center mb-3">{yearSelector}</div>}
       {user?.isAdmin && (
         <>
           <div className="mb-5 text-center">
@@ -75,7 +95,10 @@ function Meetings() {
               </div>
             </>
           )}
-          <h2>Meetings</h2>
+          <div className="d-flex justify-content-between align-items-center">
+            <h2>Meetings</h2>
+            {yearSelector}
+          </div>
         </>
       )}
       <div className="table-responsive mb-5">
@@ -105,7 +128,7 @@ function Meetings() {
             ))}
           </tbody>
         </table>
-        <Pagination page={page} lastPage={lastPage} />
+        <Pagination page={page} lastPage={lastPage} otherParams={{ year }} />
       </div>
     </main>
   );

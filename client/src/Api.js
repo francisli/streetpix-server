@@ -73,8 +73,11 @@ const Api = {
     },
   },
   meetings: {
-    index(page) {
+    index(year, page) {
       const params = {};
+      if (year) {
+        params.year = year;
+      }
       if (page) {
         params.page = page;
       }
