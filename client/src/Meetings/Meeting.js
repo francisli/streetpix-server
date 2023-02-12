@@ -12,6 +12,7 @@ import { useAuthContext } from '../AuthContext';
 import Photo from '../Photos/Photo';
 
 import './Meeting.scss';
+import PhotoRating from '../Photos/PhotoRating';
 
 function Meeting() {
   const { user } = useAuthContext();
@@ -151,6 +152,21 @@ function Meeting() {
     }
   }
 
+  function onChangeRating(photo, newValue) {
+    // add/update rating to list
+    let rating;
+    if (photo.Ratings?.length) {
+      rating = photo.Ratings[0];
+    } else {
+      rating = { UserId: user?.id };
+      photo.Ratings = photo.Ratings || [];
+      photo.Ratings.push(rating);
+    }
+    rating.value = newValue;
+    setMeeting({ ...meeting });
+    Api.photos.rate(photo.id, newValue);
+  }
+
   return (
     <main className="container">
       {photoId ? (
@@ -275,9 +291,15 @@ function Meeting() {
                         .map((ms) => (
                           <div key={ms.Photo.id} className="thumbnail col-md-3">
                             <div className="thumbnail__content">
-                              <Link to={ms.Photo.id} className="square">
+                              <Link to={ms.Photo.id} className="square mb-3">
                                 <div className="square__content" style={{ backgroundImage: `url(${ms.Photo.thumbUrl})` }}></div>
                               </Link>
+                              <div className="photos__thumbnail-metadata">
+                                <PhotoRating
+                                  value={ms.Photo.Ratings?.length ? ms.Photo.Ratings[0].value : null}
+                                  onChange={(newValue) => onChangeRating(ms.Photo, newValue)}
+                                />
+                              </div>
                             </div>
                           </div>
                         ))}

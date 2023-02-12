@@ -95,7 +95,7 @@ router.get('/:id', interceptors.requireLogin, async (req, res) => {
           include: [
             {
               model: models.Photo,
-              include: models.User,
+              include: [models.User, { model: models.Rating, required: false, where: { UserId: req.user.id } }],
             },
           ],
         },

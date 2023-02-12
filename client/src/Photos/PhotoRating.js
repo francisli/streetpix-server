@@ -51,11 +51,11 @@ function PhotoRating({ onChange, value }) {
       </div>
       <div>
         {!newValue && <>&nbsp;</>}
-        {newValue == 1 && 'unmoved'}
-        {newValue == 2 && 'not sure'}
-        {newValue == 3 && 'has potential'}
-        {newValue == 4 && 'good'}
-        {newValue == 5 && 'print it'}
+        {newValue === 1 && 'unmoved'}
+        {newValue === 2 && 'not sure'}
+        {newValue === 3 && 'has potential'}
+        {newValue === 4 && 'good'}
+        {newValue === 5 && 'print it'}
       </div>
     </div>
   );
