@@ -45,14 +45,14 @@ function User() {
         setPage(newPage);
       }
       const newSort = params.get('sort') ?? 'meeting';
-      if (newSort !== sort) {
+      if (year === 'all' && newSort !== sort) {
         setSort(newSort);
       }
     }
-  }, [validPhotoId, search, page, sort]);
+  }, [year, validPhotoId, search, page, sort]);
 
   useEffect(() => {
-    if (userId && page && sort) {
+    if (userId && page && (year !== 'all' || sort)) {
       Api.photos.index({ userId, year, page, sort }).then((response) => {
         setPhotos(response.data);
         const linkHeader = Api.parseLinkHeader(response);
@@ -151,7 +151,7 @@ function User() {
     }
   }
 
-  const currentYear = DateTime.now().year;
+  const currentYear = DateTime.now().year - (auth.user ? 0 : 1);
   let yearStarted;
   if (user && user.createdAt) {
     yearStarted = DateTime.fromISO(user.createdAt).year;
@@ -203,7 +203,7 @@ function User() {
                   </li>
                 )}
                 {[...Array(currentYear - yearStarted + 1)].map((_, i) => (
-                  <li className={classNames('page-item', { active: year === `${year - i}` })} key={`year-${currentYear - i}`}>
+                  <li className={classNames('page-item', { active: year === `${currentYear - i}` })} key={`year-${currentYear - i}`}>
                     <Link to={`../${userId}/${currentYear - i}`} className="page-link">
                       {currentYear - i}
                     </Link>
@@ -213,6 +213,7 @@ function User() {
             </nav>
           )}
           {year === 'all' && <Photos lastPage={lastPage} page={page} photos={photos} sort={sort} onSort={onSort} />}
+          {year !== 'all' && photos.length === 0 && <div className="text-center my-5">No photos yet.</div>}
           {year !== 'all' && (
             <ReactSortable
               onStart={onReorderStart}

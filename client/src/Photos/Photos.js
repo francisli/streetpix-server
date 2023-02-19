@@ -27,6 +27,7 @@ function Photos({ showName, lastPage, page, photos, sort, onSort }) {
         </div>
         <div className="offset-lg-1 col-lg-8 col-xl-9">
           <div className="row">
+            {photos.length === 0 && <div className="text-center my-5">No photos yet.</div>}
             {photos.map((photo) => (
               <div key={photo.id} className="thumbnail col-md-6 col-xl-4">
                 <div className="thumbnail__content">

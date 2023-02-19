@@ -18,6 +18,9 @@ function PhotoFeature({ photo }) {
   let yearStarted;
   if (user && user.createdAt) {
     yearStarted = DateTime.fromISO(user.createdAt).year;
+    if (photo.takenAt) {
+      yearStarted = Math.max(yearStarted, DateTime.fromISO(photo.takenAt).year);
+    }
   }
 
   async function onChange(event) {

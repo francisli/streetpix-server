@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar as faStarSolid } from '@fortawesome/free-solid-svg-icons';
 import inflection from 'inflection';
 import { DateTime } from 'luxon';
+import React from 'react';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import { Link } from 'react-router-dom';
@@ -35,9 +36,9 @@ function PhotoPanel({ isFullScreen, prevId, listUrl, nextId, data, onChangeRatin
         <table className="table table-sm table-borderless m-0">
           <tbody>
             {ratings.map((r, index) => (
-              <>
+              <React.Fragment key={index}>
                 {index < 5 && (
-                  <tr key={index}>
+                  <tr>
                     <td>{r}</td>
                     <td className="text-nowrap">
                       {[...Array(5 - index)].map((_, i) => (
@@ -46,7 +47,7 @@ function PhotoPanel({ isFullScreen, prevId, listUrl, nextId, data, onChangeRatin
                     </td>
                   </tr>
                 )}
-              </>
+              </React.Fragment>
             ))}
           </tbody>
         </table>
