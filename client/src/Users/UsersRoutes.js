@@ -9,7 +9,7 @@ import UserForm from './UserForm';
 
 function UserRoutes() {
   const { user } = useAuthContext();
-  const year = DateTime.now().year;
+  const year = DateTime.now().year - 1;
 
   return (
     <Routes>
