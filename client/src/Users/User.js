@@ -213,6 +213,7 @@ function User() {
             </nav>
           )}
           {year === 'all' && <Photos lastPage={lastPage} page={page} photos={photos} sort={sort} onSort={onSort} />}
+          {year !== 'all' && photos.length === 0 && <div className="text-center my-5">No photos yet.</div>}
           {year !== 'all' && (
             <ReactSortable
               onStart={onReorderStart}
