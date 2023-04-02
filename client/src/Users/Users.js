@@ -26,8 +26,8 @@ function Users() {
       )}
       <div className="row justify-content-center">
         {users.map((user) => (
-          <Link key={user.id} to={`/members/${user.username}`} className="users__user col-6 col-md-3 col-lg-2">
-            <UserPhoto className="mb-3" user={user} />
+          <Link key={user.id} to={`/members/${user.username}`} className="users__user col-6 col-lg-3">
+            <UserPhoto className="users__photo mb-3" user={user} />
             <h4 className="users__name mb-5">
               {user.firstName} {user.lastName}
             </h4>
