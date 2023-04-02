@@ -22,7 +22,7 @@ function Home() {
               <Link to={`/members/${p.User.username}/${p.Feature.year}/${p.id}`} className="square mb-3">
                 <div className="square__content" style={{ backgroundImage: `url(${p.thumbUrl})` }}></div>
               </Link>
-              {p.caption && <div className="thumbnail__metadata fw-bolder">{p.caption}</div>}
+              <div className="thumbnail__metadata fw-bolder">{p.caption ? p.caption : <>&nbsp;</>}</div>
               <div className="thumbnail__metadata">
                 {p.User.firstName} {p.User.lastName}
               </div>
