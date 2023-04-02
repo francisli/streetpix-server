@@ -35,32 +35,30 @@ function Photos({ showName, lastPage, page, photos, sort, onSort }) {
                     <div className="square__content" style={{ backgroundImage: `url(${photo.thumbUrl})` }}></div>
                   </Link>
                   {showName && (
-                    <div className="photos__thumbnail-metadata">
+                    <div className="thumbnail__metadata">
                       {photo.User.firstName} {photo.User.lastName}
                     </div>
                   )}
                   {sort === 'meeting' && (
-                    <div className="photos__thumbnail-metadata">
+                    <div className="thumbnail__metadata">
                       Meeting: {DateTime.fromISO(photo?.MeetingSubmission?.Meeting?.startsAt).toLocaleString(DateTime.DATE_SHORT)}
                     </div>
                   )}
                   {sort === 'createdAt' && (
-                    <div className="photos__thumbnail-metadata">
+                    <div className="thumbnail__metadata">
                       Uploaded: {DateTime.fromISO(photo?.createdAt).toLocaleString(DateTime.DATE_SHORT)}
                     </div>
                   )}
                   {sort === 'takenAt' && (
-                    <div className="photos__thumbnail-metadata">
-                      Taken: {DateTime.fromISO(photo?.takenAt).toLocaleString(DateTime.DATE_SHORT)}
-                    </div>
+                    <div className="thumbnail__metadata">Taken: {DateTime.fromISO(photo?.takenAt).toLocaleString(DateTime.DATE_SHORT)}</div>
                   )}
                   {sort === 'myRating' && (
-                    <div className="photos__thumbnail-metadata">
+                    <div className="thumbnail__metadata">
                       You: <FontAwesomeIcon icon={faStarSolid} /> {photo.Ratings?.[0].value.toFixed(1)}
                     </div>
                   )}
                   {photo.rating > 0 && (
-                    <div className="photos__thumbnail-metadata">
+                    <div className="thumbnail__metadata">
                       Avg: <FontAwesomeIcon icon={faStarSolid} /> {photo.rating.toFixed(1)}
                     </div>
                   )}

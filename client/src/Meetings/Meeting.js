@@ -294,7 +294,7 @@ function Meeting() {
                               <Link to={ms.Photo.id} className="square mb-3">
                                 <div className="square__content" style={{ backgroundImage: `url(${ms.Photo.thumbUrl})` }}></div>
                               </Link>
-                              <div className="photos__thumbnail-metadata">
+                              <div className="thumbnail__metadata">
                                 <PhotoRating
                                   value={ms.Photo.Ratings?.length ? ms.Photo.Ratings[0].value : null}
                                   onChange={(newValue) => onChangeRating(ms.Photo, newValue)}
