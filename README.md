@@ -2,13 +2,13 @@
 
 This is the source code repository for a website designed to support a private photography group. It is built using the following components:
 
-- React 18.1.0
-- React Router 6.3.3
-- Bootstrap 5.1.3
-- Node.js 16.15.0
-- Express 4.18.1
-- Sequelize 6.20.1
-- Postgres 13
+- React 18.2.0
+- React Router 6.14.1
+- Bootstrap 5.3.0
+- Node.js 18.16.0
+- Express 4.18.2
+- Sequelize 6.32.1
+- Postgres 14
 
 ## One-time Setup
 
@@ -27,8 +27,7 @@ This is the source code repository for a website designed to support a private p
 
 3. Install Docker Desktop: https://www.docker.com/products/docker-desktop
 
-   1. If you have Windows Home Edition, you will need to install Docker Toolbox instead.
-      See the troubleshooting notes below.
+   1. Windows users see notes below...
 
 4. Open a command-line shell, change into your repo directory, and execute these commands:
 
@@ -42,14 +41,11 @@ This is the source code repository for a website designed to support a private p
    like this, the server is running:
 
    ```
-   server_1       | 4:13:08 AM webpack.1 |  You can now view streetpix-server in the browser.
-   server_1       | 4:13:08 AM webpack.1 |    Local:            http://localhost:3000
+   server-1       | 5:31:23 PM client.1 |    VITE v4.3.9  ready in 327 ms
+   server-1       | 5:31:23 PM client.1 |    ➜  Local:   http://localhost:3000/
    ```
 
 5. Now you should be able to open the web app in your browser at: http://localhost:3000/
-
-   1. If you had to install Docker Toolbox, then replace "localhost" with the IP
-      address of the Docker Virtual Machine.
 
 6. Open a new tab or window of your shell, change into your repo directory as needed, and execute this command:
 
@@ -61,10 +57,10 @@ This is the source code repository for a website designed to support a private p
    Once you're logged in, you will be in a new shell for the container where you can run the following command:
 
    ```
-   bin/create-admin Firstname Lastname email password
+   bin/create-admin.js Firstname Lastname email password
    ```
 
-   Put in your name and email address and a password. This will create a first user in the database.
+   Put in your name and email address and a password. This will create a first admin user in the database.
 
 7. To stop the server, press CONTROL-C in the window with the running server.
    If it is successful, you will see something like this:
@@ -96,7 +92,9 @@ This is the source code repository for a website designed to support a private p
 
 ## Heroku Deployment Setup
 
-1. Create a free Heroku account at: https://signup.heroku.com/
+1. Sign up for a Heroku account at: https://signup.heroku.com/
+
+   You will need to add a credit card to your account and enable a billing subscription for Eco dynos.
 
 2. Click on the Deploy button below:
 
@@ -135,8 +133,28 @@ This is the source code repository for a website designed to support a private p
 5. Once linked, you can execute Heroku CLI commands. For example, to run the user creation script on the server:
 
    ```
-   heroku run bin/create-admin Firstname Lastname email password
+   heroku run "cd server && bin/create-admin.js Firstname Lastname email password"
    ```
+
+## Render Deployment Setup
+
+1. Sign up for a Render account at: https://render.com/
+
+   You will need to add a credit card number to your account, even if using free instances.
+
+2. In the Dashboard, go to Blueprints, and click on New Blueprint Instance.
+
+3. Connect your Github account and return to this page. Select your forked repository.
+
+4. Enter a name for your deployment, and optionally the branch you wish to deploy (if not main).
+
+5. Set values for VITE_FEATURE_REGISTRATION (true/false to enable/disable user registration), VITE_SITE_TITLE (the name you wish to appear in the browser title bar), and SMTP_ENABLED (true/false to enable/disable mail, recommend false to start until mail server is set up).
+
+6. Click on Apply and wait, this can take quite a few minutes. You can click on the web service server link to follow the deployment event and watch the logs if you like.
+
+7. Once completed, you can see the site at the provided generated URL.
+
+8. Go to the web service server Settings, and edit the Build Command. Remove the command to run seeders and to create a first admin user so it doesn't re-run on subsequent builds (`if [ -d seeders ]; then ../node_modules/.bin/sequelize db:seed:all; fi; bin/create-admin.js Site Admin admin@test.com changeme123;`). You can log in to the site with this email and temporary password (change it immediately after logging in!).
 
 ## Shell Command Quick Reference
 
@@ -257,28 +275,23 @@ This is the source code repository for a website designed to support a private p
   docker compose build server
   ```
 
-## Docker Troubleshooting
+## Windows Docker Notes
 
-- On some PC laptops, a hardware CPU feature called virtualization is disabled by default, which is required by Docker. To enable it, reboot your computer into its BIOS interface (typically by pressing a key like DELETE or F1 during the boot process), and look for an option to enable it. It may be called something like _Intel Virtualization Technology_, _Intel VT_, _AMD-V_, or some similar variation.
+- On some PC laptops, a hardware CPU feature called virtualization is disabled by default, which is required. To enable it, reboot your computer into its BIOS interface (typically by pressing a key like DELETE, ESC, or F1 during the boot process), and look for an option to enable it. It may be called something like _Intel Virtualization Technology_, _Intel VT_, _AMD-V_, or some similar variation.
 
-- On Windows, Docker Desktop cannot run on Windows Home edition. Install Docker Toolbox instead:
+  https://support.microsoft.com/en-us/windows/enable-virtualization-on-windows-11-pcs-c5578302-6e43-4b4b-a449-8ced115f58e1
 
-  https://docs.docker.com/toolbox/overview/
+- Install the Windows Subsystem for Linux (WSL) and make sure to check "Use WSL 2 instead of Hyper-V" when installing Docker Desktop for Windows.
 
-  https://github.com/docker/toolbox/releases
+  https://learn.microsoft.com/en-us/windows/wsl/install  
+  https://docs.docker.com/desktop/install/windows-install/
 
-  Use the _Docker QuickStart shell_ installed with Docker Toolbox to open a command-line shell that launches Docker for you when it starts. On Windows, right-click on the shotcut and Run as Administrator. Note: this can take a long time to start, depending upon your computer, as it needs to start a virtual machine running Linux.
-
-  The virtual machine will have its own, separate IP address on your computer. To view this IP address, run this command in the command-line shell:
-
-  ```
-  docker-machine ip
-  ```
+- Use Microsoft Terminal to open a command-line shell running in your WSL distribution (typically Ubuntu), and use the git command line to _clone this project into your Linux filesystem_. If you attempt to run this project in Docker from the Windows file system, performance will be degraded and file change detection will not work. Editors like VSCode can edit files in the Linux filesystem of WSL.
 
 ## License
 
-StreetPix
-Copyright (C) 2022 Francis Li
+StreetPix  
+Copyright (C) 2023 Francis Li
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as
