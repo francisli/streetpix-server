@@ -10,7 +10,8 @@
       "metadata": null,
       "license": null,
       "acquireLicensePage": null,
-      "rating": 4
+      "rating": 4,
+      "createdAt": "2022-01-29T22:59:56+0000"
     }
   },
   {
@@ -24,7 +25,8 @@
       "metadata": null,
       "license": null,
       "acquireLicensePage": null,
-      "takenAt": "2022-02-09T19:00:00"
+      "takenAt": "2022-02-09T19:00:00",
+      "createdAt": "2022-01-29T23:00:56+0000"
     }
   },
   {

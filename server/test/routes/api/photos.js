@@ -3,10 +3,13 @@ import fs from 'fs-extra';
 import { StatusCodes } from 'http-status-codes';
 import path from 'path';
 import session from 'supertest-session';
+import { fileURLToPath } from 'url';
 
 import helper from '../../helper.js';
 import app from '../../../app.js';
 import models from '../../../models/index.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 describe('/api/photos', () => {
   let testSession;
