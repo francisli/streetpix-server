@@ -6,6 +6,7 @@ import React from 'react';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 import License from '../Components/License';
 import { useAuthContext } from '../AuthContext';
@@ -260,4 +261,16 @@ function PhotoPanel({ isFullScreen, prevId, listUrl, nextId, data, onChangeRatin
     </>
   );
 }
+
+PhotoPanel.propTypes = {
+  isFullScreen: PropTypes.bool,
+  prevId: PropTypes.string,
+  listUrl: PropTypes.string,
+  nextId: PropTypes.string,
+  data: PropTypes.object,
+  onChangeRating: PropTypes.func,
+  onEdit: PropTypes.func,
+  onFullScreen: PropTypes.func,
+};
+
 export default PhotoPanel;

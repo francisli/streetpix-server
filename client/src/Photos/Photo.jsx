@@ -3,6 +3,7 @@ import { useNavigate, useResolvedPath } from 'react-router-dom';
 import { FullScreen, useFullScreenHandle } from 'react-full-screen';
 import { DateTime } from 'luxon';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 import Api from '../Api';
 import { useAuthContext } from '../AuthContext';
@@ -184,4 +185,17 @@ function Photo({ id, page, sort, nextId, prevId, index, count, onDeleted, timerD
     </div>
   );
 }
+
+Photo.propTypes = {
+  id: PropTypes.string,
+  page: PropTypes.number,
+  sort: PropTypes.string,
+  nextId: PropTypes.string,
+  prevId: PropTypes.string,
+  index: PropTypes.number,
+  count: PropTypes.number,
+  onDeleted: PropTypes.func,
+  timerDuration: PropTypes.number,
+};
+
 export default Photo;

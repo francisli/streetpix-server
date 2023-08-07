@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 
 import Api from '../Api';
 import { useAuthContext } from '../AuthContext';
@@ -69,7 +70,7 @@ function PhotoForm({ id, filename, file, meetingId, onCancel, onUpdated, onDelet
     setShowConfirmDelete(false);
   }
 
-  async function onDelete(event) {
+  async function onDelete() {
     try {
       setLoading(true);
       await Api.photos.delete(id);
@@ -166,4 +167,15 @@ function PhotoForm({ id, filename, file, meetingId, onCancel, onUpdated, onDelet
     </form>
   );
 }
+
+PhotoForm.propTypes = {
+  id: PropTypes.string,
+  filename: PropTypes.string,
+  file: PropTypes.string,
+  meetingId: PropTypes.string,
+  onCancel: PropTypes.func,
+  onUpdated: PropTypes.func,
+  onDeleted: PropTypes.func,
+};
+
 export default PhotoForm;

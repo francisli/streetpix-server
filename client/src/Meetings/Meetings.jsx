@@ -73,7 +73,7 @@ function Meetings() {
           <select className="form-select ms-2" value={year} onChange={setYear}>
             <option value="all">All</option>
             {[...Array(currentYear - yearStarted + 1)].map((_, i) => (
-              <option>{currentYear - i}</option>
+              <option key={currentYear - i}>{currentYear - i}</option>
             ))}
           </select>
         </div>

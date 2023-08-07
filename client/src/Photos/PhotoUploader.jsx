@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 import Api from '../Api';
 import { useAuthContext } from '../AuthContext';
@@ -79,5 +80,12 @@ function PhotoUploader({ id, className, maxFiles, meetingId }) {
     </DropzoneUploader>
   );
 }
+
+PhotoUploader.propTypes = {
+  id: PropTypes.string,
+  className: PropTypes.string,
+  maxFiles: PropTypes.number,
+  meetingId: PropTypes.string,
+};
 
 export default PhotoUploader;

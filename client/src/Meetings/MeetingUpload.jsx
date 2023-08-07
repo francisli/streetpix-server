@@ -50,8 +50,8 @@ function MeetingUpload() {
                   You may upload up to <b>{uploadsRemaining}</b> more photos for this meeting.
                   <br />
                   <br />
-                  <em>Important:</em> Do not close or navigate away from this page until all the "Please wait..." messages are replaced with
-                  a photo detail editing form.
+                  <em>Important:</em> Do not close or navigate away from this page until all the &quot;Please wait...&quot; messages are
+                  replaced with a photo detail editing form.
                 </p>
                 <PhotoUploader meetingId={meetingId} maxFiles={uploadsRemaining} />
               </>

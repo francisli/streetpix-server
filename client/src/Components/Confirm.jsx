@@ -1,4 +1,5 @@
 import Modal from 'react-bootstrap/Modal';
+import PropTypes from 'prop-types';
 
 function Confirm({ isShowing, onHide, onConfirm, title, children, cancelLabel, dangerLabel, primaryLabel }) {
   return (
@@ -27,4 +28,16 @@ function Confirm({ isShowing, onHide, onConfirm, title, children, cancelLabel, d
     </Modal>
   );
 }
+
+Confirm.propTypes = {
+  isShowing: PropTypes.bool,
+  onHide: PropTypes.func,
+  onConfirm: PropTypes.func,
+  title: PropTypes.string,
+  children: PropTypes.node,
+  cancelLabel: PropTypes.string,
+  dangerLabel: PropTypes.string,
+  primaryLabel: PropTypes.string,
+};
+
 export default Confirm;

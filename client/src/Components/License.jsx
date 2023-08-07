@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 function License({ selected }) {
   return (
     <>
@@ -11,4 +13,9 @@ function License({ selected }) {
     </>
   );
 }
+
+License.propTypes = {
+  selected: PropTypes.string,
+};
+
 export default License;

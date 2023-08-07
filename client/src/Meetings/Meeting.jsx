@@ -78,7 +78,7 @@ function Meeting() {
       });
     } else {
       const rng = seedrandom(meetingId);
-      users.sort((a, b) => 0.5 - rng());
+      users.sort(() => 0.5 - rng());
     }
   }
 

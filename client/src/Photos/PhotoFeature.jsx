@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import { DateTime } from 'luxon';
+import PropTypes from 'prop-types';
 
 import Api from '../Api';
 import { useAuthContext } from '../AuthContext';
@@ -57,4 +58,9 @@ function PhotoFeature({ photo }) {
     </>
   );
 }
+
+PhotoFeature.propTypes = {
+  photo: PropTypes.object,
+};
+
 export default PhotoFeature;

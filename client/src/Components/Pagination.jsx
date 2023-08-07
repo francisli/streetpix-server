@@ -94,6 +94,7 @@ Pagination.propTypes = {
   lastPage: PropTypes.number,
   page: PropTypes.number,
   url: PropTypes.string,
+  otherParams: PropTypes.object,
 };
 
 export default Pagination;

@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 import './UserPhoto.scss';
 
@@ -11,5 +12,10 @@ function UserPhoto({ className, user }) {
     </div>
   );
 }
+
+UserPhoto.propTypes = {
+  className: PropTypes.string,
+  user: PropTypes.object,
+};
 
 export default UserPhoto;

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import { StatusCodes } from 'http-status-codes';
 import { DateTime } from 'luxon';
+import PropTypes from 'prop-types';
 
 import Api from '../Api';
 import UnexpectedError from '../UnexpectedError';
@@ -229,5 +230,9 @@ function MeetingForm({ isTemplate }) {
     </main>
   );
 }
+
+MeetingForm.propTypes = {
+  isTemplate: PropTypes.bool,
+};
 
 export default MeetingForm;

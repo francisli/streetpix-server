@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-regular-svg-icons';
 import { faStar as faStarSolid } from '@fortawesome/free-solid-svg-icons';
+import PropTypes from 'prop-types';
 
 import './PhotoRating.scss';
 
@@ -60,4 +61,10 @@ function PhotoRating({ onChange, value }) {
     </div>
   );
 }
+
+PhotoRating.propTypes = {
+  onChange: PropTypes.func,
+  value: PropTypes.number,
+};
+
 export default PhotoRating;

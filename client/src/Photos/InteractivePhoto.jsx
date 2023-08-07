@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import useWebSocket from 'react-use-websocket';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 import { useAuthContext } from '../AuthContext';
 
@@ -160,7 +161,7 @@ function InteractivePhoto({ prevId, listUrl, nextId, onChangeRating, onKeyDown, 
   }, [onLoad]);
 
   useEffect(() => {
-    function resizeHandler(event) {
+    function resizeHandler() {
       calculateImageRect();
     }
     window.addEventListener('resize', resizeHandler);
@@ -229,5 +230,15 @@ function InteractivePhoto({ prevId, listUrl, nextId, onChangeRating, onKeyDown, 
     </div>
   );
 }
+
+InteractivePhoto.propTypes = {
+  prevId: PropTypes.string,
+  listUrl: PropTypes.string,
+  nextId: PropTypes.string,
+  onChangeRating: PropTypes.func,
+  onKeyDown: PropTypes.func,
+  onLoad: PropTypes.func,
+  data: PropTypes.object,
+};
 
 export default InteractivePhoto;

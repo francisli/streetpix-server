@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import PropTypes from 'prop-types';
 
 import Api from '../Api';
 
@@ -56,4 +57,10 @@ function NotesPanel({ data, onUpdated }) {
     </>
   );
 }
+
+NotesPanel.propTypes = {
+  data: PropTypes.object,
+  onUpdated: PropTypes.func,
+};
+
 export default NotesPanel;

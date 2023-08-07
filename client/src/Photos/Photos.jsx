@@ -2,6 +2,7 @@ import { DateTime } from 'luxon';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar as faStarSolid } from '@fortawesome/free-solid-svg-icons';
+import PropTypes from 'prop-types';
 
 import Pagination from '../Components/Pagination';
 
@@ -72,4 +73,14 @@ function Photos({ showName, lastPage, page, photos, sort, onSort }) {
     </>
   );
 }
+
+Photos.propTypes = {
+  showName: PropTypes.bool,
+  lastPage: PropTypes.number,
+  page: PropTypes.number,
+  photos: PropTypes.array,
+  sort: PropTypes.string,
+  onSort: PropTypes.func,
+};
+
 export default Photos;
