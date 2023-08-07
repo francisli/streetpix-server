@@ -16,7 +16,7 @@ router.post('/login', (req, res, next) => {
         if (logInErr) {
           next(logInErr);
         } else if (user.deactivatedAt) {
-          res.status(HttpStatus.FORBIDDEN).end();
+          res.status(StatusCodes.FORBIDDEN).end();
         } else {
           res.status(StatusCodes.OK).json(user);
         }

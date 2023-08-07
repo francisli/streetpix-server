@@ -5,7 +5,7 @@ import session from 'supertest-session';
 
 import helper from '../../helper.js';
 import app from '../../../app.js';
-import models from '../../models/index.js';
+import models from '../../../models/index.js';
 
 describe('/api/users', () => {
   let testSession;
@@ -63,7 +63,7 @@ describe('/api/users', () => {
 
       it('returns a User by its username', async () => {
         /// request user list
-        const response = await testSession.get('/api/users/regular123').set('Accept', 'application/json').expect(HttpStatus.OK);
+        const response = await testSession.get('/api/users/regular123').set('Accept', 'application/json').expect(StatusCodes.OK);
 
         assert.deepStrictEqual(response.body, {
           id: 2,
@@ -190,7 +190,7 @@ describe('/api/users', () => {
 
     describe('DELETE /:id', () => {
       it('deactivates a User by its id', async () => {
-        await testSession.delete('/api/users/2').set('Accept', 'application/json').expect(HttpStatus.OK);
+        await testSession.delete('/api/users/2').set('Accept', 'application/json').expect(StatusCodes.OK);
         const user = await models.User.findByPk(2);
         assert(user.deactivatedAt);
       });

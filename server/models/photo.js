@@ -1,4 +1,4 @@
-import ExifReader from 'exifreader';
+import { load } from 'exifreader';
 import fs from 'fs-extra';
 import _ from 'lodash';
 import { DateTime } from 'luxon';
@@ -62,7 +62,7 @@ export default function (sequelize, DataTypes) {
       if (!filePath) {
         return null;
       }
-      const tags = await ExifReader.load(filePath, { expanded: true });
+      const tags = await load(filePath, { expanded: true });
       const attributes = {
         metadata: _.pick(tags, ['file', 'gps', 'exif', 'iptc', 'icc']),
       };

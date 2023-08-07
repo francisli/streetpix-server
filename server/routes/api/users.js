@@ -112,7 +112,7 @@ router.delete('/:id', interceptors.requireAdmin, async (req, res) => {
     try {
       user = await models.User.findByPk(req.params.id, { transaction });
       if (!user) {
-        res.status(HttpStatus.NOT_FOUND).end();
+        res.status(StatusCodes.NOT_FOUND).end();
         return;
       }
       const { deactivatedAt } = user;
@@ -120,17 +120,17 @@ router.delete('/:id', interceptors.requireAdmin, async (req, res) => {
     } catch (error) {
       user = null;
       if (error.name === 'SequelizeValidationError') {
-        res.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
+        res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
+          status: StatusCodes.UNPROCESSABLE_ENTITY,
           errors: error.errors,
         });
       } else {
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).end();
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).end();
       }
     }
   });
   if (user) {
-    res.status(HttpStatus.OK).end();
+    res.status(StatusCodes.OK).end();
   }
 });
 
