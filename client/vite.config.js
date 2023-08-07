@@ -13,6 +13,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': 'http://localhost:3100',
+      '/assets': 'http://localhost:3100',
     },
   },
 });

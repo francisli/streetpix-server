@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar as faStarSolid } from '@fortawesome/free-solid-svg-icons';
-import inflection from 'inflection';
+import { capitalize } from 'inflection';
 import { DateTime } from 'luxon';
 import React from 'react';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
@@ -57,7 +57,7 @@ function PhotoPanel({ isFullScreen, prevId, listUrl, nextId, data, onChangeRatin
 
   let cameraModel = null;
   if (data?.metadata?.exif?.Make || data?.metadata?.exif?.Model) {
-    const make = inflection.capitalize(data.metadata?.exif?.Make?.description ?? '');
+    const make = capitalize(data.metadata?.exif?.Make?.description ?? '');
     let model = data.metadata?.exif?.Model?.description ?? '';
     if (model.startsWith(`${make} `)) {
       model = model.substring(make.length + 1);
