@@ -77,7 +77,8 @@ export default function (sequelize, DataTypes) {
       if (takenAt) {
         attributes.takenAt = takenAt;
       }
-      return this.update(attributes, { transaction });
+      // remove Unicode \u0000 characters
+      return this.update(JSON.parse(JSON.stringify(attributes).replaceAll('\\u0000', '')), { transaction });
     }
 
     async updateRating(options = {}) {
