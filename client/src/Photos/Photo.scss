@@ -1,0 +1,74 @@
+.photo {
+  &:focus,
+  &:focus-visible {
+    outline: none;
+  }
+}
+
+.photo__fullscreen {
+  position: relative;
+}
+
+.photo__loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: white;
+  pointer-events: none;
+  h2 {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: center;
+  }
+}
+
+.photo__loader--fullscreen {
+  background-color: black;
+  h2 {
+    color: white;
+    top: 55%;
+  }
+}
+
+.photo__name {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  h1 {
+    color: white;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+.photo__image {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  max-height: 70vh;
+}
+
+.photo__countdown {
+  position: absolute;
+  margin: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  background-color: black;
+  bottom: 0;
+  right: 0;
+  color: white;
+  font-size: 1.5rem;
+  opacity: 0.6;
+}
+
+.photo__countdown--expired {
+  color: red;
+}

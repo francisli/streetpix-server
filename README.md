@@ -1,6 +1,6 @@
-# Full-Stack Starter
+# StreetPix
 
-This repository contains a "starter" project for web application development in JavaScript. This includes the following components, from front-end to back-end:
+This is the source code repository for a website designed to support a private photography group. It is built using the following components:
 
 - React 18.2.0
 - React Router 6.14.1
@@ -21,8 +21,8 @@ This repository contains a "starter" project for web application development in 
    into the directory.
 
    ```
-   git clone https://github.com/YOUR_ACCOUNT_ID/full-stack-starter.git
-   cd full-stack-starter
+   git clone https://github.com/YOUR_ACCOUNT_ID/streetpix-server.git
+   cd streetpix-server
    ```
 
 3. Install Docker Desktop: https://www.docker.com/products/docker-desktop
@@ -41,8 +41,8 @@ This repository contains a "starter" project for web application development in 
    like this, the server is running:
 
    ```
-   full-stack-starter-server-1       | 5:31:23 PM client.1 |    VITE v4.3.9  ready in 327 ms
-   full-stack-starter-server-1       | 5:31:23 PM client.1 |    ➜  Local:   http://localhost:3000/
+   server-1       | 5:31:23 PM client.1 |    VITE v4.3.9  ready in 327 ms
+   server-1       | 5:31:23 PM client.1 |    ➜  Local:   http://localhost:3000/
    ```
 
 5. Now you should be able to open the web app in your browser at: http://localhost:3000/
@@ -66,9 +66,9 @@ This repository contains a "starter" project for web application development in 
    If it is successful, you will see something like this:
 
    ```
-   Killing full-stack-starter_db_1           ... done
-   Killing full-stack-starter_server_1       ... done
-   Killing full-stack-starter_mailcatcher_1  ... done
+   Killing streetpix-server_db_1           ... done
+   Killing streetpix-server_server_1       ... done
+   Killing streetpix-server_mailcatcher_1  ... done
    ```
 
    If it is not successful, you may see something like this:
@@ -82,9 +82,9 @@ This repository contains a "starter" project for web application development in 
 
    ```
    docker compose stop
-   Stopping full-stack-starter_db_1          ... done
-   Stopping full-stack-starter_server_1      ... done
-   Stopping full-stack-starter_mailcatcher_1 ... done
+   Stopping streetpix-server_db_1          ... done
+   Stopping streetpix-server_server_1      ... done
+   Stopping streetpix-server_mailcatcher_1 ... done
    ```
 
 8. That's it! After all this setup is complete, the only command you need to run to get
@@ -290,8 +290,8 @@ This repository contains a "starter" project for web application development in 
 
 ## License
 
-Full-Stack Starter  
-Copyright (C) 2023 <Dev/Mission>
+StreetPix  
+Copyright (C) 2023 Francis Li
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as

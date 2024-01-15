@@ -1,10 +1,18 @@
 import { matchPath } from 'react-router-dom';
+import { DateTime } from 'luxon';
 
-export const ADMIN_AUTH_PROTECTED_PATHS = ['/admin/*'];
-export const AUTH_PROTECTED_PATHS = ['/account/*'];
+export const ADMIN_AUTH_PROTECTED_PATHS = ['/admin/*', '/meetings/templates/:meetingId/edit', '/meetings/:meetingId/edit'];
+export const AUTH_PROTECTED_PATHS = ['/meetings/*', '/members/:userId/edit'];
 export const REDIRECTS = [
-  ['/admin', '/admin/users'],
-  ['/passwords', '/passwords/forgot'],
+  ['/admin', '/admin/members'],
+  [
+    '/members/:userId',
+    (user) => {
+      const year = DateTime.now().year - 1;
+      return user ? '/members/:userId/all' : `/members/:userId/${year}`;
+    },
+  ],
+  [('/passwords', '/passwords/forgot')],
 ];
 
 export function handleRedirects(authContext, location, pathname, callback) {
@@ -35,6 +43,9 @@ export function handleRedirects(authContext, location, pathname, callback) {
     let [src, dest] = redirect;
     match = matchPath(src, pathname);
     if (match) {
+      if (typeof dest === 'function') {
+        dest = dest(authContext.user);
+      }
       if (match.params) {
         for (const key of Object.keys(match.params)) {
           dest = dest.replace(`:${key}`, match.params[key]);

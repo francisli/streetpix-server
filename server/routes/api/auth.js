@@ -15,6 +15,8 @@ router.post('/login', (req, res, next) => {
       req.logIn(user, (logInErr) => {
         if (logInErr) {
           next(logInErr);
+        } else if (user.deactivatedAt) {
+          res.status(StatusCodes.FORBIDDEN).end();
         } else {
           res.status(StatusCodes.OK).json(user);
         }
@@ -35,7 +37,7 @@ router.get('/logout', (req, res) => {
 /// register a new user if enabled
 if (process.env.VITE_FEATURE_REGISTRATION === 'true') {
   router.post('/register', async (req, res, next) => {
-    const user = models.User.build(_.pick(req.body, ['firstName', 'lastName', 'email', 'password']));
+    const user = models.User.build(_.pick(req.body, ['firstName', 'lastName', 'username', 'email', 'password', 'confirmPassword']));
     try {
       await user.save();
       await user.sendWelcomeEmail();

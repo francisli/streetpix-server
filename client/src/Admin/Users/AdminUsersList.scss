@@ -1,0 +1,11 @@
+@import '../../common';
+
+.admin-user--deactivated {
+  .admin-user__first-name,
+  .admin-user__last-name,
+  .admin-user__username a,
+  .admin-user__email a {
+    text-decoration: line-through;
+    color: $text-muted;
+  }
+}

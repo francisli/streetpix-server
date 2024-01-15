@@ -53,6 +53,10 @@ async function resetDatabase() {
   // clear all test data (order matters due to foreign key relationships)
   await models.sequelize.query(`
     DELETE FROM "Invites";
+    DELETE FROM "Meetings";
+    DELETE FROM "MeetingTemplates";
+    DELETE FROM "Features";
+    DELETE FROM "Photos";
     DELETE FROM "Users";
   `);
 }

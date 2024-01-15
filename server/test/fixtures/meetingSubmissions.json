@@ -1,0 +1,34 @@
+[
+  {
+    "model": "MeetingSubmission",
+    "data": {
+      "MeetingId": "4a8b1331-8d68-470b-bfc9-265c2cc8f039",
+      "PhotoId": "e6ecab76-48ca-4a89-8593-281153dff454",
+      "position": 1
+    }
+  },
+  {
+    "model": "MeetingSubmission",
+    "data": {
+      "MeetingId": "12464934-3e8e-4034-8064-009c28147a27",
+      "PhotoId": "ea92aaca-4fa3-4ff7-96e9-dd0db71b5143",
+      "position": 1
+    }
+  },
+  {
+    "model": "MeetingSubmission",
+    "data": {
+      "MeetingId": "12464934-3e8e-4034-8064-009c28147a27",
+      "PhotoId": "d0cb02d1-e95f-4d05-8b90-f2db36357e83",
+      "position": 1
+    }
+  },
+  {
+    "model": "MeetingSubmission",
+    "data": {
+      "MeetingId": "4a8b1331-8d68-470b-bfc9-265c2cc8f039",
+      "PhotoId": "719a0396-782e-4edc-934c-72a23689f89f",
+      "position": 1
+    }
+  }
+]

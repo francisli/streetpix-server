@@ -5,6 +5,7 @@
       "id": 1,
       "firstName": "Admin",
       "lastName": "User",
+      "username": "admin1",
       "email": "admin.user@test.com",
       "hashedPassword": "$2b$10$s2eQxhoZ2Khb4KrbOaAl/ekpWKiGmyX1HFICIVl3ZX3NnL191fPuS",
       "isAdmin": true
@@ -16,7 +17,20 @@
       "id": 2,
       "firstName": "Regular",
       "lastName": "User",
+      "username": "regular123",
       "email": "regular.user@test.com",
+      "hashedPassword": "$2b$10$s2eQxhoZ2Khb4KrbOaAl/ekpWKiGmyX1HFICIVl3ZX3NnL191fPuS",
+      "isAdmin": false
+    }
+  },
+  {
+    "model": "User",
+    "data": {
+      "id": 3,
+      "firstName": "Third",
+      "lastName": "User",
+      "username": "third",
+      "email": "third.user@test.com",
       "hashedPassword": "$2b$10$s2eQxhoZ2Khb4KrbOaAl/ekpWKiGmyX1HFICIVl3ZX3NnL191fPuS",
       "isAdmin": false
     }

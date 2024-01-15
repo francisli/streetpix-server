@@ -1,0 +1,16 @@
+.home-grid {
+  display: -webkit-box; /* Not needed if autoprefixing */
+  display: -ms-flexbox; /* Not needed if autoprefixing */
+  display: flex;
+  margin-left: -20px; /* gutter size offset */
+  width: auto;
+}
+
+.home-grid__column {
+  padding-left: 20px; /* gutter size */
+  background-clip: padding-box;
+}
+
+.home-grid__item {
+  margin-bottom: 20px;
+}

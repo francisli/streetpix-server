@@ -34,12 +34,12 @@ app.use(express.urlencoded({ extended: false }));
 /// support forwarded headers from intermediate proxies
 app.set('trust proxy', 1);
 /// set up session handling in cookies
-app.use(
-  cookieSession({
-    secret: process.env.SESSION_SECRET,
-    secure: process.env.NODE_ENV === 'production',
-  })
-);
+app.sessionParser = cookieSession({
+  maxAge: 24 * 60 * 60 * 1000,
+  secret: process.env.SESSION_SECRET,
+  secure: process.env.NODE_ENV === 'production',
+});
+app.use(app.sessionParser);
 /// use passport for authentication
 app.use(passport.initialize());
 app.use(passport.session());

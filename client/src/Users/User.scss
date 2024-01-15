@@ -1,0 +1,35 @@
+@import '../common';
+
+@include media-breakpoint-up(md) {
+  .user__header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 156px;
+  }
+}
+
+@include media-breakpoint-up(lg) {
+  .user__header {
+    min-height: 136px;
+  }
+}
+
+@include media-breakpoint-up(xl) {
+  .user__header {
+    min-height: 166px;
+  }
+}
+
+@include media-breakpoint-up(xxl) {
+  .user__header {
+    min-height: 196px;
+  }
+}
+
+.user__website {
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
+}

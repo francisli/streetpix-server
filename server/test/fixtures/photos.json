@@ -1,0 +1,62 @@
+[
+  {
+    "model": "Photo",
+    "data": {
+      "id": "e6ecab76-48ca-4a89-8593-281153dff454",
+      "UserId": 1,
+      "file": "e6ecab76-48ca-4a89-8593-281153dff454.jpg",
+      "caption": "Test photo 1",
+      "description": "This is a description of Test photo 1",
+      "metadata": null,
+      "license": null,
+      "acquireLicensePage": null,
+      "rating": 4,
+      "createdAt": "2022-01-29T22:59:56+0000"
+    }
+  },
+  {
+    "model": "Photo",
+    "data": {
+      "id": "ea92aaca-4fa3-4ff7-96e9-dd0db71b5143",
+      "UserId": 1,
+      "file": "ea92aaca-4fa3-4ff7-96e9-dd0db71b5143.jpg",
+      "caption": "Test photo 2",
+      "description": "This is a description of Test photo 2",
+      "metadata": null,
+      "license": null,
+      "acquireLicensePage": null,
+      "takenAt": "2022-02-09T19:00:00",
+      "createdAt": "2022-01-29T23:00:56+0000"
+    }
+  },
+  {
+    "model": "Photo",
+    "data": {
+      "id": "d0cb02d1-e95f-4d05-8b90-f2db36357e83",
+      "UserId": 2,
+      "file": "d0cb02d1-e95f-4d05-8b90-f2db36357e83.jpg",
+      "caption": "Test photo 3",
+      "description": "This is a description of Test photo 3",
+      "metadata": null,
+      "license": null,
+      "acquireLicensePage": null,
+      "takenAt": "2022-02-10T19:00:00",
+      "createdAt": "2022-01-29T23:01:56+0000"
+    }
+  },
+  {
+    "model": "Photo",
+    "data": {
+      "id": "719a0396-782e-4edc-934c-72a23689f89f",
+      "UserId": 2,
+      "file": "719a0396-782e-4edc-934c-72a23689f89f.jpg",
+      "caption": "Test photo 4",
+      "description": "This is a description of Test photo 4",
+      "metadata": null,
+      "license": null,
+      "acquireLicensePage": null,
+      "rating": 5,
+      "createdAt": "2022-01-29T23:02:56+0000"
+    }
+  }
+]

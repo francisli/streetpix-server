@@ -5,6 +5,7 @@ import session from 'supertest-session';
 
 import helper from '../../helper.js';
 import app from '../../../app.js';
+import models from '../../../models/index.js';
 
 describe('/api/users', () => {
   let testSession;
@@ -27,7 +28,7 @@ describe('/api/users', () => {
       it('returns a list of Users ordered by last name, first name, email', async () => {
         /// request user list
         const response = await testSession.get('/api/users').set('Accept', 'application/json').expect(StatusCodes.OK);
-        assert.deepStrictEqual(response.body?.length, 2);
+        assert.deepStrictEqual(response.body?.length, 3);
 
         const users = response.body;
         assert.deepStrictEqual(users[0].firstName, 'Admin');
@@ -44,10 +45,43 @@ describe('/api/users', () => {
           id: 2,
           firstName: 'Regular',
           lastName: 'User',
+          username: 'regular123',
           email: 'regular.user@test.com',
+          phone: null,
           isAdmin: false,
+          isPublic: false,
           picture: null,
           pictureUrl: null,
+          bio: null,
+          license: 'allrightsreserved',
+          acquireLicensePage: null,
+          website: null,
+          createdAt: response.body.createdAt,
+          deactivatedAt: null,
+        });
+      });
+
+      it('returns a User by its username', async () => {
+        /// request user list
+        const response = await testSession.get('/api/users/regular123').set('Accept', 'application/json').expect(StatusCodes.OK);
+
+        assert.deepStrictEqual(response.body, {
+          id: 2,
+          firstName: 'Regular',
+          lastName: 'User',
+          username: 'regular123',
+          email: 'regular.user@test.com',
+          phone: null,
+          isAdmin: false,
+          isPublic: false,
+          picture: null,
+          pictureUrl: null,
+          bio: null,
+          license: 'allrightsreserved',
+          acquireLicensePage: null,
+          website: null,
+          createdAt: response.body.createdAt,
+          deactivatedAt: null,
         });
       });
     });
@@ -60,6 +94,7 @@ describe('/api/users', () => {
           .send({
             firstName: 'Normal',
             lastName: 'Person',
+            username: 'normalperson',
             email: 'normal.person@test.com',
           })
           .expect(StatusCodes.OK);
@@ -68,10 +103,19 @@ describe('/api/users', () => {
           id: 2,
           firstName: 'Normal',
           lastName: 'Person',
+          username: 'normalperson',
           email: 'normal.person@test.com',
+          phone: null,
           isAdmin: false,
+          isPublic: false,
           picture: null,
           pictureUrl: null,
+          bio: null,
+          license: 'allrightsreserved',
+          acquireLicensePage: null,
+          website: null,
+          createdAt: response.body.createdAt,
+          deactivatedAt: null,
         });
       });
 
@@ -84,12 +128,13 @@ describe('/api/users', () => {
             lastName: '',
             email: '',
             password: 'foo',
+            confirmPassword: '',
           })
           .expect(StatusCodes.UNPROCESSABLE_ENTITY);
 
         const error = response.body;
         assert.deepStrictEqual(error.status, StatusCodes.UNPROCESSABLE_ENTITY);
-        assert.deepStrictEqual(error.errors.length, 4);
+        assert.deepStrictEqual(error.errors.length, 5);
         assert(
           _.find(error.errors, {
             path: 'firstName',
@@ -114,6 +159,12 @@ describe('/api/users', () => {
             message: 'Minimum eight characters, at least one letter and one number',
           })
         );
+        assert(
+          _.find(error.errors, {
+            path: 'confirmPassword',
+            message: 'Passwords do not match',
+          })
+        );
       });
 
       it('validates email is not already registered', async () => {
@@ -134,6 +185,14 @@ describe('/api/users', () => {
             message: 'Email already registered',
           })
         );
+      });
+    });
+
+    describe('DELETE /:id', () => {
+      it('deactivates a User by its id', async () => {
+        await testSession.delete('/api/users/2').set('Accept', 'application/json').expect(StatusCodes.OK);
+        const user = await models.User.findByPk(2);
+        assert(user.deactivatedAt);
       });
     });
   });

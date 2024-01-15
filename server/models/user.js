@@ -1,8 +1,10 @@
 import bcrypt from 'bcrypt';
+import fs from 'fs-extra';
 import { Model, Op } from 'sequelize';
 import _ from 'lodash';
 import { v4 as uuid } from 'uuid';
 import mailer from '../emails/mailer.js';
+import s3 from '../lib/s3.js';
 
 export default function (sequelize, DataTypes) {
   class User extends Model {
@@ -14,10 +16,33 @@ export default function (sequelize, DataTypes) {
     // eslint-disable-next-line no-unused-vars
     static associate(models) {
       // define association here
+      User.hasMany(models.Photo);
+      User.hasMany(models.Feature);
     }
 
     static isValidPassword(password) {
       return password.match(/^(?=.*?[A-Za-z])(?=.*?[0-9]).{8,30}$/) != null;
+    }
+
+    static async generateThumbnails(id, prevPath, newPath) {
+      if (prevPath) {
+        // remove old thumbnails
+        if (process.env.AWS_S3_BUCKET) {
+          await s3.deleteObject(prevPath.replace('/picture/', '/thumb/'));
+        } else {
+          fs.removeSync(prevPath.replace('/picture/', '/thumb/'));
+        }
+      }
+      if (newPath) {
+        // create thumbnails
+        if (process.env.AWS_S3_BUCKET) {
+          const filePath = await s3.getObject(newPath);
+          await sequelize.models.Photo.resize(filePath, filePath.replace('/picture/', '/thumb/'), 500);
+          await s3.putObject(newPath.replace('/picture/', '/thumb/'), filePath.replace('/picture/', '/thumb/'));
+        } else {
+          await sequelize.models.Photo.resize(newPath, newPath.replace('/picture/', '/thumb/'), 500);
+        }
+      }
     }
 
     authenticate(password) {
@@ -25,7 +50,25 @@ export default function (sequelize, DataTypes) {
     }
 
     toJSON() {
-      return _.pick(this.get(), ['id', 'firstName', 'lastName', 'email', 'picture', 'pictureUrl', 'isAdmin']);
+      return _.pick(this.get(), [
+        'id',
+        'firstName',
+        'lastName',
+        'username',
+        'email',
+        'phone',
+        'picture',
+        'pictureUrl',
+        'pictureThumbUrl',
+        'isAdmin',
+        'bio',
+        'website',
+        'license',
+        'acquireLicensePage',
+        'isPublic',
+        'createdAt',
+        'deactivatedAt',
+      ]);
     }
 
     hashPassword(password, options) {
@@ -119,16 +162,71 @@ export default function (sequelize, DataTypes) {
           return `${this.firstName} ${this.lastName} <${this.email}>`;
         },
       },
+      username: {
+        type: DataTypes.CITEXT,
+        allowNull: false,
+        validate: {
+          notNull: {
+            msg: 'Username cannot be blank',
+          },
+          notEmpty: {
+            msg: 'Username cannot be blank',
+          },
+          async isValid(value) {
+            if (value.match(/^[0-9]+$/) != null) {
+              throw new Error('Please include at least one letter');
+            }
+            if (value.match(/^[A-Za-z0-9-]+$/) == null) {
+              throw new Error('Letters, numbers and hypen only');
+            }
+          },
+          async isUnique(value) {
+            if (this.changed('username')) {
+              const user = await User.findOne({
+                where: {
+                  id: {
+                    [Op.ne]: this.id,
+                  },
+                  username: value,
+                },
+              });
+              if (user) {
+                throw new Error('Username already taken');
+              }
+            }
+          },
+        },
+      },
+      phone: {
+        type: DataTypes.STRING,
+      },
       password: {
         type: DataTypes.VIRTUAL,
         validate: {
-          isStrong(value) {
+          isValid(value) {
             if (this.hashedPassword && this.password === '') {
               // not changing, skip validation
               return;
             }
             if (value.match(/^(?=.*?[A-Za-z])(?=.*?[0-9]).{8,30}$/) == null) {
               throw new Error('Minimum eight characters, at least one letter and one number');
+            }
+            if (value !== this.confirmPassword) {
+              throw new Error('Passwords do not match');
+            }
+          },
+        },
+      },
+      confirmPassword: {
+        type: DataTypes.VIRTUAL,
+        validate: {
+          isValid(value) {
+            if (this.hashedPassword && this.password === '') {
+              // not changing, skip validation
+              return;
+            }
+            if (value !== this.password) {
+              throw new Error('Passwords do not match');
             }
           },
         },
@@ -144,6 +242,29 @@ export default function (sequelize, DataTypes) {
         get() {
           return this.assetUrl('picture');
         },
+      },
+      pictureThumbUrl: {
+        type: DataTypes.VIRTUAL(DataTypes.STRING),
+        get() {
+          return this.pictureUrl?.replace('/picture/', '/thumb/');
+        },
+      },
+      bio: {
+        type: DataTypes.TEXT,
+      },
+      website: {
+        type: DataTypes.TEXT,
+      },
+      license: {
+        type: DataTypes.TEXT,
+      },
+      acquireLicensePage: {
+        type: DataTypes.TEXT,
+      },
+      isPublic: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
       },
       isAdmin: {
         type: DataTypes.BOOLEAN,
@@ -176,7 +297,7 @@ export default function (sequelize, DataTypes) {
   });
 
   User.afterSave(async (user, options) => {
-    user.handleAssetFile('picture', options);
+    user.handleAssetFile('picture', options, User.generateThumbnails);
   });
 
   return User;

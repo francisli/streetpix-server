@@ -8,6 +8,7 @@ import debug from 'debug';
 import http from 'http';
 
 import app from '../app.js';
+import { configure } from '../wss.js';
 
 const logger = debug('app:server');
 
@@ -31,6 +32,12 @@ const server = http.createServer(app);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
+
+/**
+ * Create WebSocket server, handle session authentication on upgrade/connection
+ */
+
+configure(server, app);
 
 /**
  * Normalize a port into a number, string, or false.

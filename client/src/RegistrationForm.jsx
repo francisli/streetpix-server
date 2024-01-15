@@ -35,6 +35,20 @@ function RegistrationForm({ error, isLoading, onChange, onSubmit, user }) {
           {error?.errorMessagesHTMLFor?.('lastName')}
         </div>
         <div className="mb-3">
+          <label className="form-label" htmlFor="username">
+            Username
+          </label>
+          <input
+            type="text"
+            className={classNames('form-control', { 'is-invalid': error?.errorsFor?.('username') })}
+            id="username"
+            name="username"
+            onChange={onChange}
+            value={user.username ?? ''}
+          />
+          {error?.errorMessagesHTMLFor?.('username')}
+        </div>
+        <div className="mb-3">
           <label className="form-label" htmlFor="email">
             Email
           </label>
@@ -61,6 +75,20 @@ function RegistrationForm({ error, isLoading, onChange, onSubmit, user }) {
             value={user.password}
           />
           {error?.errorMessagesHTMLFor?.('password')}
+        </div>
+        <div className="mb-3">
+          <label className="form-label" htmlFor="confirmPassword">
+            Confirm Password
+          </label>
+          <input
+            type="password"
+            className={classNames('form-control', { 'is-invalid': error?.errorsFor?.('confirmPassword') })}
+            id="confirmPassword"
+            name="confirmPassword"
+            onChange={onChange}
+            value={user.confirmPassword ?? ''}
+          />
+          {error?.errorMessagesHTMLFor?.('confirmPassword')}
         </div>
         <div className="mb-3 d-grid">
           <button className="btn btn-primary" type="submit">

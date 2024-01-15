@@ -55,7 +55,7 @@ function AdminUserInvite() {
           <div className="col col-sm-10 col-md-8 col-lg-6 col-xl-4">
             <div className="card">
               <div className="card-body">
-                <h2 className="card-title">Invite a new User</h2>
+                <h2 className="card-title">Invite a new Member</h2>
                 <form onSubmit={onSubmit}>
                   {error && error.message && <div className="alert alert-danger">{error.message}</div>}
                   <fieldset disabled={isLoading}>

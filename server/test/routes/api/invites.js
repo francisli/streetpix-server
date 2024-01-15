@@ -109,10 +109,19 @@ describe('/api/invites', () => {
         id,
         firstName: 'Accepting',
         lastName: 'User',
+        username: 'acceptinguser',
         email: 'accepting.user@test.com',
+        phone: null,
+        bio: null,
+        license: 'allrightsreserved',
+        website: null,
+        acquireLicensePage: null,
         isAdmin: false,
+        isPublic: false,
         picture: null,
         pictureUrl: null,
+        createdAt: response.body.createdAt,
+        deactivatedAt: null,
       });
 
       const invite = await models.Invite.findByPk('14a500b7-f14c-48cd-b815-3685a8b54370');

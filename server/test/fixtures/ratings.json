@@ -1,0 +1,18 @@
+[
+  {
+    "model": "Rating",
+    "data": {
+      "PhotoId": "e6ecab76-48ca-4a89-8593-281153dff454",
+      "UserId": 2,
+      "value": 4
+    }
+  },
+  {
+    "model": "Rating",
+    "data": {
+      "PhotoId": "719a0396-782e-4edc-934c-72a23689f89f",
+      "UserId": 1,
+      "value": 5
+    }
+  }
+]

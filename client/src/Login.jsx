@@ -25,16 +25,20 @@ function Login() {
   const [password, setPassword] = useState('');
 
   const [showInvalidError, setShowInvalidError] = useState(false);
+  const [showDeactivatedError, setShowDeactivatedError] = useState(false);
 
   async function onSubmit(event) {
     event.preventDefault();
     setShowInvalidError(false);
+    setShowDeactivatedError(false);
     try {
       const response = await Api.auth.login(email, password);
       authContext.setUser(response.data);
       navigate(from, { replace: true });
     } catch (error) {
-      if (error.response?.status === 422) {
+      if (error.response?.status === 403) {
+        setShowDeactivatedError(true);
+      } else if (error.response?.status === 422) {
         setShowInvalidError(true);
       } else {
         console.log(error);
@@ -54,11 +58,12 @@ function Login() {
               <div className="card-body">
                 <h2 className="card-title">Log in</h2>
                 {location.state?.flash && <div className="alert alert-success">{location.state?.flash}</div>}
+                {showDeactivatedError && <div className="alert alert-danger">Your account is deactivated.</div>}
                 {showInvalidError && <div className="alert alert-danger">Invalid email and/or password.</div>}
                 <form onSubmit={onSubmit}>
                   <div className="mb-3">
                     <label className="form-label" htmlFor="email">
-                      Email
+                      Email or Username
                     </label>
                     <input
                       type="text"

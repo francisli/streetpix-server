@@ -18,8 +18,10 @@ function Register() {
   const [user, setUser] = useState({
     firstName: '',
     lastName: '',
+    username: '',
     email: '',
     password: '',
+    confirmPassword: '',
   });
   const [error, setError] = useState(null);
 

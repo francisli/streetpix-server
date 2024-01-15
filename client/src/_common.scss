@@ -1,0 +1,17 @@
+// Configuration
+@import '~bootstrap/scss/functions';
+
+$font-stack-serif: 'Palatino Linotype', Palatino, Palladio, 'URW Palladio L', 'Book Antiqua', Baskerville, 'Bookman Old Style',
+  'Bitstream Charter', 'Nimbus Roman No9 L', Garamond, 'Apple Garamond', 'ITC Garamond Narrow', 'New Century Schoolbook',
+  'Century Schoolbook', 'Century Schoolbook L', Georgia, serif;
+
+$font-family-base: $font-stack-serif;
+
+$primary: #343a40;
+
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/variables-dark';
+
+@import '~bootstrap/scss/maps';
+@import '~bootstrap/scss/mixins';
+@import '~bootstrap/scss/utilities';

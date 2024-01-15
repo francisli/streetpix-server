@@ -1,0 +1,32 @@
+[
+  {
+    "model": "Feature",
+    "data": {
+      "id": 1,
+      "UserId": 1,
+      "PhotoId": "ea92aaca-4fa3-4ff7-96e9-dd0db71b5143",
+      "year": 2022,
+      "position": 1
+    }
+  },
+  {
+    "model": "Feature",
+    "data": {
+      "id": 2,
+      "UserId": 2,
+      "PhotoId": "d0cb02d1-e95f-4d05-8b90-f2db36357e83",
+      "year": 2022,
+      "position": 1
+    }
+  },
+  {
+    "model": "Feature",
+    "data": {
+      "id": 3,
+      "UserId": 2,
+      "PhotoId": "719a0396-782e-4edc-934c-72a23689f89f",
+      "year": 2021,
+      "position": 1
+    }
+  }
+]
