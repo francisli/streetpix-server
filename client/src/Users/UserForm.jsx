@@ -349,7 +349,7 @@ function UserForm({ userId }) {
 }
 
 UserForm.propTypes = {
-  userId: PropTypes.string,
+  userId: PropTypes.number,
 };
 
 export default UserForm;
