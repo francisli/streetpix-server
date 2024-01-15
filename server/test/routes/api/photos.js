@@ -172,19 +172,7 @@ describe('/api/photos', () => {
         const record = await models.Photo.findByPk(doc.id);
         assert(record);
         assert.deepStrictEqual(record.file, '227d54fe-6abf-4130-a75e-3cc90d92dcb6.jpg');
-        assert(
-          fs.pathExistsSync(
-            path.resolve(
-              __dirname,
-              '../../../public/assets',
-              process.env.ASSET_PATH_PREFIX,
-              'photos',
-              record.id,
-              'file',
-              '227d54fe-6abf-4130-a75e-3cc90d92dcb6.jpg'
-            )
-          )
-        );
+        assert(helper.assetPathExists(path.join('photos', record.id, 'file', '227d54fe-6abf-4130-a75e-3cc90d92dcb6.jpg')));
         assert.deepStrictEqual(record.caption, 'This is a test caption');
         assert.deepStrictEqual(record.description, 'This is a test description');
       });
