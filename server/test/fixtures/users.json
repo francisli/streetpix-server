@@ -8,6 +8,7 @@
       "username": "admin1",
       "email": "admin.user@test.com",
       "hashedPassword": "$2b$10$s2eQxhoZ2Khb4KrbOaAl/ekpWKiGmyX1HFICIVl3ZX3NnL191fPuS",
+      "createdAt": "2022-01-29T22:58:56+0000",
       "isAdmin": true
     }
   },
@@ -20,6 +21,7 @@
       "username": "regular123",
       "email": "regular.user@test.com",
       "hashedPassword": "$2b$10$s2eQxhoZ2Khb4KrbOaAl/ekpWKiGmyX1HFICIVl3ZX3NnL191fPuS",
+      "createdAt": "2022-01-29T22:59:56+0000",
       "isAdmin": false
     }
   },
@@ -32,6 +34,7 @@
       "username": "third",
       "email": "third.user@test.com",
       "hashedPassword": "$2b$10$s2eQxhoZ2Khb4KrbOaAl/ekpWKiGmyX1HFICIVl3ZX3NnL191fPuS",
+      "createdAt": "2022-01-29T23:00:56+0000",
       "isAdmin": false
     }
   }

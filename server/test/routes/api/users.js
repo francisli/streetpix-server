@@ -119,6 +119,20 @@ describe('/api/users', () => {
         });
       });
 
+      it('can update a User createdAt timestamp', async () => {
+        await testSession
+          .patch('/api/users/2')
+          .set('Accept', 'application/json')
+          .send({
+            firstName: 'Updated',
+            createdAt: '2021-01-29T22:58:56+0000',
+          })
+          .expect(StatusCodes.OK);
+        const record = await models.User.findByPk(2);
+        assert.deepStrictEqual(record.firstName, 'Updated');
+        assert.deepStrictEqual(record.createdAt, new Date('2021-01-29T22:58:56+0000'));
+      });
+
       it('validates required fields', async () => {
         const response = await testSession
           .patch('/api/users/2')

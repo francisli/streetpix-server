@@ -90,7 +90,7 @@ router.patch('/:id', interceptors.requireLogin, (req, res) => {
       if (req.user.isAdmin && req.body.createdAt) {
         user.changed('createdAt', true);
         user.set('createdAt', req.body.createdAt, { raw: true });
-        await user.save({ silent: true, fields: ['createdAt'] });
+        await user.save({ silent: true, fields: ['createdAt'], transaction });
       }
       res.json(user.toJSON());
     } catch (error) {
