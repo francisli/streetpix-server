@@ -12,7 +12,7 @@ export const REDIRECTS = [
       return user ? '/members/:userId/all' : `/members/:userId/${year}`;
     },
   ],
-  [('/passwords', '/passwords/forgot')],
+  ['/passwords', '/passwords/forgot'],
 ];
 
 export function handleRedirects(authContext, location, pathname, callback) {
