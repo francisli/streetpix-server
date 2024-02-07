@@ -184,6 +184,31 @@ describe('/api/meetings', () => {
       assert.deepStrictEqual(photo.description, 'This is a test description');
       assert.deepStrictEqual(photo.takenAt, new Date('2022-08-07T20:41:18.000Z'));
     });
+
+    it('should handle a photo with Unicode nulls in its metadata', async () => {
+      await helper.loadUploads([['metadata2.jpg', '227d54fe-6abf-4130-a75e-3cc90d92dcb6.jpg']]);
+      const response = await testSession
+        .post('/api/meetings/4a8b1331-8d68-470b-bfc9-265c2cc8f039/submissions')
+        .set('Accept', 'application/json')
+        .send({
+          file: '227d54fe-6abf-4130-a75e-3cc90d92dcb6.jpg',
+          caption: 'This is a test caption',
+          description: 'This is a test description',
+        })
+        .expect(StatusCodes.CREATED);
+      const meetingSubmission = await models.MeetingSubmission.findByPk(response.body.id);
+      assert(meetingSubmission);
+      assert.deepStrictEqual(meetingSubmission.position, 2);
+      const photo = await meetingSubmission.getPhoto();
+      assert(photo);
+      assert.deepStrictEqual(photo.file, '227d54fe-6abf-4130-a75e-3cc90d92dcb6.jpg');
+      assert(await helper.assetPathExists(path.join('photos', photo.id, 'file', '227d54fe-6abf-4130-a75e-3cc90d92dcb6.jpg')));
+      assert(await helper.assetPathExists(path.join('photos', photo.id, 'thumb', '227d54fe-6abf-4130-a75e-3cc90d92dcb6.jpg')));
+      assert(await helper.assetPathExists(path.join('photos', photo.id, 'large', '227d54fe-6abf-4130-a75e-3cc90d92dcb6.jpg')));
+      assert.deepStrictEqual(photo.caption, 'This is a test caption');
+      assert.deepStrictEqual(photo.description, 'This is a test description');
+      assert.deepStrictEqual(photo.takenAt, new Date('2024-01-28T09:13:16.000Z'));
+    });
   });
 
   describe('DELETE /:id', () => {
