@@ -57,16 +57,16 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.patch('/:id', interceptors.requireLogin, (req, res) => {
+router.patch('/:id', interceptors.requireLogin, async (req, res) => {
   if (!req.user.isAdmin && req.user.id !== parseInt(req.params.id, 10)) {
     res.status(StatusCodes.UNAUTHORIZED).end();
     return;
   }
-  models.sequelize.transaction(async (transaction) => {
-    try {
-      const user = await models.User.findByPk(req.params.id, { transaction });
+  try {
+    let user;
+    await models.sequelize.transaction(async (transaction) => {
+      user = await models.User.findByPk(req.params.id, { transaction });
       if (!user) {
-        res.status(StatusCodes.NOT_FOUND).end();
         return;
       }
       const fields = [
@@ -92,18 +92,22 @@ router.patch('/:id', interceptors.requireLogin, (req, res) => {
         user.set('createdAt', req.body.createdAt, { raw: true });
         await user.save({ silent: true, fields: ['createdAt'], transaction });
       }
+    });
+    if (!user) {
+      res.status(StatusCodes.NOT_FOUND).end();
+    } else {
       res.json(user.toJSON());
-    } catch (error) {
-      if (error.name === 'SequelizeValidationError') {
-        res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
-          status: StatusCodes.UNPROCESSABLE_ENTITY,
-          errors: error.errors,
-        });
-      } else {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).end();
-      }
     }
-  });
+  } catch (error) {
+    if (error.name === 'SequelizeValidationError') {
+      res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
+        status: StatusCodes.UNPROCESSABLE_ENTITY,
+        errors: error.errors,
+      });
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).end();
+    }
+  }
 });
 
 router.delete('/:id', interceptors.requireAdmin, async (req, res) => {

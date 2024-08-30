@@ -1,6 +1,7 @@
 import express from 'express';
 import assetsRoutes from './assets.js';
 import authRoutes from './auth.js';
+import commentsRoutes from './comments.js';
 import invitesRoutes from './invites.js';
 import meetingTemplatesRoutes from './meetingTemplates.js';
 import meetingsRoutes from './meetings.js';
@@ -12,6 +13,7 @@ const router = express.Router();
 
 router.use('/assets', assetsRoutes);
 router.use('/auth', authRoutes);
+router.use('/comments', commentsRoutes);
 router.use('/invites', invitesRoutes);
 router.use('/meetings/templates', meetingTemplatesRoutes);
 router.use('/meetings', meetingsRoutes);

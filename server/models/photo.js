@@ -9,13 +9,8 @@ import s3 from '../lib/s3.js';
 
 export default function (sequelize, DataTypes) {
   class Photo extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
+      Photo.hasMany(models.Comment);
       Photo.hasMany(models.Rating);
       Photo.hasOne(models.Feature);
       Photo.hasOne(models.MeetingSubmission);
@@ -134,6 +129,9 @@ export default function (sequelize, DataTypes) {
       }
       if (this.Ratings) {
         json.Ratings = this.Ratings.map((r) => r.toJSON());
+      }
+      if (this.Comments) {
+        json.Comments = this.Comments.map((c) => c.toJSON());
       }
       return json;
     }
