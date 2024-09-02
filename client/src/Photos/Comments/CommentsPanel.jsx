@@ -11,6 +11,8 @@ function CommentsPanel({ data, onUpdated }) {
   const [commentData, setCommentData] = useState();
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
+  const [error, setError] = useState();
+
   async function onSubmit(event) {
     event.preventDefault();
     try {
@@ -20,7 +22,9 @@ function CommentsPanel({ data, onUpdated }) {
       newData.Comments.push(response.data);
       onUpdated(newData);
       setBody('');
-    } catch (error) {}
+    } catch (error) {
+      setError(error);
+    }
   }
 
   function onKeyDown(event) {
@@ -43,20 +47,33 @@ function CommentsPanel({ data, onUpdated }) {
     setShowConfirmDelete(true);
   }
 
-  function onDeleteConfirmed() {}
+  async function onDeleteConfirmed() {
+    try {
+      await Api.comments.delete(commentData.id);
+      const newData = { ...data };
+      const index = newData.Comments.findIndex((c) => c.id === commentData.id);
+      if (index >= 0) {
+        newData.Comments.splice(index, 1);
+        onUpdated(newData);
+      }
+    } catch (error) {
+      setError(error);
+    } finally {
+      setCommentData();
+      setShowConfirmDelete(false);
+    }
+  }
 
   function hideConfirmDeleteModal() {
     setCommentData();
     setShowConfirmDelete(false);
   }
 
-  function onError(error) {}
-
   return (
     <div>
       <div className="mb-3">
         {data.Comments?.map((c) => (
-          <Comment key={c.id} data={c} onDelete={onDelete} onError={onError} onUpdated={onUpdatedComment} />
+          <Comment key={c.id} data={c} onDelete={onDelete} onError={setError} onUpdated={onUpdatedComment} />
         ))}
       </div>
       <div>
@@ -79,7 +96,14 @@ function CommentsPanel({ data, onUpdated }) {
         title="Are you sure?"
         cancelLabel="Cancel"
         dangerLabel="Delete">
-        Are you sure you wish to delete the comment <b>"{commentData?.body}"</b>? This cannot be undone.
+        Are you sure you wish to delete the comment <b>&ldquo;{commentData?.body}&rdquo;</b>? This cannot be undone.
+      </Confirm>
+      <Confirm isShowing={!!error} onHide={() => setError()} onConfirm={() => setError()} title="Error" primaryLabel="OK">
+        An unexpected error has occurred, please try again shortly. If it continues to occur, please report details of the action you were
+        trying to perform and this message:
+        <br />
+        <br />
+        <b>{error?.message}</b>
       </Confirm>
     </div>
   );
