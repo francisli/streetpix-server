@@ -35,24 +35,24 @@ function NotesPanel({ data, onUpdated }) {
 
   return (
     <>
-      <hr />
       <div className="mb-3">
-        <div className="d-flex justify-content-between">
-          <label htmlFor="notes" className="form-label">
-            My Private Notes:
-          </label>
+        <textarea id="notes" name="notes" value={data?.notes ?? ''} onChange={onChange} className="form-control mb-1" />
+        <div className="d-flex justify-content-end">
           {isLoading && (
             <div className="text-muted">
-              Saving... <div className="spinner-border spinner-border-sm"></div>
+              <small>
+                Saving... <div className="spinner-border spinner-border-sm"></div>
+              </small>
             </div>
           )}
           {!isLoading && isSaved === data.id && (
-            <div className="text-muted">
-              Saved! <FontAwesomeIcon icon={faCheck} />
+            <div className="text-muted text-small">
+              <small>
+                Saved! <FontAwesomeIcon icon={faCheck} />
+              </small>
             </div>
           )}
         </div>
-        <textarea id="notes" name="notes" value={data?.notes ?? ''} onChange={onChange} className="form-control" />
       </div>
     </>
   );

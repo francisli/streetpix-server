@@ -112,7 +112,8 @@ router.get('/random', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const photo = await models.Photo.findByPk(req.params.id, {
-      include: [models.Comment, models.Feature, models.Rating, models.User],
+      include: [{ model: models.Comment, include: [models.User] }, models.Feature, models.Rating, models.User],
+      order: [[models.Comment, 'createdAt', 'ASC']],
     });
     if (photo) {
       const json = photo.toJSON();
@@ -139,7 +140,8 @@ router.patch('/:id', interceptors.requireLogin, async (req, res) => {
   try {
     await models.sequelize.transaction(async (transaction) => {
       doc = await models.Photo.findByPk(req.params.id, {
-        include: [models.Comment, models.Feature, models.Rating, models.User],
+        include: [{ model: models.Comment, include: [models.User] }, models.Feature, models.Rating, models.User],
+        order: [[models.Comment, 'createdAt', 'ASC']],
         transaction,
       });
       if (!doc) {

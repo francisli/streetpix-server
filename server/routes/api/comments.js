@@ -20,6 +20,7 @@ router.get('/', interceptors.requireAdmin, async (req, res) => {
 
 router.post('/', interceptors.requireLogin, async (req, res) => {
   const record = models.Comment.build(_.pick(req.body, ['PhotoId', 'body']));
+  record.User = req.user;
   record.UserId = req.user.id;
   try {
     await record.save();
@@ -49,7 +50,10 @@ router.get('/:id', async (req, res) => {
 
 router.patch('/:id', async (req, res) => {
   await models.sequelize.transaction(async (transaction) => {
-    const record = await models.Comment.findByPk(req.params.id, { transaction });
+    const record = await models.Comment.findByPk(req.params.id, {
+      include: [models.User],
+      transaction,
+    });
     if (record) {
       if (!req.user.isAdmin && record.UserId !== req.user.id) {
         res.status(StatusCodes.FORBIDDEN).end();

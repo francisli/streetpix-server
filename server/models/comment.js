@@ -9,7 +9,11 @@ export default function (sequelize, DataTypes) {
     }
 
     toJSON() {
-      return _.pick(this.get(), ['id', 'PhotoId', 'UserId', 'body', 'createdAt', 'updatedAt']);
+      const json = _.pick(this.get(), ['id', 'PhotoId', 'UserId', 'body', 'createdAt', 'updatedAt']);
+      if (this.User) {
+        json.User = this.User.toJSON();
+      }
+      return json;
     }
   }
   Comment.init(
