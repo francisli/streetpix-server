@@ -110,11 +110,13 @@ function Browse() {
 
   return (
     <main className="container">
-      <h1>Browse</h1>
       {photoId ? (
         <Photo id={photoId} page={page} sort={sort} nextId={nextPhotoId} prevId={prevPhotoId} onDeleted={onDeleted} />
       ) : (
-        <Photos showName={true} lastPage={lastPage} page={page} photos={photos} sort={sort} onSort={onSort} />
+        <>
+          <h1>Browse</h1>
+          <Photos showName={true} lastPage={lastPage} page={page} photos={photos} sort={sort} onSort={onSort} />
+        </>
       )}
     </main>
   );

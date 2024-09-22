@@ -53,6 +53,10 @@ const Api = {
     },
   },
   comments: {
+    index({ page }) {
+      const params = { page };
+      return instance.get('/api/comments', { params });
+    },
     create(data) {
       return instance.post('/api/comments', data);
     },

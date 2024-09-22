@@ -10,6 +10,9 @@ export default function (sequelize, DataTypes) {
 
     toJSON() {
       const json = _.pick(this.get(), ['id', 'PhotoId', 'UserId', 'body', 'createdAt', 'updatedAt']);
+      if (this.Photo) {
+        json.Photo = this.Photo.toJSON();
+      }
       if (this.User) {
         json.User = this.User.toJSON();
       }

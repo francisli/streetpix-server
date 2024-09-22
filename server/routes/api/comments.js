@@ -8,8 +8,9 @@ import interceptors from '../interceptors.js';
 
 const router = express.Router();
 
-router.get('/', interceptors.requireAdmin, async (req, res) => {
+router.get('/', interceptors.requireLogin, async (req, res) => {
   const options = {
+    include: [models.Photo, models.User],
     page: req.query.page || '1',
     order: [['createdAt', 'DESC']],
   };

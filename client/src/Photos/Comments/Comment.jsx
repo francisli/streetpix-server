@@ -38,7 +38,7 @@ function Comment({ data, onDelete, onError, onUpdated }) {
         <small className="text-muted">
           <b>
             {data.User?.firstName} {data.User?.lastName}
-          </b>{' '}
+          </b>
           <span className="text-muted ms-1">
             {DateTime.fromISO(data.createdAt).toRelative({ style: 'narrow' })}
             {data.updatedAt !== data.createdAt && (
