@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
 import Api from './Api';
 import Comment from './Comments/Comment';
@@ -7,7 +7,6 @@ import Pagination from './Components/Pagination';
 import Photo from './Photos/Photo';
 
 function Comments() {
-  const navigate = useNavigate();
   const [comments, setComments] = useState([]);
   const { search } = useLocation();
   const [page, setPage] = useState();
@@ -45,68 +44,68 @@ function Comments() {
   }, [page]);
 
   useEffect(() => {
-    if (photoId && comments && page && lastPage) {
-      async function search() {
-        // find the first index of a comment with this photo
-        const index = comments.findIndex((c) => c.Photo.id === photoId);
-        if (index < 0) {
-          // not found, go to next page (if any) or reset to beginning
-          if (page < lastPage) {
-            setPage(page + 1);
-          } else if (page !== 1) {
-            setPage(1);
-          }
-          setComments([]);
-          setLastPage(null);
-          return;
+    async function search() {
+      // find the first index of a comment with this photo
+      const index = comments.findIndex((c) => c.Photo.id === photoId);
+      if (index < 0) {
+        // not found, go to next page (if any) or reset to beginning
+        if (page < lastPage) {
+          setPage(page + 1);
+        } else if (page !== 1) {
+          setPage(1);
         }
-        // search backwards, paginating if necessary, to find the first prev photo if any
-        let searchPhotoId;
-        let searchComments = comments;
-        let searchIndex = index;
-        let searchPage = page;
-        for (;;) {
-          while (searchIndex > 0) {
-            if (searchComments[searchIndex - 1].Photo.id !== photoId) {
-              searchPhotoId = searchComments[searchIndex - 1].Photo.id;
-              break;
-            }
-            searchIndex -= 1;
-          }
-          if (searchPhotoId || searchPage === 1) {
-            break;
-          }
-          // not found, so go to prev page
-          searchPage -= 1;
-          const response = await Api.comments.index({ page: searchPage });
-          searchComments = response.data;
-          searchIndex = searchComments.length;
-        }
-        setPrevPhotoId(searchPhotoId);
-        // search forwards, paginating if necessary, to find the next photo if any
-        searchPhotoId = undefined;
-        searchComments = comments;
-        searchIndex = index;
-        searchPage = page;
-        for (;;) {
-          while (searchIndex < searchComments.length - 1) {
-            if (searchComments[searchIndex + 1].Photo.id !== photoId) {
-              searchPhotoId = searchComments[searchIndex + 1].Photo.id;
-              break;
-            }
-            searchIndex += 1;
-          }
-          if (searchPhotoId || searchPage == lastPage) {
-            break;
-          }
-          // not found, so go to next page
-          searchPage += 1;
-          const response = await Api.comments.index({ page: searchPage });
-          searchComments = response.data;
-          searchIndex = -1;
-        }
-        setNextPhotoId(searchPhotoId);
+        setComments([]);
+        setLastPage(null);
+        return;
       }
+      // search backwards, paginating if necessary, to find the first prev photo if any
+      let searchPhotoId;
+      let searchComments = comments;
+      let searchIndex = index;
+      let searchPage = page;
+      for (;;) {
+        while (searchIndex > 0) {
+          if (searchComments[searchIndex - 1].Photo.id !== photoId) {
+            searchPhotoId = searchComments[searchIndex - 1].Photo.id;
+            break;
+          }
+          searchIndex -= 1;
+        }
+        if (searchPhotoId || searchPage === 1) {
+          break;
+        }
+        // not found, so go to prev page
+        searchPage -= 1;
+        const response = await Api.comments.index({ page: searchPage });
+        searchComments = response.data;
+        searchIndex = searchComments.length;
+      }
+      setPrevPhotoId(searchPhotoId);
+      // search forwards, paginating if necessary, to find the next photo if any
+      searchPhotoId = undefined;
+      searchComments = comments;
+      searchIndex = index;
+      searchPage = page;
+      for (;;) {
+        while (searchIndex < searchComments.length - 1) {
+          if (searchComments[searchIndex + 1].Photo.id !== photoId) {
+            searchPhotoId = searchComments[searchIndex + 1].Photo.id;
+            break;
+          }
+          searchIndex += 1;
+        }
+        if (searchPhotoId || searchPage == lastPage) {
+          break;
+        }
+        // not found, so go to next page
+        searchPage += 1;
+        const response = await Api.comments.index({ page: searchPage });
+        searchComments = response.data;
+        searchIndex = -1;
+      }
+      setNextPhotoId(searchPhotoId);
+    }
+    if (photoId && comments && page && lastPage) {
       search();
     }
   }, [photoId, comments, page, lastPage]);

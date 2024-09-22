@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { DateTime } from 'luxon';
+import PropTypes from 'prop-types';
 
 import './Comment.scss';
 
@@ -26,4 +27,9 @@ function Comment({ data }) {
     </div>
   );
 }
+
+Comment.propTypes = {
+  data: PropTypes.object,
+};
+
 export default Comment;
