@@ -5,7 +5,7 @@ import { Op } from 'sequelize';
 const logger = debug('app:queue');
 
 const COMMENTS_QUEUE = 'comments';
-const COMMENTS_DEBOUNCE_INTERVAL = 10; /*sec*/
+const COMMENTS_DEBOUNCE_INTERVAL = 5 /*min*/ * 60; /*sec/min*/
 
 const boss = new PgBoss(process.env.DATABASE_URL);
 boss.on('error', logger);
