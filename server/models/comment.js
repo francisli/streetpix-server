@@ -1,6 +1,8 @@
 import _ from 'lodash';
 import { Model } from 'sequelize';
 
+import queue from '../lib/queue.js';
+
 export default function (sequelize, DataTypes) {
   class Comment extends Model {
     static associate(models) {
@@ -19,6 +21,7 @@ export default function (sequelize, DataTypes) {
       return json;
     }
   }
+
   Comment.init(
     {
       body: DataTypes.TEXT,
@@ -28,5 +31,10 @@ export default function (sequelize, DataTypes) {
       modelName: 'Comment',
     }
   );
+
+  Comment.afterCreate(async (comment) => {
+    return queue.enqueueCommentNotification(comment.id);
+  });
+
   return Comment;
 }
