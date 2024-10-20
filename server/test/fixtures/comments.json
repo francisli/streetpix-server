@@ -1,0 +1,22 @@
+[
+  {
+    "model": "Comment",
+    "data": {
+      "id": "4ea2f8b6-4f13-4faa-99fb-0fafb3c6c825",
+      "PhotoId": "e6ecab76-48ca-4a89-8593-281153dff454",
+      "UserId": 1,
+      "body": "Test comment 1",
+      "createdAt": "2022-01-29T22:59:56+0000"
+    }
+  },
+  {
+    "model": "Comment",
+    "data": {
+      "id": "5e6ee1a4-d398-4926-b39c-77b87f124c0a",
+      "PhotoId": "e6ecab76-48ca-4a89-8593-281153dff454",
+      "UserId": 2,
+      "body": "Test comment 2",
+      "createdAt": "2022-01-29T23:00:56+0000"
+    }
+  }
+]

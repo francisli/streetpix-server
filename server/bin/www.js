@@ -9,6 +9,7 @@ import http from 'http';
 
 import app from '../app.js';
 import { configure } from '../wss.js';
+import queue from '../lib/queue.js';
 
 const logger = debug('app:server');
 
@@ -38,6 +39,11 @@ server.on('listening', onListening);
  */
 
 configure(server, app);
+
+/**
+ * Set up db-backed job queuing system.
+ */
+queue.initialize();
 
 /**
  * Normalize a port into a number, string, or false.

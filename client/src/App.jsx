@@ -9,6 +9,7 @@ import Header from './Header';
 import Footer from './Footer';
 import Home from './Home';
 import Browse from './Browse';
+import Comments from './Comments';
 import Login from './Login';
 import Register from './Register';
 import AdminRoutes from './Admin/AdminRoutes';
@@ -36,6 +37,10 @@ function App() {
                 {staticContext?.env?.VITE_FEATURE_REGISTRATION === 'true' && <Route path="/register" element={<Register />} />}
                 <Route path="/members/*" element={<UsersRoutes />} />
                 <Route path="/browse" element={<Browse />}>
+                  <Route path=":photoId" element={<></>} />
+                  <Route path="" element={<></>} />
+                </Route>
+                <Route path="/comments" element={<Comments />}>
                   <Route path=":photoId" element={<></>} />
                   <Route path="" element={<></>} />
                 </Route>

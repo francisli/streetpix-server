@@ -1,0 +1,11 @@
+<%- include('../layout/_header.text.ejs') %>
+
+<% for (const comment of comments) { %>
+<%= `${process.env.BASE_URL}/comments/${comment.Photo.id}` %>
+<%= `${comment.User?.firstName} ${comment.User?.lastName}`.trim() %>
+<%= DateTime.fromJSDate(comment.createdAt).toRelative({ style: 'narrow' }) %>
+<%= comment.body %>
+
+<% } %>
+
+<%- include('../layout/_footer.text.ejs') %>

@@ -42,32 +42,41 @@ router.post('/', interceptors.requireAdmin, async (req, res) => {
 });
 
 router.post('/:id/resend', interceptors.requireAdmin, async (req, res) => {
+  let invite;
   await models.sequelize.transaction(async (transaction) => {
-    const invite = await models.Invite.findByPk(req.params.id, { transaction });
+    invite = await models.Invite.findByPk(req.params.id, { transaction });
     if (invite) {
       invite.changed('updatedAt', true);
-      await invite.update({ updatedAt: new Date() });
+      await invite.update({ updatedAt: new Date() }, { transaction });
       await invite.sendInviteEmail();
-      res.json(invite.toJSON());
-    } else {
-      res.status(StatusCodes.NOT_FOUND).end();
     }
   });
+  if (invite) {
+    res.json(invite.toJSON());
+  } else {
+    res.status(StatusCodes.NOT_FOUND).end();
+  }
 });
 
 router.delete('/:id', interceptors.requireAdmin, async (req, res) => {
+  let invite;
   await models.sequelize.transaction(async (transaction) => {
-    const invite = await models.Invite.findByPk(req.params.id, { transaction });
+    invite = await models.Invite.findByPk(req.params.id, { transaction });
     if (invite) {
-      if (invite.acceptedAt) {
-        res.status(StatusCodes.FORBIDDEN).end();
+      if (!invite.acceptedAt) {
+        await invite.update({ revokedAt: new Date(), RevokedByUserId: req.user.id }, { transaction });
       }
-      await invite.update({ revokedAt: new Date(), RevokedByUserId: req.user.id });
-      res.status(StatusCodes.OK).end();
-    } else {
-      res.status(StatusCodes.NOT_FOUND).end();
     }
   });
+  if (invite) {
+    if (invite.acceptedAt) {
+      res.status(StatusCodes.FORBIDDEN).end();
+    } else {
+      res.status(StatusCodes.OK).end();
+    }
+  } else {
+    res.status(StatusCodes.NOT_FOUND).end();
+  }
 });
 
 router.post('/:id/accept', async (req, res, next) => {

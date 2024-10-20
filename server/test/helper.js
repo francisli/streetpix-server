@@ -9,6 +9,7 @@ import fs from 'fs-extra';
 import nodemailerMock from 'nodemailer-mock';
 import { fileURLToPath } from 'url';
 
+import queue from '../lib/queue.js';
 import models from '../models/index.js';
 import s3 from '../lib/s3.js';
 
@@ -72,8 +73,13 @@ beforeEach(async () => {
   nodemailerMock.mock.reset();
 });
 
+before(async () => {
+  await queue.initialize();
+});
+
 // eslint-disable-next-line no-undef
 after(async () => {
+  await queue.stop();
   // close all db connections
   await models.sequelize.close();
 });

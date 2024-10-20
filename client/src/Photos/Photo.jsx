@@ -4,12 +4,15 @@ import { FullScreen, useFullScreenHandle } from 'react-full-screen';
 import { DateTime } from 'luxon';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
 
 import Api from '../Api';
 import { useAuthContext } from '../AuthContext';
 
 import './Photo.scss';
 import InteractivePhoto from './InteractivePhoto';
+import CommentsPanel from './Comments/CommentsPanel';
 import NotesPanel from './NotesPanel';
 import PhotoForm from './PhotoForm';
 import PhotoPanel from './PhotoPanel';
@@ -174,7 +177,18 @@ function Photo({ id, page, sort, nextId, prevId, index, count, onDeleted, timerD
                     onEdit={onEdit}
                     onFullScreen={fshandle.enter}
                   />
-                  {user && user.id === data.UserId && <NotesPanel data={data} onUpdated={onUpdated} />}
+                  {user && (
+                    <Tabs className="mb-3" defaultActiveKey="comments">
+                      <Tab eventKey="comments" title="Comments">
+                        <CommentsPanel data={data} onUpdated={onUpdated} />
+                      </Tab>
+                      {user.id === data.UserId && (
+                        <Tab eventKey="notes" title="My Private Notes">
+                          <NotesPanel data={data} onUpdated={onUpdated} />
+                        </Tab>
+                      )}
+                    </Tabs>
+                  )}
                 </>
               )}
               {isEditing && <PhotoForm id={id} onCancel={onCancel} onUpdated={onUpdated} onDeleted={onDeletedInternal} />}

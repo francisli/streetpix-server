@@ -62,6 +62,11 @@ pre {
 .btn-link--text {
   padding: 0;
   border: 0;
+
+  &.btn-sm {
+    position: relative;
+    top: -1px;
+  }
 }
 
 .square {

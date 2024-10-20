@@ -68,13 +68,18 @@ function Header() {
               {user && (
                 <>
                   <li className="nav-item">
+                    <Link className="nav-link" to="/meetings" onClick={hideNavbar}>
+                      Meetings
+                    </Link>
+                  </li>
+                  <li className="nav-item">
                     <Link className="nav-link" to="/browse" onClick={hideNavbar}>
                       Browse
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link className="nav-link" to="/meetings" onClick={hideNavbar}>
-                      Meetings
+                    <Link className="nav-link" to="/comments" onClick={hideNavbar}>
+                      Comments
                     </Link>
                   </li>
                 </>

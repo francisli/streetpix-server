@@ -52,6 +52,21 @@ const Api = {
       return instance.post('/api/auth/register', data);
     },
   },
+  comments: {
+    index({ page }) {
+      const params = { page };
+      return instance.get('/api/comments', { params });
+    },
+    create(data) {
+      return instance.post('/api/comments', data);
+    },
+    update(id, data) {
+      return instance.patch(`/api/comments/${id}`, data);
+    },
+    delete(id) {
+      return instance.delete(`/api/comments/${id}`);
+    },
+  },
   invites: {
     index() {
       return instance.get(`/api/invites`);
