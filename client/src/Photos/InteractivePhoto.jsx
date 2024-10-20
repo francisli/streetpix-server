@@ -22,9 +22,17 @@ function InteractivePhoto({ prevId, listUrl, nextId, onChangeRating, onKeyDown, 
 
   const [pointers, setPointers] = useState({});
 
+  const [isMouseDown, setMouseDown] = useState(false);
+
   const [cropStart, setCropStart] = useState();
   const [cropDrag, setCropDrag] = useState();
   const [cropEnd, setCropEnd] = useState();
+
+  const [scale, setScale] = useState(1.0);
+  const [translate, setTranslate] = useState([0, 0]);
+
+  const [isPanning, setPanning] = useState(false);
+  const [panStart, setPanStart] = useState();
 
   useEffect(() => {
     if (lastJsonMessage) {
@@ -72,6 +80,13 @@ function InteractivePhoto({ prevId, listUrl, nextId, onChangeRating, onKeyDown, 
     return {};
   }
 
+  function onMouseDown(event) {
+    if (event.button === 0) {
+      setMouseDown(true);
+      setPanStart([event.clientX, event.clientY]);
+    }
+  }
+
   function onMouseMove(event) {
     if (!cropStart && !isPanelShowing && event.clientY >= event.target.offsetHeight - 10) {
       setPanelShowing(true);
@@ -85,13 +100,37 @@ function InteractivePhoto({ prevId, listUrl, nextId, onChangeRating, onKeyDown, 
       if (cropStart && !cropEnd) {
         setCropDrag({ dx, dy });
         sendJsonMessage({ user: { id: user.id }, type: 'crop', start: cropStart, drag: { dx, dy } });
+      } else if (isMouseDown) {
+        if (scale === 1) {
+          return;
+        }
+        setPanning(true);
+        console.log(translate, panStart);
+        const newImageStyle = { ...imageStyle };
+        newImageStyle.transform = `translate(${translate[0] + event.clientX - panStart[0]}px, ${
+          translate[1] + event.clientY - panStart[1]
+        }px) scale(${scale})`;
+        console.log(newImageStyle);
+        setImageStyle(newImageStyle);
       }
+    }
+  }
+
+  function onMouseUp(event) {
+    setMouseDown(false);
+    if (isPanning) {
+      const newTranslate = [...translate];
+      newTranslate[0] = translate[0] + event.clientX - panStart[0];
+      newTranslate[1] = translate[1] + event.clientY - panStart[1];
+      setTranslate(newTranslate);
+      const newImageStyle = { ...imageStyle };
+      newImageStyle.transform = `translate(${newTranslate[0]}px, ${newTranslate[1]}px) scale(${scale})`;
+      setImageStyle(newImageStyle);
     }
   }
 
   function onPanelLeave(event) {
     if (event.clientY <= ref.current.offsetHeight - event.target.offsetHeight + 10) {
-      console.log('!!!', event);
       setPanelShowing(false);
     }
   }
@@ -105,8 +144,9 @@ function InteractivePhoto({ prevId, listUrl, nextId, onChangeRating, onKeyDown, 
     onKeyDown(event);
   }
 
-  function onMouseDown(event) {
-    if (!user || isPanelShowing) {
+  function onClick(event) {
+    if (!user || isPanelShowing || isPanning) {
+      setPanning(false);
       return;
     }
     const { dx, dy } = normalizeMouseLocation(event);
@@ -124,6 +164,19 @@ function InteractivePhoto({ prevId, listUrl, nextId, onChangeRating, onKeyDown, 
         setCropDrag({ dx, dy });
       }
     }
+  }
+
+  function onWheel(event) {
+    const newScale = Math.min(4.0, Math.max(1.0, scale + event.deltaY * 0.1));
+    setScale(newScale);
+    let newTranslate = [...translate];
+    if (newScale === 1.0) {
+      newTranslate = [0, 0];
+      setTranslate(newTranslate);
+    }
+    const newImageStyle = { ...imageStyle };
+    newImageStyle.transform = `translate(${newTranslate[0]}px, ${newTranslate[1]}px) scale(${newScale})`;
+    setImageStyle(newImageStyle);
   }
 
   function pointerStyle(pointer) {
@@ -188,10 +241,22 @@ function InteractivePhoto({ prevId, listUrl, nextId, onChangeRating, onKeyDown, 
       className="interactive-photo"
       ref={ref}
       tabIndex={0}
+      draggable={false}
       onKeyDown={onKeyDownInternal}
+      onMouseDown={onMouseDown}
       onMouseMove={onMouseMove}
-      onMouseDown={onMouseDown}>
-      <img className="interactive-photo__image" onLoad={calculateImageRect} src={url} alt={alt} ref={imgRef} style={imageStyle} />
+      onMouseUp={onMouseUp}
+      onClick={onClick}
+      onWheel={onWheel}>
+      <img
+        draggable={false}
+        className="interactive-photo__image"
+        onLoad={calculateImageRect}
+        src={url}
+        alt={alt}
+        ref={imgRef}
+        style={imageStyle}
+      />
       {Object.values(pointers).map((p) => (
         <div key={p.user.id} className="interactive-photo__pointer" style={pointerStyle(p)}>
           <div className="interactive-photo__pointer-name">{p.user.firstName}</div>
