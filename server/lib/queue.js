@@ -7,7 +7,7 @@ const logger = debug('app:queue');
 const COMMENTS_QUEUE = 'comments';
 const COMMENTS_DEBOUNCE_INTERVAL = 5 /*min*/ * 60; /*sec/min*/
 
-const boss = new PgBoss(process.env.DATABASE_URL);
+const boss = new PgBoss(process.env.NODE_ENV === 'test' ? `${process.env.DATABASE_URL}_test` : process.env.DATABASE_URL);
 boss.on('error', logger);
 
 let models;
@@ -57,8 +57,13 @@ async function enqueueCommentNotification(commentId, startAfter = COMMENTS_DEBOU
   });
 }
 
+async function stop() {
+  return boss.stop();
+}
+
 export default {
   COMMENTS_QUEUE,
   initialize,
   enqueueCommentNotification,
+  stop,
 };
