@@ -27,6 +27,7 @@ async function commentNotificationHandler(jobs) {
     if (commentId) {
       const comment = await models.Comment.findByPk(commentId);
       const comments = await models.Comment.findAll({
+        include: [models.Photo, models.User],
         where: {
           createdAt: {
             [Op.gte]: comment.createdAt,
@@ -41,11 +42,7 @@ async function commentNotificationHandler(jobs) {
         if (dt < COMMENTS_DEBOUNCE_INTERVAL * 1000) {
           enqueueCommentNotification(commentId, COMMENTS_DEBOUNCE_INTERVAL - Math.ceil(dt / 1000));
         } else {
-          console.log(
-            'send notifications for',
-            comments.map((c) => c.id),
-            dt / 1000
-          );
+          await models.Comment.sendNotifications(comments);
         }
       }
     }

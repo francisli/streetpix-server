@@ -17,9 +17,7 @@ function Comment({ data }) {
           </b>
           <span className="text-muted ms-1">
             {DateTime.fromISO(data.createdAt).toRelative({ style: 'narrow' })}
-            {data.updatedAt !== data.createdAt && (
-              <span> (updated {DateTime.fromISO(data.updatedAt).toRelative({ style: 'narrow' })})</span>
-            )}
+            {data.updatedAt !== data.createdAt && <span> (edited {DateTime.fromISO(data.updatedAt).toRelative({ style: 'narrow' })})</span>}
           </span>
         </div>
         <div>{data.body}</div>

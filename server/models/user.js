@@ -281,6 +281,12 @@ export default function (sequelize, DataTypes) {
     }
   );
 
+  User.addScope('active', {
+    where: {
+      deactivatedAt: null,
+    },
+  });
+
   User.beforeSave(async (user) => {
     if (user.changed('password') && user.password !== '') {
       user.hashedPassword = await bcrypt.hash(user.password, 12);
