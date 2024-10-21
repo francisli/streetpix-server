@@ -4,8 +4,7 @@ import { FullScreen, useFullScreenHandle } from 'react-full-screen';
 import { DateTime } from 'luxon';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
+import { Tab, Tabs } from 'react-bootstrap';
 
 import Api from '../Api';
 import { useAuthContext } from '../AuthContext';

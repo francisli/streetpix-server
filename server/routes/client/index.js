@@ -38,7 +38,7 @@ router.get('/*', async (req, res, next) => {
         );
       }
     } catch (error) {
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).end();
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(error.stack);
     }
   } else {
     next();

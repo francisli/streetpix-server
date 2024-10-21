@@ -7,7 +7,11 @@ const logger = debug('app:queue');
 const COMMENTS_QUEUE = 'comments';
 const COMMENTS_DEBOUNCE_INTERVAL = 5 /*min*/ * 60; /*sec/min*/
 
-const boss = new PgBoss(process.env.NODE_ENV === 'test' ? `${process.env.DATABASE_URL}_test` : process.env.DATABASE_URL);
+const boss = new PgBoss(
+  process.env.NODE_ENV === 'test'
+    ? `${process.env.DATABASE_URL}_test`
+    : `${process.env.DATABASE_URL}${process.env.NODE_ENV === 'production' ? '?ssl=no-verify' : ''}`
+);
 boss.on('error', logger);
 
 let models;
