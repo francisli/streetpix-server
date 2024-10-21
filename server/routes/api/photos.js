@@ -95,13 +95,20 @@ router.post('/', interceptors.requireLogin, async (req, res) => {
 
 router.get('/random', async (req, res) => {
   try {
+    const [results] = await models.sequelize.query(`
+      SELECT DISTINCT ON ("Users".id) "Users".id AS "UserId", "Photos".id AS "PhotoId", "Features".id AS "FeatureId"
+      FROM "Users"
+      JOIN "Photos" ON "Users".id="Photos"."UserId"
+      JOIN "Features" ON "Features"."PhotoId"="Photos".id
+      WHERE "Users"."deactivatedAt" IS NULL
+      AND "Users"."isPublic"=TRUE
+      ORDER BY "Users".id, RANDOM()`);
     const photos = await models.Photo.findAll({
-      include: [
-        { model: models.Feature, required: true },
-        { model: models.User, where: { isPublic: true } },
-      ],
+      where: {
+        id: results.map((r) => r.PhotoId),
+      },
+      include: [models.Feature, models.User],
       order: models.Sequelize.literal('RANDOM()'),
-      limit: 12,
     });
     res.json(photos.map((p) => p.toJSON()));
   } catch (error) {
