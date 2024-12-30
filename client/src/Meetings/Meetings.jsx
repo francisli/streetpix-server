@@ -16,28 +16,46 @@ function Meetings() {
   const params = new URLSearchParams(search);
   const page = parseInt(params.get('page') ?? '1', 10);
   const [lastPage, setLastPage] = useState(1);
-  const year = params.get('year') ?? `${DateTime.now().year}`;
+  const year = params.get('year');
+  const [latestYear, setLatestYear] = useState();
   const [meetingTemplates, setMeetingTemplates] = useState([]);
 
   useEffect(() => {
     if (user) {
-      Api.meetings.index(year, page).then((response) => {
-        setMeetings(response.data);
-        const linkHeader = Api.parseLinkHeader(response);
-        let newLastPage = page;
-        if (linkHeader?.last) {
-          const match = linkHeader.last.match(/page=(\d+)/);
-          newLastPage = parseInt(match[1], 10);
-        } else if (linkHeader?.next) {
-          newLastPage = page + 1;
-        }
-        setLastPage(newLastPage);
-      });
+      if (!latestYear) {
+        Api.meetings.index('all', 1).then((response) => {
+          if (response.data.length) {
+            const firstMeeting = response.data[0];
+            const firstYear = DateTime.fromISO(firstMeeting.startsAt).year;
+            setLatestYear(firstYear);
+            if (!year) {
+              navigate(`?year=${firstYear}`);
+            }
+          } else {
+            if (!year) {
+              navigate(`?year=${DateTime.now().year}`);
+            }
+          }
+        });
+      } else if (year) {
+        Api.meetings.index(year, page).then((response) => {
+          setMeetings(response.data);
+          const linkHeader = Api.parseLinkHeader(response);
+          let newLastPage = page;
+          if (linkHeader?.last) {
+            const match = linkHeader.last.match(/page=(\d+)/);
+            newLastPage = parseInt(match[1], 10);
+          } else if (linkHeader?.next) {
+            newLastPage = page + 1;
+          }
+          setLastPage(newLastPage);
+        });
+      }
       if (user.isAdmin) {
         Api.meetingTemplates.index().then((response) => setMeetingTemplates(response.data));
       }
     }
-  }, [user, year, page]);
+  }, [user, latestYear, year, page, navigate]);
 
   function setYear(event) {
     navigate(`?year=${event.target.value}`);
@@ -61,24 +79,27 @@ function Meetings() {
     }
   }
 
-  const currentYear = now.year;
   const yearStarted = 2021;
 
   return (
     <main className="meetings container">
       <h1>Meetings</h1>
-      <div className="d-flex justify-content-center mb-3">
-        <div className="d-flex align-items-center">
-          Year:
-          <select className="form-select ms-2" value={year} onChange={setYear}>
-            <option value="all">All</option>
-            {[...Array(currentYear - yearStarted + 1)].map((_, i) => (
-              <option key={currentYear - i}>{currentYear - i}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-      {user?.isAdmin && (year === 'all' || parseInt(year, 10) === currentYear) && (
+      {latestYear && (
+        <>
+          <div className="d-flex justify-content-center mb-3">
+            <div className="d-flex align-items-center">
+              Year:
+              <select className="form-select ms-2" value={year} onChange={setYear}>
+                <option value="all">All</option>
+                {[...Array(latestYear - yearStarted + 1)].map((_, i) => (
+                  <option key={latestYear - i}>{latestYear - i}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </>
+      )}
+      {user?.isAdmin && (year === 'all' || parseInt(year, 10) === latestYear) && (
         <>
           <div className="mb-5 text-center">
             <Link to="/meetings/new" className="btn btn-outline-primary">
