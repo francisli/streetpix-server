@@ -65,6 +65,7 @@ function Meeting() {
       photosByUser[user.id].push(meetingSubmission);
       photoCount += 1;
     }
+    photosByUser[user.id]?.sort((ms1, ms2) => ms1.position - ms2.position);
     if (sort === 'alpha') {
       users.sort((u1, u2) => {
         let result = u1.firstName.localeCompare(u2.firstName);
