@@ -61,8 +61,7 @@
     "nodemailer-mock": "^2.0.1",
     "sequelize-fixtures": "^1.2.0",
     "supertest": "^6.3.3",
-    "supertest-session": "^4.1.0",
-    "why-is-node-running": "^3.2.2"
+    "supertest-session": "^4.1.0"
   },
   "eslintConfig": {
     "env": {

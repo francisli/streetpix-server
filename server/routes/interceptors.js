@@ -95,11 +95,11 @@ passport.deserializeUser((req, id, done) => {
 });
 
 function sendErrorUnauthorized(req, res) {
-  res.sendStatus(StatusCodes.UNAUTHORIZED);
+  res.status(StatusCodes.UNAUTHORIZED).end();
 }
 
 function sendErrorForbidden(req, res) {
-  res.sendStatus(StatusCodes.FORBIDDEN);
+  res.status(StatusCodes.FORBIDDEN).end();
 }
 
 function requireLoginInternal(req, res, next, requireAdmin) {

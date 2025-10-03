@@ -8,7 +8,7 @@ import meetingsRoutes from './meetings.js';
 import passwordsRoutes from './passwords.js';
 import photosRoutes from './photos.js';
 import resourceCategoriesRoutes from './resourceCategories.js';
-import resourcesRoutes from './resources.js';
+// import resourcesRoutes from './resources.js';
 import usersRoutes from './users.js';
 
 const router = express.Router();
@@ -22,7 +22,7 @@ router.use('/meetings', meetingsRoutes);
 router.use('/passwords', passwordsRoutes);
 router.use('/photos', photosRoutes);
 router.use('/resource-categories', resourceCategoriesRoutes);
-router.use('/resources', resourcesRoutes);
+// router.use('/resources', resourcesRoutes);
 router.use('/users', usersRoutes);
 
 export default router;

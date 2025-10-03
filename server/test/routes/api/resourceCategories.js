@@ -94,11 +94,6 @@ describe('/api/resource-categories', () => {
   });
 
   context('unauthenticated', () => {
-    beforeEach(async () => {
-      // ensure no login in this context
-      testSession = session(app);
-    });
-
     it('GET / returns 401', async () => {
       await testSession.get('/api/resource-categories').set('Accept', 'application/json').expect(StatusCodes.UNAUTHORIZED);
     });
