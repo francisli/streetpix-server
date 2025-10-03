@@ -13,7 +13,7 @@ router.get('/', interceptors.requireLogin, async (req, res) => {
   const options = {
     page: req.query.page || '1',
     include: [models.User],
-    order: [['createdAt', 'DESC']],
+    order: [['name', 'ASC']],
   };
   const { records, pages, total } = await models.Resource.paginate(options);
   helpers.setPaginationHeaders(req, res, options.page, pages, total);
