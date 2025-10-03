@@ -58,19 +58,20 @@ router.get('/:id', interceptors.requireLogin, async (req, res) => {
 
 // Update resource
 router.patch('/:id', interceptors.requireLogin, async (req, res) => {
+  let record;
   await models.sequelize.transaction(async (transaction) => {
-    const record = await models.Resource.findByPk(req.params.id, { transaction });
-    if (!record) {
-      res.status(StatusCodes.NOT_FOUND).end();
-      return;
+    record = await models.Resource.findByPk(req.params.id, { transaction });
+    if (record && (req.user.isAdmin || record.UserId == req.user.id)) {
+      await record.update(_.pick(req.body, ['name', 'desc', 'url', 'file', 'CategoryId']), { transaction });
     }
-    if (!req.user.isAdmin && record.UserId !== req.user.id) {
-      res.status(StatusCodes.FORBIDDEN).end();
-      return;
-    }
-    await record.update(_.pick(req.body, ['name', 'desc', 'url', 'file', 'CategoryId']), { transaction });
-    res.json(record.toJSON());
   });
+  if (!record) {
+    res.status(StatusCodes.NOT_FOUND).end();
+  } else if (!req.user.isAdmin && record.UserId !== req.user.id) {
+    res.status(StatusCodes.FORBIDDEN).end();
+  } else {
+    res.json(record.toJSON());
+  }
 });
 
 // Delete resource
@@ -78,18 +79,16 @@ router.delete('/:id', interceptors.requireLogin, async (req, res) => {
   let record;
   await models.sequelize.transaction(async (transaction) => {
     record = await models.Resource.findByPk(req.params.id, { transaction });
-    if (record) {
-      if (!req.user.isAdmin && record.UserId !== req.user.id) {
-        res.status(StatusCodes.FORBIDDEN).end();
-        return;
-      }
+    if (record && (req.user.isAdmin || record.UserId == req.user.id)) {
       await record.destroy({ transaction });
     }
   });
-  if (record) {
-    res.status(StatusCodes.OK).end();
-  } else {
+  if (!record) {
     res.status(StatusCodes.NOT_FOUND).end();
+  } else if (!req.user.isAdmin && record.UserId !== req.user.id) {
+    res.status(StatusCodes.FORBIDDEN).end();
+  } else {
+    res.status(StatusCodes.OK).end();
   }
 });
 
