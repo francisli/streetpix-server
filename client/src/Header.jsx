@@ -82,6 +82,11 @@ function Header() {
                       Comments
                     </Link>
                   </li>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/resources" onClick={hideNavbar}>
+                      Resources
+                    </Link>
+                  </li>
                 </>
               )}
               <div className="flex-grow-1 d-lg-flex text-end justify-content-end">

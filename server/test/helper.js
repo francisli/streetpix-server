@@ -1,4 +1,5 @@
 /* eslint-disable mocha/no-top-level-hooks, mocha/no-hooks-for-single-case, mocha/no-exports */
+import whyIsNodeRunning from 'why-is-node-running' // should be your first import
 
 import './vars.js';
 // Load .env config after above overrides
@@ -84,6 +85,7 @@ after(async () => {
   await queue.stop();
   // close all db connections
   await models.sequelize.close();
+  whyIsNodeRunning();
 });
 
 export default {
