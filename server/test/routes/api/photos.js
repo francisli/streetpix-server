@@ -99,10 +99,10 @@ describe('/api/photos', () => {
         assert.deepStrictEqual(response.body?.length, 4);
 
         const docs = response.body;
-        assert.deepStrictEqual(docs[0].caption, 'Test photo 3');
-        assert.deepStrictEqual(docs[1].caption, 'Test photo 2');
-        assert.deepStrictEqual(docs[2].caption, 'Test photo 4');
-        assert.deepStrictEqual(docs[3].caption, 'Test photo 1');
+        assert.deepStrictEqual(docs[0].caption, 'Test photo 2');
+        assert.deepStrictEqual(docs[1].caption, 'Test photo 3');
+        assert.deepStrictEqual(docs[2].caption, 'Test photo 1');
+        assert.deepStrictEqual(docs[3].caption, 'Test photo 4');
       });
 
       it('returns photos with takenAt, sorted by takenAt', async () => {

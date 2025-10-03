@@ -24,7 +24,7 @@ module.exports = {
       },
       CategoryId: {
         type: Sequelize.INTEGER,
-        allowNull: true,
+        allowNull: false,
         references: {
           model: {
             tableName: 'ResourceCategories',

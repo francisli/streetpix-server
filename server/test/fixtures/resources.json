@@ -1,0 +1,13 @@
+[
+  {
+    "model": "Resource",
+    "data": {
+      "id": 202,
+      "name": "Res 1",
+      "desc": "desc",
+      "url": "https://x.test",
+      "CategoryId": 200,
+      "UserId": 2
+    }
+  }
+]
