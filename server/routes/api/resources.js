@@ -10,10 +10,21 @@ const router = express.Router();
 
 // List resources with pagination
 router.get('/', interceptors.requireLogin, async (req, res) => {
+  const { page = '1', categoryId = null } = req.query;
+  let CategoryId = null;
+  if (categoryId && !categoryId.match(/^[0-9]+$/)) {
+    const category = await models.ResourceCategory.findOne({ where: { link: categoryId } });
+    CategoryId = category?.id ?? null;
+  } else {
+    CategoryId = categoryId;
+  }
   const options = {
-    page: req.query.page || '1',
+    page,
     include: [models.User],
     order: [['name', 'ASC']],
+    where: {
+      CategoryId,
+    },
   };
   const { records, pages, total } = await models.Resource.paginate(options);
   helpers.setPaginationHeaders(req, res, options.page, pages, total);

@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 import Api from '../Api';
 import { useAuthContext } from '../AuthContext';
@@ -37,13 +39,16 @@ function Category() {
         {resources.map((resource) => (
           <div className="col col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 mb-3" key={resource.id}>
             <div className="card">
-              <div className="card-body">
+              <div className="card-body pb-2">
                 <h5 className="card-title">{resource.name}</h5>
+                <p className="card-text">{resource.desc}</p>
                 <p className="card-text">
-                  {resource.desc}
-                  <br />
                   {resource.url && <ExternalLink href={resource.url} />}
-                  {resource.file && <ExternalLink href={resource.fileURL}>{resource.fileName ?? resource.file}</ExternalLink>}
+                  {resource.file && (
+                    <ExternalLink href={resource.fileURL}>
+                      <FontAwesomeIcon icon={faDownload} /> {resource.fileName ?? resource.file}
+                    </ExternalLink>
+                  )}
                 </p>
               </div>
             </div>

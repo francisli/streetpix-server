@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link, Outlet } from 'react-router-dom';
+import { useParams, Link, Outlet, useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 
 import Api from '../Api';
@@ -8,6 +8,7 @@ import { useAuthContext } from '../AuthContext';
 function Resources() {
   const { user } = useAuthContext();
   const { categoryId } = useParams();
+  const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
@@ -15,6 +16,12 @@ function Resources() {
       setCategories(response.data);
     });
   }, []);
+
+  useEffect(() => {
+    if (!categoryId && categories.length > 0) {
+      navigate(`/resources/${categories[0].link}`);
+    }
+  }, [categoryId, categories, navigate]);
 
   return (
     <main className="container">
