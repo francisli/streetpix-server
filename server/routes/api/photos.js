@@ -32,7 +32,7 @@ router.get('/', async (req, res) => {
         options.include.push({ model: models.MeetingSubmission, include: models.Meeting });
         options.order = [
           [models.MeetingSubmission, models.Meeting, 'startsAt', 'DESC'],
-          [models.MeetingSubmission, 'createdAt', 'DESC'],
+          [models.MeetingSubmission, 'position', 'DESC'],
         ];
         break;
       case 'takenAt':

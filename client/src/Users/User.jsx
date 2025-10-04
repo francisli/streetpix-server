@@ -6,6 +6,7 @@ import { DateTime } from 'luxon';
 
 import { useAuthContext } from '../AuthContext';
 import Api from '../Api';
+import ExternalLink from '../Components/ExternalLink';
 import Photo from '../Photos/Photo';
 import Photos from '../Photos/Photos';
 
@@ -176,9 +177,7 @@ function User() {
                   {user.bio && <p>{user.bio}</p>}
                   {user.website && (
                     <p className="text-center text-md-start">
-                      <a className="user__website" href={user.website}>
-                        {user.website}
-                      </a>
+                      <ExternalLink href={user.website} />
                     </p>
                   )}
                   {user.id === auth.user?.id && (

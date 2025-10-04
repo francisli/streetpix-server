@@ -1,0 +1,24 @@
+[
+  {
+    "model": "Resource",
+    "data": {
+      "id": 202,
+      "name": "Res 1",
+      "desc": "desc",
+      "url": "https://x.test",
+      "CategoryId": 101,
+      "UserId": 2
+    }
+  },
+  {
+    "model": "Resource",
+    "data": {
+      "id": 203,
+      "name": "Res 2",
+      "desc": "desc",
+      "url": "https://x.test",
+      "CategoryId": 101,
+      "UserId": 1
+    }
+  }
+]

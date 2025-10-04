@@ -1,5 +1,4 @@
 /* eslint-disable mocha/no-top-level-hooks, mocha/no-hooks-for-single-case, mocha/no-exports */
-
 import './vars.js';
 // Load .env config after above overrides
 import 'dotenv/config';
@@ -53,6 +52,8 @@ async function cleanAssets() {
 async function resetDatabase() {
   // clear all test data (order matters due to foreign key relationships)
   await models.sequelize.query(`
+    DELETE FROM "Resources";
+    DELETE FROM "ResourceCategories";
     DELETE FROM "Invites";
     DELETE FROM "Meetings";
     DELETE FROM "MeetingTemplates";

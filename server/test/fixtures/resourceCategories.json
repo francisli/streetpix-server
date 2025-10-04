@@ -1,0 +1,44 @@
+[
+  {
+    "model": "ResourceCategory",
+    "data": {
+      "id": 100,
+      "name": "Parent B",
+      "link": "parent-b",
+      "position": 1,
+      "UserId": 1
+    }
+  },
+  {
+    "model": "ResourceCategory",
+    "data": {
+      "id": 101,
+      "name": "Parent A",
+      "link": "parent-a",
+      "position": 2,
+      "UserId": 1
+    }
+  },
+  {
+    "model": "ResourceCategory",
+    "data": {
+      "id": 102,
+      "name": "A Child 1",
+      "link": "a-child-1",
+      "position": 1,
+      "CategoryId": 101,
+      "UserId": 1
+    }
+  },
+  {
+    "model": "ResourceCategory",
+    "data": {
+      "id": 103,
+      "name": "A Child 2",
+      "link": "a-child-2",
+      "position": 2,
+      "CategoryId": 101,
+      "UserId": 1
+    }
+  }
+]

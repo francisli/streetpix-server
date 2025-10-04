@@ -122,6 +122,7 @@ export default function (sequelize, DataTypes) {
       }
       if (this.MeetingSubmission && this.MeetingSubmission.Meeting) {
         json.MeetingSubmission = {
+          position: this.MeetingSubmission.position,
           Meeting: {
             startsAt: this.MeetingSubmission.Meeting.startsAt,
           },
