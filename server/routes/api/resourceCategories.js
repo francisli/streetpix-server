@@ -48,10 +48,17 @@ router.post('/', interceptors.requireAdmin, async (req, res) => {
 // Show category
 router.get('/:id', interceptors.requireLogin, async (req, res) => {
   try {
-    const record = await models.ResourceCategory.findByPk(req.params.id, {
+    const options = {
       include: [{ model: models.ResourceCategory, as: 'Children' }],
       order: [['position', 'ASC']],
-    });
+      where: {},
+    };
+    if (req.params.id.match(/^[0-9]+$/)) {
+      options.where.id = req.params.id;
+    } else {
+      options.where.link = req.params.id;
+    }
+    const record = await models.ResourceCategory.findOne(options);
     if (record) {
       res.json(record.toJSON());
     } else {

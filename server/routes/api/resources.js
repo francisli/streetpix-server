@@ -22,7 +22,7 @@ router.get('/', interceptors.requireLogin, async (req, res) => {
 
 // Create resource
 router.post('/', interceptors.requireLogin, async (req, res) => {
-  const payload = _.pick(req.body, ['name', 'desc', 'url', 'file', 'CategoryId']);
+  const payload = _.pick(req.body, ['name', 'desc', 'url', 'file', 'fileName', 'CategoryId']);
   const record = models.Resource.build(payload);
   record.UserId = req.user.id;
   try {
@@ -62,7 +62,7 @@ router.patch('/:id', interceptors.requireLogin, async (req, res) => {
   await models.sequelize.transaction(async (transaction) => {
     record = await models.Resource.findByPk(req.params.id, { transaction });
     if (record && (req.user.isAdmin || record.UserId == req.user.id)) {
-      await record.update(_.pick(req.body, ['name', 'desc', 'url', 'file', 'CategoryId']), { transaction });
+      await record.update(_.pick(req.body, ['name', 'desc', 'url', 'file', 'fileName', 'CategoryId']), { transaction });
     }
   });
   if (!record) {

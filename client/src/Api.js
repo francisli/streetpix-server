@@ -165,6 +165,41 @@ const Api = {
       return instance.delete(`/api/photos/${id}`);
     },
   },
+  resourceCategories: {
+    index() {
+      return instance.get('/api/resource-categories');
+    },
+    get(id) {
+      return instance.get(`/api/resource-categories/${id}`);
+    },
+    create(data) {
+      return instance.post('/api/resource-categories', data);
+    },
+    update(id, data) {
+      return instance.patch(`/api/resource-categories/${id}`, data);
+    },
+    delete(id) {
+      return instance.delete(`/api/resource-categories/${id}`);
+    },
+  },
+  resources: {
+    index({ categoryId }) {
+      const params = { categoryId };
+      return instance.get('/api/resources', { params });
+    },
+    get(id) {
+      return instance.get(`/api/resources/${id}`);
+    },
+    create(data) {
+      return instance.post('/api/resources', data);
+    },
+    update(id, data) {
+      return instance.patch(`/api/resources/${id}`, data);
+    },
+    delete(id) {
+      return instance.delete(`/api/resources/${id}`);
+    },
+  },
   users: {
     index(args) {
       const { showAll } = args ?? {};

@@ -13,7 +13,7 @@ module.exports = {
         allowNull: false,
       },
       link: {
-        type: Sequelize.TEXT,
+        type: Sequelize.CITEXT,
         allowNull: false,
       },
       CategoryId: {

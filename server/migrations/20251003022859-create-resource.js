@@ -22,6 +22,9 @@ module.exports = {
       file: {
         type: Sequelize.TEXT,
       },
+      fileName: {
+        type: Sequelize.TEXT,
+      },
       CategoryId: {
         type: Sequelize.INTEGER,
         allowNull: false,

@@ -11,9 +11,28 @@ export default function (sequelize, DataTypes) {
   }
   ResourceCategory.init(
     {
-      name: DataTypes.TEXT,
-      link: DataTypes.TEXT,
-      position: DataTypes.INTEGER,
+      name: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+        validate: {
+          notEmpty: true,
+        },
+      },
+      link: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+        unique: true,
+        validate: {
+          notEmpty: true,
+        },
+      },
+      position: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+          notEmpty: true,
+        },
+      },
     },
     {
       sequelize,

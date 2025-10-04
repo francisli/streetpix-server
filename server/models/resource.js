@@ -13,6 +13,13 @@ export default function (sequelize, DataTypes) {
       desc: DataTypes.TEXT,
       url: DataTypes.TEXT,
       file: DataTypes.TEXT,
+      fileURL: {
+        type: DataTypes.VIRTUAL(DataTypes.STRING, ['file']),
+        get() {
+          return this.assetUrl('file');
+        },
+      },
+      fileName: DataTypes.TEXT,
     },
     {
       sequelize,
