@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 
 import Category from './Category';
-import CategoryForm from './Categories/CategoryForm';
+import CategoryForm from './CategoryForm';
 import Resources from './Resources';
 import ResourceForm from './ResourceForm';
 

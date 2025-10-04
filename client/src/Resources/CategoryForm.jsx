@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import classNames from 'classnames';
-import ValidationError from '../../ValidationError';
+import ValidationError from '../ValidationError';
 import { useNavigate } from 'react-router-dom';
-import Api from '../../Api';
+import Api from '../Api';
 
 function CategoryForm() {
   const navigate = useNavigate();
