@@ -47,7 +47,10 @@ describe('/api/resources', () => {
 
     describe('GET /', () => {
       it('lists resources with pagination headers', async () => {
-        const response = await testSession.get('/api/resources').set('Accept', 'application/json').expect(StatusCodes.OK);
+        const response = await testSession
+          .get('/api/resources?categoryId=parent-a')
+          .set('Accept', 'application/json')
+          .expect(StatusCodes.OK);
         assert(Array.isArray(response.body));
         assert(response.headers['x-total-count']);
         assert.strictEqual(response.body.length, 2);
